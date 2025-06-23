@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 import logging
 import logging.handlers
-from datetime import datetime
+from datetime import datetime, timezone
 from database import db
 
 # Import the internationalization module
@@ -32,7 +32,6 @@ def csrf_exempt_token_auth(request):
     return False
 
 # Timezone management functions have been moved to utils.timezone_utils
-
 def format_date(value):
     """Jinja filter to format dates in dd/mm/yyyy format"""
     if not value:
@@ -57,9 +56,8 @@ def format_date(value):
     except Exception:
         return value  # In case of an error, return the original value
 
-def create_app(config_name=None):
-    app = Flask(__name__)
-    
+def configure_basic_settings(app):
+    """Configure basic Flask application settings"""
     # Configure ProxyFix to handle X-Forwarded-* headers
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     
@@ -69,12 +67,6 @@ def create_app(config_name=None):
     # Disable template caching for development
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     
-    # Server configuration
-    server_name = os.getenv('SERVER_NAME')
-    # Disabling SERVER_NAME verification to allow healthcheck
-    # if server_name:
-    #     app.config['SERVER_NAME'] = server_name
-    
     # Configuration for HTTPS
     app.config['PREFERRED_URL_SCHEME'] = 'https'
     app.config['SESSION_COOKIE_SECURE'] = True
@@ -83,7 +75,10 @@ def create_app(config_name=None):
     # Configuration for SSL certificate verification during external requests
     # By default, certificates are not verified unless a custom certificate is provided
     app.config['VERIFY_SSL_CERTIFICATES'] = os.getenv('VERIFY_SSL_CERTIFICATES', 'False').lower() == 'true'
-    
+
+
+def configure_database(app):
+    """Configure database connection settings"""
     # Use the database configuration from the DATABASE_URL variable if it exists
     # otherwise use individual variables or default values
     database_url = os.getenv('DATABASE_URL')
@@ -110,11 +105,17 @@ def create_app(config_name=None):
         'pool_pre_ping': True 
     }
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    # Initialize extensions
+
+
+def init_extensions(app):
+    """Initialize Flask extensions"""
     db.init_app(app)
     login_manager.init_app(app)
-    
+    migrate.init_app(app, db)
+
+
+def configure_csrf(app):
+    """Configure CSRF protection with exemptions for APIs"""
     # Configure CSRF protection with exemption for token-authenticated APIs
     csrf.init_app(app)
     
@@ -143,10 +144,116 @@ def create_app(config_name=None):
         if request.path.startswith('/admin/users/') and request.path.endswith('/delete'):
             return True
         return False
+
+
+def configure_internationalization(app):
+    """Initialize internationalization and configure custom filters"""
+    # Initialize internationalization
+    i18n.init_app(app)
     
-    migrate.init_app(app, db)
+    # Add custom filters
+    app.jinja_env.filters['format_date'] = format_date
+    
+    # Filter to format dates and times
+    def datetime_filter(value):
+        if not value:
+            return ""
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value.replace('Z', '+00:00'))
+            except (ValueError, TypeError):
+                return value
+        if isinstance(value, datetime):
+            return value.strftime('%d/%m/%Y %H:%M')
+        return value
+
+    app.jinja_env.filters['datetime'] = datetime_filter
+
+
+def configure_routes(app):
+    """Configure application routes and error handlers"""
+    # Healthcheck endpoint for Docker
+    @app.route('/health')
+    def health_check():
+        # Mark this route as public so it's accessible without authentication
+        # and regardless of the configured SERVER_NAME
+        health_check.is_public = True
+        return jsonify({"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}), 200
+    
+    # Custom error handlers
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        # Get IP error information from the session if it exists
+        ip_error_info = session.get('ip_error_info', None)
+        # Delete the information from the session after retrieving it
+        if 'ip_error_info' in session:
+            session.pop('ip_error_info')
+        return render_template('errors/403.html', ip_error_info=ip_error_info), 403
+
+
+def initialize_database(app):
+    """Create database tables"""
+    with app.app_context():
+        try:
+            db.create_all()
+            app.logger.info("Database tables created successfully")
+        except Exception as e:
+            app.logger.error(f"Error creating database tables: {str(e)}")
+            raise
+
+
+def initialize_scheduler(app):
+    """Initialize the scheduler service for cron jobs"""
+    from services.scheduler_service import SchedulerService
+    scheduler = SchedulerService(app)
+    app.scheduler = scheduler  # Store the instance for later access if needed
+
+
+def create_app():
+    """Create and configure the Flask application"""
+    app = Flask(__name__)
+    
+    # Configure basic settings
+    configure_basic_settings(app)
+    
+    # Configure database
+    configure_database(app)
+    
+    # Initialize extensions
+    init_extensions(app)
+    
+    # Configure CSRF protection
+    configure_csrf(app)
     
     # Configure logging
+    configure_logging(app)
+    
+    # Configure authentication
+    configure_authentication(app)
+    
+    # Import models
+    import_models()
+    
+    # Setup JSON methods
+    setup_json_methods(app)
+    
+    # Register blueprints
+    register_blueprints(app)
+    
+    # Configure internationalization and filters
+    configure_internationalization(app)
+    
+    # Configure routes and error handlers
+    configure_routes(app)
+    
+    # Initialize database tables
+    initialize_database(app)
+    
+    # Initialize scheduler
+    initialize_scheduler(app)
+    
+def configure_logging(app):
+    """Configure application logging with console and file handlers"""
     # Determine the log level from the LOG_LEVEL environment variable
     log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
     log_level = getattr(logging, log_level_str, logging.INFO)
@@ -157,17 +264,31 @@ def create_app(config_name=None):
     
     app.logger.setLevel(log_level)
     
-    # Handler for the console
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter(LOG_FORMAT))
-    app.logger.addHandler(console_handler)
-    
     # Create log directories if they don't exist
     logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
     cron_logs_dir = os.path.join(logs_dir, 'cron')
     admin_logs_dir = os.path.join(logs_dir, 'admin')
     os.makedirs(cron_logs_dir, exist_ok=True)
     os.makedirs(admin_logs_dir, exist_ok=True)
+    
+    # Configure main application logger
+    _setup_app_logger(app, logs_dir, log_level, LOG_FORMAT)
+    
+    # Configure specialized loggers
+    cron_logger = _setup_cron_logger(cron_logs_dir, log_level, LOG_FORMAT)
+    admin_logger = _setup_admin_logger(admin_logs_dir, log_level, LOG_FORMAT)
+    
+    # Make the loggers available in the application
+    app.config['ADMIN_LOGGER'] = admin_logger
+    app.config['CRON_LOGGER'] = cron_logger
+
+
+def _setup_app_logger(app, logs_dir, log_level, log_format):
+    """Configure the main application logger"""
+    # Handler for the console
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter(log_format))
+    app.logger.addHandler(console_handler)
     
     # Configure a log file for the main application with rotation
     app_handler = logging.handlers.TimedRotatingFileHandler(
@@ -176,10 +297,12 @@ def create_app(config_name=None):
         interval=1,
         backupCount=30  # Keep 30 days of logs
     )
-    app_handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    app_handler.setFormatter(logging.Formatter(log_format))
     app.logger.addHandler(app_handler)
-    
-    # Configuration of the specific logger for cron jobs
+
+
+def _setup_cron_logger(cron_logs_dir, log_level, log_format):
+    """Configure the cron job logger"""
     cron_logger = logging.getLogger('services.scheduler_service')
     cron_logger.setLevel(log_level)
     
@@ -190,13 +313,17 @@ def create_app(config_name=None):
         interval=1,
         backupCount=30  # Keep 30 days of logs
     )
-    cron_handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    cron_handler.setFormatter(logging.Formatter(log_format))
     cron_logger.addHandler(cron_handler)
     
     # Ensure cron logs are not propagated to parent handlers
     cron_logger.propagate = False
     
-    # Configuration of the specific logger for administration actions
+    return cron_logger
+
+
+def _setup_admin_logger(admin_logs_dir, log_level, log_format):
+    """Configure the administration actions logger"""
     admin_logger = logging.getLogger('admin')
     admin_logger.setLevel(log_level)
     
@@ -207,33 +334,40 @@ def create_app(config_name=None):
         interval=1,
         backupCount=30  # Keep 30 days of logs
     )
-    admin_handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    admin_handler.setFormatter(logging.Formatter(log_format))
     admin_logger.addHandler(admin_handler)
     
     # Ensure admin logs are not propagated to parent handlers
     admin_logger.propagate = False
     
-    # Make the loggers available in the application
-    app.config['ADMIN_LOGGER'] = admin_logger
-    app.config['CRON_LOGGER'] = cron_logger
+    return admin_logger
     
+def is_public_route():
+    """Check if the current route is public and doesn't require authentication"""
+    # List of public paths that should be accessible without authentication
+    public_paths = [
+        '/api/docs/openapi.yaml',  # OpenAPI file
+        '/health',  # Healthcheck endpoint for Docker
+    ]
+    
+    # Check if the path is in the list of public paths
+    if request.path in public_paths:
+        return True
+    
+    # Check if the current route is marked as public via function attribute
+    if not request.endpoint:
+        return False
+        
+    view_function = current_app.view_functions.get(request.endpoint)
+    if view_function is None:
+        return False
+    return getattr(view_function, 'is_public', False)
+
+
+def configure_authentication(app):
+    """Configure authentication and login manager"""
     # Configure login manager
     login_manager.login_view = 'auth.login'
-    
-    # Function to check if a route is public
-    def is_public_route():
-        # Check if the current route is marked as public
-        if request.endpoint:
-            view_function = app.view_functions.get(request.endpoint)
-            if view_function and getattr(view_function, 'is_public', False):
-                return True
-        
-        # Check specific routes that should be public
-        public_paths = [
-            '/api/docs/openapi.yaml',  # OpenAPI file
-            '/health',  # Healthcheck endpoint for Docker
-        ]
-        return request.path in public_paths
     
     # Configure the login manager to exempt public routes
     @login_manager.unauthorized_handler
@@ -243,33 +377,39 @@ def create_app(config_name=None):
             return None
         # Otherwise, redirect to the login page
         return redirect(url_for('auth.login'))
-        
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        from models.user import User
+        return User.query.get(int(user_id)) if user_id else None
+    
     # Add a before_request decorator to handle public route authentication
     @app.before_request
     def handle_public_routes():
         # If it's a public route, no authentication check is needed
         if is_public_route():
             return None
-    
-    @login_manager.user_loader
-    def load_user(user_id):
-        from models.user import User
-        return User.query.get(int(user_id))
-    
-    # Import models to ensure they are registered with SQLAlchemy
+
+
+def import_models():
+    """Import models to ensure they are registered with SQLAlchemy"""
     from models.user import User
     from models.list import List, ListColumn, ListData
     from models.ldap_config import LDAPConfig
     from models.api_token import ApiToken
-    
-    # Add JSON configuration methods to the List model
+
+
+def setup_json_methods(app):
+    """Add JSON configuration methods to the List model"""
     try:
         import add_json_methods
         app.logger.info("JSON configuration methods added to the List model")
     except Exception as e:
         app.logger.error(f"Error adding JSON configuration methods: {str(e)}")
-    
-    # Register blueprints
+
+
+def register_blueprints(app):
+    """Register all application blueprints"""
     from routes.auth_routes import auth_bp
     from routes.list_routes import list_bp
     from routes.ui_routes import ui_bp
@@ -291,59 +431,6 @@ def create_app(config_name=None):
     app.register_blueprint(help_bp)
     app.register_blueprint(public_files_bp)
     app.register_blueprint(admin_bp)
-    
-    # Initialize internationalization
-    i18n.init_app(app)
-    
-    # Add custom filters
-    app.jinja_env.filters['format_date'] = format_date
-    
-    # Healthcheck endpoint for Docker
-    @app.route('/health')
-    def health_check():
-        # Mark this route as public so it's accessible without authentication
-        # and regardless of the configured SERVER_NAME
-        health_check.is_public = True
-        return jsonify({"status": "healthy", "timestamp": datetime.utcnow().isoformat()}), 200
-    
-    # Custom error handlers
-    @app.errorhandler(403)
-    def forbidden_error(error):
-        # Get IP error information from the session if it exists
-        ip_error_info = session.get('ip_error_info', None)
-        # Delete the information from the session after retrieving it
-        if 'ip_error_info' in session:
-            session.pop('ip_error_info')
-        return render_template('errors/403.html', ip_error_info=ip_error_info), 403
-
-    # Filter to format dates and times
-    def datetime_filter(value):
-        if not value:
-            return ""
-        if isinstance(value, str):
-            try:
-                value = datetime.fromisoformat(value.replace('Z', '+00:00'))
-            except (ValueError, TypeError):
-                return value
-        if isinstance(value, datetime):
-            return value.strftime('%d/%m/%Y %H:%M')
-        return value
-
-    app.jinja_env.filters['datetime'] = datetime_filter
-    
-    # Create database tables
-    with app.app_context():
-        try:
-            db.create_all()
-            app.logger.info("Database tables created successfully")
-        except Exception as e:
-            app.logger.error(f"Error creating database tables: {str(e)}")
-            raise
-    
-    # Initialize the scheduler service for cron jobs
-    from services.scheduler_service import SchedulerService
-    scheduler = SchedulerService(app)
-    app.scheduler = scheduler  # Store the instance for later access if needed
     
     return app
 
