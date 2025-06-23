@@ -151,14 +151,15 @@ def create_app(config_name=None):
     log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
     log_level = getattr(logging, log_level_str, logging.INFO)
     
+    # Define a constant for log format to avoid duplication
+    LOG_FORMAT = '%(asctime)s %(levelname)s: %(message)s '\
+                '[in %(pathname)s:%(lineno)d]'
+    
     app.logger.setLevel(log_level)
     
     # Handler for the console
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
+    console_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     app.logger.addHandler(console_handler)
     
     # Create log directories if they don't exist
@@ -175,10 +176,7 @@ def create_app(config_name=None):
         interval=1,
         backupCount=30  # Keep 30 days of logs
     )
-    app_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
+    app_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     app.logger.addHandler(app_handler)
     
     # Configuration of the specific logger for cron jobs
@@ -192,10 +190,7 @@ def create_app(config_name=None):
         interval=1,
         backupCount=30  # Keep 30 days of logs
     )
-    cron_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
+    cron_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     cron_logger.addHandler(cron_handler)
     
     # Ensure cron logs are not propagated to parent handlers
@@ -212,10 +207,7 @@ def create_app(config_name=None):
         interval=1,
         backupCount=30  # Keep 30 days of logs
     )
-    admin_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
+    admin_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     admin_logger.addHandler(admin_handler)
     
     # Ensure admin logs are not propagated to parent handlers
