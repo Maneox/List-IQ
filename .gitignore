@@ -1,2 +1,20 @@
 docs/Exemples de listes
 docs/exemples de listes
+# Configuration de l'IDE
+.vscode/*
+.sonarlint/*
+# Docker configuration
+docker-compose.yml
+Dockerfile
+# Logs de l'application
+app/logs/*
+# Fichiers de configuration
+.env
+app/nginx/*
+init.sql
+#certificats
+app/ssl/*
+app/certs/*
+
+#gitignore
+.gitignore
