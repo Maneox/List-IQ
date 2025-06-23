@@ -1,0 +1,420 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Help - Python Scripts for APIs') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('list_bp.lists_ui') }}">{{ _('Lists') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('Help - Python Scripts for APIs') }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ _('Guide for Python Scripts for APIs') }}</h1>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> {% trans %}This page provides examples and best practices for creating Python scripts that retrieve data from APIs.{% endtrans %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group sticky-top" style="top: 20px;">
+                <a href="#basic-structure" class="list-group-item list-group-item-action">{{ _('Basic Structure') }}</a>
+                <a href="#rest-api" class="list-group-item list-group-item-action">{{ _('Simple REST API') }}</a>
+                <a href="#api-key" class="list-group-item list-group-item-action">{{ _('API with Authentication Key') }}</a>
+                <a href="#pagination" class="list-group-item list-group-item-action">{{ _('Handling Pagination') }}</a>
+                <a href="#error-handling" class="list-group-item list-group-item-action">{{ _('Error Handling') }}</a>
+                <a href="#data-transformation" class="list-group-item list-group-item-action">{{ _('Data Transformation') }}</a>
+                <a href="#advanced-examples" class="list-group-item list-group-item-action">{{ _('Advanced Examples') }}</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card mb-4" id="basic-structure">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Basic Structure of a Python Script for API') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Here is the basic structure of a Python script to retrieve data from an API:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+
+    import json
+    import requests
+
+    # {{ _('Your code to retrieve data') }}
+    response = requests.get("https://api.example.com/data")
+    
+    # {{ _('Check if the request was successful') }}
+    if response.status_code == 200:
+        # {{ _('Convert the response to JSON') }}
+        data = response.json()
+        return data
+    else:
+        print(f"{{ _('Error:') }} {response.status_code}")
+        return []
+
+# {{ _('This function is automatically called by the system') }}
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of items retrieved:') }} {len(results)}")</code></pre>
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important:') }}</strong> {% trans %}Your script must always contain a <code>main()</code> function that returns the data as a list of objects.{% endtrans %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="rest-api">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Example with a Simple REST API') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a script to retrieve data from the JSONPlaceholder API:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+    import requests
+
+    # {{ _('API URL') }}
+    url = "https://jsonplaceholder.typicode.com/posts"
+    
+    try:
+        # {{ _('Make the GET request') }}
+        response = requests.get(url)
+        
+        # {{ _('Check if the request was successful') }}
+        if response.status_code == 200:
+            # {{ _('Convert the response to JSON') }}
+            data = response.json()
+            return data
+        else:
+            print(f"{{ _('Error:') }} {response.status_code}")
+            return []
+    except Exception as e:
+        print(f"{{ _('An error occurred:') }} {str(e)}")
+        return []
+
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of articles retrieved:') }} {len(results)}")</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="api-key">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('API with Authentication Key') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a script for an API requiring an API key (like OpenWeatherMap):{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+    import requests
+
+    # {{ _('API Parameters') }}
+    api_key = "{{ _('your_api_key') }}"  # {{ _('Replace with your API key') }}
+    city = "Paris"
+    url = f"https://api.openweathermap.org/data/2.5/weather"
+    
+    # {{ _('Request Parameters') }}
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric"
+    }
+    
+    try:
+        # {{ _('Make the GET request with parameters') }}
+        response = requests.get(url, params=params)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # {{ _('Transform the data to fit our format') }}
+            result = [{
+                "city": city,
+                "temperature": data["main"]["temp"],
+                "humidity": data["main"]["humidity"],
+                "description": data["weather"][0]["description"]
+            }]
+            
+            return result
+        else:
+            print(f"{{ _('Error:') }} {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        print(f"{{ _('An error occurred:') }} {str(e)}")
+        return []
+
+if __name__ == "__main__":
+    results = main()
+    for item in results:
+        print(f"{{ _('Weather in') }} {item['city']}: {item['temperature']}°C, {item['description']}")</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="pagination">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Handling Pagination') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a script to retrieve paginated data (like The Movie Database API):{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+    import requests
+    
+    # {{ _('Base Parameters') }}
+    api_key = "{{ _('your_api_key') }}"  # {{ _('Replace with your API key') }}
+    query = "batman"
+    url = "https://api.themoviedb.org/3/search/movie"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "accept": "application/json"
+    }
+    
+    try:
+        # {{ _('Get the first page') }}
+        params = {"query": query, "page": 1}
+        response = requests.get(url, headers=headers, params=params)
+        
+        if response.status_code != 200:
+            print(f"{{ _('API Error:') }} {response.status_code} - {response.text}")
+            return []
+            
+        data = response.json()
+        
+        # {{ _('Extract the total number of pages and the results from the first page') }}
+        total_pages = min(data.get("total_pages", 1), 5)  # {{ _('Limit to a maximum of 5 pages') }}
+        print(f"{{ _('Total number of pages:') }} {total_pages}")
+            
+        all_results = data.get("results", [])
+        
+        # {{ _('Get the remaining pages') }}
+        for page in range(2, total_pages + 1):
+            params["page"] = page
+            response = requests.get(url, headers=headers, params=params)
+            
+            if response.status_code != 200:
+                print(f"{{ _('API error for page') }} {page}: {response.status_code}")
+                break
+                
+            page_data = response.json()
+            all_results.extend(page_data.get("results", []))
+            print(f"{{ _('Page') }} {page}/{total_pages} {{ _('retrieved,') }} {len(page_data.get('results', []))} {{ _('results') }}")
+        
+        # {{ _('Transform the data to get only the necessary information') }}
+        transformed_results = []
+        for movie in all_results:
+            transformed_results.append({
+                "id": movie.get("id"),
+                "title": movie.get("title"),
+                "release_date": movie.get("release_date"),
+                "popularity": movie.get("popularity"),
+                "vote_average": movie.get("vote_average")
+            })
+        
+        return transformed_results
+        
+    except Exception as e:
+        print(f"{{ _('Error retrieving data:') }} {str(e)}")
+        return []
+
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of movies found:') }} {len(results)}")</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="error-handling">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Error Handling') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a script with robust error handling:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code># {{ _('Logging configuration') }}
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+def main():
+    import requests
+    import time
+    import logging
+    
+    url = "https://api.example.com/data"
+    max_retries = 3
+    retry_delay = 2  # {{ _('seconds') }}
+    
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"{{ _('Attempt') }} {attempt + 1}/{max_retries}")
+            response = requests.get(url, timeout=10)  # {{ _('10-second timeout') }}
+            
+            if response.status_code == 200:
+                data = response.json()
+                logger.info(f"{{ _('Data retrieved successfully:') }} {len(data)} {{ _('items') }}")
+                return data
+            elif response.status_code == 429:  # Too Many Requests
+                retry_after = int(response.headers.get('Retry-After', retry_delay))
+                logger.warning(f"{{ _('Request limit reached. Waiting for') }} {retry_after} {{ _('seconds.') }}")
+                time.sleep(retry_after)
+            else:
+                logger.error(f"{{ _('HTTP Error:') }} {response.status_code} - {response.text}")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                else:
+                    return []
+        except requests.exceptions.Timeout:
+            logger.error("{{ _('The request timed out') }}")
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+            else:
+                return []
+        except requests.exceptions.ConnectionError:
+            logger.error("{{ _('Connection error') }}")
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+            else:
+                return []
+        except Exception as e:
+            logger.error(f"{{ _('Unexpected error:') }} {str(e)}")
+            return []
+    
+    return []
+
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of items retrieved:') }} {len(results)}")</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="data-transformation">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Data Transformation') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a script with data transformation and filtering:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+    import requests
+    from datetime import datetime
+    
+    url = "https://jsonplaceholder.typicode.com/users"
+    
+    try:
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            users = response.json()
+            
+            # {{ _('Get posts for each user') }}
+            transformed_data = []
+            for user in users[:5]:  # {{ _('Limit to 5 users for the example') }}
+                posts_url = f"https://jsonplaceholder.typicode.com/posts?userId={user['id']}"
+                posts_response = requests.get(posts_url)
+                
+                if posts_response.status_code == 200:
+                    posts = posts_response.json()
+                    
+                    # {{ _('Filter and transform the data') }}
+                    for post in posts:
+                        transformed_data.append({
+                            "user_id": user["id"],
+                            "user_name": user["name"],
+                            "user_email": user["email"],
+                            "post_id": post["id"],
+                            "post_title": post["title"],
+                            "post_body": post["body"][:100] + "...",  # {{ _('Truncate the content') }}
+                            "extraction_date": datetime.now().strftime("%Y-%m-%d")
+                        })
+            
+            return transformed_data
+        else:
+            print(f"{{ _('Error:') }} {response.status_code}")
+            return []
+    except Exception as e:
+        print(f"{{ _('An error occurred:') }} {str(e)}")
+        return []
+
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of items retrieved:') }} {len(results)}")</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="advanced-examples">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Advanced Examples') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">{{ _('API with OAuth Authentication') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+    import requests
+    from requests_oauthlib import OAuth1
+    
+    # {{ _('OAuth Authentication Parameters') }}
+    client_key = "{{ _('your_client_key') }}"
+    client_secret = "{{ _('your_client_secret') }}"
+    
+    # {{ _('Create OAuth1 authentication') }}
+    oauth = OAuth1(client_key, client_secret)
+    
+    # {{ _('API URL') }}
+    url = "https://api.example.com/data"
+    
+    try:
+        response = requests.get(url, auth=oauth)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"{{ _('Error:') }} {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        print(f"{{ _('An error occurred:') }} {str(e)}")
+        return []
+
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of items retrieved:') }} {len(results)}")</code></pre>
+
+                    <h3 class="h6 mt-4">{{ _('API with Token Authentication') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>def main():
+    import requests
+    
+    # {{ _('Authentication Parameters') }}
+    username = "{{ _('your_username') }}"
+    password = "{{ _('your_password') }}"
+    token_url = "https://api.example.com/auth/token"
+    
+    try:
+        # {{ _('Get the authentication token') }}
+        token_response = requests.post(
+            token_url,
+            json={"username": username, "password": password}
+        )
+        
+        if token_response.status_code != 200:
+            print(f"{{ _('Authentication error:') }} {token_response.status_code}")
+            return []
+        
+        token_data = token_response.json()
+        access_token = token_data.get("access_token")
+        
+        # {{ _('Use the token to access data') }}
+        headers = {"Authorization": f"Bearer {access_token}"}
+        data_url = "https://api.example.com/data"
+        
+        data_response = requests.get(data_url, headers=headers)
+        
+        if data_response.status_code == 200:
+            return data_response.json()
+        else:
+            print(f"{{ _('Error:') }} {data_response.status_code} - {data_response.text}")
+            return []
+    except Exception as e:
+        print(f"{{ _('An error occurred:') }} {str(e)}")
+        return []
+
+if __name__ == "__main__":
+    results = main()
+    print(f"{{ _('Number of items retrieved:') }} {len(results)}")</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

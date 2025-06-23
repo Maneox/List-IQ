@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Access Denied') }}{% endblock %}
+
+{% block content %}
+<!-- Empty page with only the modal -->
+<div class="container mt-5 text-center">
+    <p class="text-muted">{{ _('Redirecting...') }}</p>
+</div>
+
+<!-- Error modal that displays automatically -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>{{ _('Access Denied') }}</h5>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-ban fa-4x text-danger my-3"></i>
+                <h5>{{ _('Access Denied') }}</h5>
+                <p>{{ _('Contact the administrator.') }}</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url_for('ui.index') }}" class="btn btn-primary">{{ _('Back to Home') }}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Automatically display the modal on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+        errorModal.show();
+    });
+</script>
+{% endblock %}

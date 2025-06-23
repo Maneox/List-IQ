@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Help - Curl Commands for APIs') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('list_bp.lists_ui') }}">{{ _('Lists') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('Help - Curl Commands for APIs') }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ _('Guide for Curl Commands for APIs') }}</h1>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> {% trans %}This page provides examples and best practices for creating Curl commands that retrieve data from APIs.{% endtrans %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group sticky-top" style="top: 20px;">
+                <a href="#basic-structure" class="list-group-item list-group-item-action">{{ _('Basic Structure') }}</a>
+                <a href="#rest-api" class="list-group-item list-group-item-action">{{ _('Simple REST API') }}</a>
+                <a href="#api-key" class="list-group-item list-group-item-action">{{ _('API with Authentication Key') }}</a>
+                <a href="#headers" class="list-group-item list-group-item-action">{{ _('Custom Headers') }}</a>
+                <a href="#post-data" class="list-group-item list-group-item-action">{{ _('Sending Data (POST)') }}</a>
+                <a href="#error-handling" class="list-group-item list-group-item-action">{{ _('Error Handling') }}</a>
+                <a href="#advanced-examples" class="list-group-item list-group-item-action">{{ _('Advanced Examples') }}</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card mb-4" id="basic-structure">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Basic Structure of a Curl Command') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Here is the basic structure of a Curl command to retrieve data from an API:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data"</code></pre>
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important:') }}</strong> {% trans %}The Curl command must return data in JSON format for the application to process it correctly.{% endtrans %}
+                    </div>
+                    <p>{{ _('Common options:') }}</p>
+                    <ul>
+                        <li><code>-X</code> or <code>--request</code>: {% trans %}Specifies the HTTP method (GET, POST, PUT, DELETE, etc.){% endtrans %}</li>
+                        <li><code>-H</code> or <code>--header</code>: {% trans %}Adds a header to the request{% endtrans %}</li>
+                        <li><code>-d</code> or <code>--data</code>: {% trans %}Sends data in the request body{% endtrans %}</li>
+                        <li><code>-o</code> or <code>--output</code>: {% trans %}Writes the output to a file{% endtrans %}</li>
+                        <li><code>-s</code> or <code>--silent</code>: {% trans %}Silent mode (does not show the progress bar){% endtrans %}</li>
+                        <li><code>-v</code> or <code>--verbose</code>: {% trans %}Verbose mode (displays detailed information){% endtrans %}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="rest-api">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Example with a Simple REST API') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a Curl command to retrieve data from the JSONPlaceholder API:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://jsonplaceholder.typicode.com/posts"</code></pre>
+                    <p>{% trans %}To retrieve a specific item:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://jsonplaceholder.typicode.com/posts/1"</code></pre>
+                    <p>{% trans %}To filter results with query parameters:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://jsonplaceholder.typicode.com/posts?userId=1"</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="api-key">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('API with Authentication Key') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a Curl command for an API requiring an API key (like OpenWeatherMap):{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.openweathermap.org/data/2.5/weather?q=Paris&appid={{ _('your_api_key') }}&units=metric"</code></pre>
+                    <p>{% trans %}With the API key in the header:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -H "X-API-Key: {{ _('your_api_key') }}"</code></pre>
+                    <p>{% trans %}With token authentication (Bearer Token):{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -H "Authorization: Bearer {{ _('your_access_token') }}"</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="headers">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Custom Headers') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a Curl command with custom headers:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -H "User-Agent: MyApp/1.0"</code></pre>
+                    <p>{{ _('Common headers:') }}</p>
+                    <ul>
+                        <li><code>Content-Type</code>: {% trans %}Type of content sent (e.g., application/json){% endtrans %}</li>
+                        <li><code>Accept</code>: {% trans %}Type of content accepted in response{% endtrans %}</li>
+                        <li><code>Authorization</code>: {% trans %}Authentication information{% endtrans %}</li>
+                        <li><code>User-Agent</code>: {% trans %}Application identifier{% endtrans %}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="post-data">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Sending Data (POST)') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}Example of a Curl command to send data in JSON format:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X POST "https://api.example.com/data" \
+    -H "Content-Type: application/json" \
+    -d '{"name": "John Doe", "email": "john@example.com"}'</code></pre>
+                    <p>{% trans %}With form data:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X POST "https://api.example.com/form" \
+    -d "name=John Doe&email=john@example.com"</code></pre>
+                    <p>{% trans %}With a JSON file:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X POST "https://api.example.com/data" \
+    -H "Content-Type: application/json" \
+    -d @data.json</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="error-handling">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Error Handling') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}To display HTTP status codes:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -I</code></pre>
+                    <p>{% trans %}To display the headers and body of the response:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -i</code></pre>
+                    <p>{% trans %}To display detailed information about the request and response:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -v</code></pre>
+                    <p>{% trans %}To follow redirects:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -L</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="advanced-examples">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Advanced Examples') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">{{ _('API with OAuth Authentication') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.twitter.com/1.1/statuses/user_timeline.json" \
+    -H "Authorization: OAuth oauth_consumer_key=\"consumer_key\", \
+                       oauth_nonce=\"generated_oauth_nonce\", \
+                       oauth_signature=\"generated_oauth_signature\", \
+                       oauth_signature_method=\"HMAC-SHA1\", \
+                       oauth_timestamp=\"generated_timestamp\", \
+                       oauth_token=\"access_token\", \
+                       oauth_version=\"1.0\""</code></pre>
+
+                    <h3 class="h6 mt-4">{{ _('API with Token Authentication') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code># {{ _('Step 1: Get the authentication token') }}
+curl -X POST "https://api.example.com/auth/token" \
+    -H "Content-Type: application/json" \
+    -d '{"username": "{{ _('your_username') }}", "password": "{{ _('your_password') }}"}'
+
+# {{ _('Step 2: Use the token to access data') }}
+curl -X GET "https://api.example.com/data" \
+    -H "Authorization: Bearer {{ _('your_access_token') }}"</code></pre>
+
+                    <h3 class="h6 mt-4">{{ _('API with Pagination') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code># {{ _('Get the first page') }}
+curl -X GET "https://api.example.com/data?page=1&per_page=10"
+
+# {{ _('Get the next page') }}
+curl -X GET "https://api.example.com/data?page=2&per_page=10"</code></pre>
+
+                    <h3 class="h6 mt-4">{{ _('API with Filtering and Sorting') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data?filter=status:active&sort=created_at:desc"</code></pre>
+
+                    <h3 class="h6 mt-4">{{ _('API with Timeout') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" --connect-timeout 10 --max-time 30</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

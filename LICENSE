@@ -1,16 +1,22 @@
-MIT License
+MIT License with Commons Clause
 
-Copyright (c) 2025 Maneox
+Copyright (c) 2025 List-IQ - Yoann THIBERT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+to use, copy, modify, merge, publish, distribute, sublicense, subject to the
+following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+Commons Clause Restriction: Selling the Software or using it for commercial 
+purposes is prohibited. This includes, but is not limited to, providing 
+the Software as a commercialized service, incorporating it into a product 
+or service sold for profit, or any other use intended to generate direct or
+indirect revenue. Non-commercial uses, such as personal, educational, or 
+non-profit use, are expressly permitted.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

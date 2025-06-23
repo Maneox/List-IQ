@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ _('API Integration with Postman') }} - {{ _('List-IQ') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>{{ _('API Integration with Postman') }}</h1>
+            
+            <div class="mb-4">
+                <a href="{{ url_for('api_docs.api_docs') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> {{ _('Back to API Documentation') }}
+                </a>
+                <a href="{{ url_for('api_docs.serve_openapi_spec') }}" class="btn btn-primary" download="openapi.yaml">
+                    <i class="fas fa-file-download"></i> {{ _('Download OpenAPI File') }}
+                </a>
+                <a href="{{ url_for('api_docs.serve_postman_collection') }}" class="btn btn-success" download="listing_gateway_collection.json">
+                    <i class="fas fa-file-download"></i> {{ _('Download Postman Collection') }}
+                </a>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">{{ _('Postman Configuration') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">1. {{ _('Recommended Method: Direct Import of the Postman Collection') }}</h3>
+                    <p>{{ _('We have prepared a ready-to-use Postman collection that works immediately:') }}</p>
+                    <ol>
+                        <li>{{ _('Open Postman') }}</li>
+                        <li>{{ _('Click "Import" in the upper left corner') }}</li>
+                        <li>{{ _('Select the "Link" tab') }}</li>
+                        <li>{{ _('Paste the following URL:') }} <code>{{ request.host_url.strip('/') }}{{ url_for('api_docs.serve_postman_collection') }}</code></li>
+                        <li>{{ _('Click "Import"') }}</li>
+                        <li>{{ _('Postman will import the complete collection with all configured endpoints') }}</li>
+                    </ol>
+                    <div class="alert alert-success">
+                        <strong>{{ _('Recommended:') }}</strong> {{ _('This method is more reliable than OpenAPI import and includes request and response examples.') }}
+                    </div>
+                    
+                    <h3 class="h6 mt-4">{{ _('Alternative: OpenAPI Documentation Import') }}</h3>
+                    <p>{{ _('Postman can also directly import the OpenAPI documentation:') }}</p>
+                    <ol>
+                        <li>{{ _('Open Postman') }}</li>
+                        <li>{{ _('Click "Import" in the upper left corner') }}</li>
+                        <li>{{ _('Select the "Link" tab and paste') }} <code>{{ request.host_url.strip('/') }}{{ url_for('api_docs.serve_openapi_spec') }}</code> {{ _('or use the "File" tab and import the file') }} <code>openapi.yaml</code> {{ _('that you downloaded') }}</li>
+                        <li>{{ _('Postman will generate a collection based on the OpenAPI specification') }}</li>
+                    </ol>
+                    <div class="alert alert-warning">
+                        <strong>{{ _('Note:') }}</strong> {{ _('Importing via OpenAPI may sometimes fail to capture all the collection details.') }}
+                    </div>
+                    
+                    <h3 class="h6 mt-4">2. {{ _('Environment Variables Configuration') }}</h3>
+                    <p>{{ _('To facilitate the use of the API, create an environment with the following variables:') }}</p>
+                    <ol>
+                        <li>{{ _('Click the gear icon (⚙️) in the top right') }}</li>
+                        <li>{{ _('Select "Environments" then "Add"') }}</li>
+                        <li>{{ _('Name your environment (e.g., "List-IQ - Local")') }}</li>
+                        <li>{{ _('Add the following variables:') }}
+                            <ul>
+                                <li><code>base_url</code>: {{ _('API base URL (e.g.:') }} <code>{{ request.host_url.strip('/') }}/api</code>)</li>
+                                <li><code>token</code>: {{ _('Your API token (without the "Bearer" prefix)') }}</li>
+                                <li><code>list_id</code>: {{ _('ID of a list for testing (optional)') }}</li>
+                                <li><code>row_id</code>: {{ _('ID of a row for testing (optional)') }}</li>
+                            </ul>
+                        </li>
+                        <li>{{ _('Click "Save"') }}</li>
+                        <li>{{ _('Select your environment from the dropdown menu in the top right') }}</li>
+                    </ol>
+                    
+                    <h3 class="h6 mt-4">3. {{ _('Authentication Configuration') }}</h3>
+                    <p>{{ _('Configure token authentication for the entire collection:') }}</p>
+                    <ol>
+                        <li>{{ _('In the imported collection, click the three dots (⋮) next to the collection name') }}</li>
+                        <li>{{ _('Select "Edit"') }}</li>
+                        <li>{{ _('Go to the "Authorization" tab') }}</li>
+                        <li>{{ _('Select the type "Bearer Token"') }}</li>
+                        <li>{{ _('In the "Token" field, enter <code>{{token}}</code> to use the environment variable') }}</li>
+                        <li>{{ _('Click "Update"') }}</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">{{ _('API Usage') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">{{ _('Main Endpoints') }}</h3>
+                    
+                    <h4 class="h6 mt-3">{{ _('List Management') }}</h4>
+                    <ul>
+                        <li><strong>GET /lists</strong>: {{ _('Retrieve all accessible lists') }}</li>
+                        <li><strong>GET /lists/{list_id}</strong>: {{ _('Retrieve details of a specific list') }}</li>
+                        <li><strong>POST /lists</strong>: {{ _('Create a new list (admin only)') }}</li>
+                        <li><strong>PUT /lists/{list_id}</strong>: {{ _('Update a list (admin only)') }}</li>
+                        <li><strong>DELETE /lists/{list_id}</strong>: {{ _('Delete a list (admin only)') }}</li>
+                    </ul>
+                    
+                    <h4 class="h6 mt-3">{{ _('Data Management') }}</h4>
+                    <ul>
+                        <li><strong>GET /lists/{list_id}/data</strong>: {{ _('Retrieve all data from a list') }}</li>
+                        <li><strong>GET /lists/{list_id}/data/{row_id}</strong>: {{ _('Retrieve a specific row') }}</li>
+                        <li><strong>POST /lists/{list_id}/data</strong>: {{ _('Add a data row (admin only)') }}</li>
+                        <li><strong>PUT /lists/{list_id}/data/{row_id}</strong>: {{ _('Update a row (admin only)') }}</li>
+                        <li><strong>DELETE /lists/{list_id}/data/{row_id}</strong>: {{ _('Delete a row (admin only)') }}</li>
+                    </ul>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important:') }}</strong> {{ _('In accordance with the project rules, list administration actions (creation, structure modification, column management) are only available via the web interface and not via the API.') }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">{{ _('Request Examples') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">{{ _('Retrieve all lists') }}</h3>
+                    <pre><code>GET {{base_url}}/lists
+Authorization: Bearer {{token}}</code></pre>
+                    
+                    <h3 class="h6 mt-3">{{ _('Create a new URL CSV list (admin only)') }}</h3>
+                    <pre><code>POST {{base_url}}/lists
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "{{ _('My URLCSVAPI List') }}",
+  "description": "{{ _('Description of my CSV list imported from a URL') }}",
+  "update_type": "automatic",
+  "update_schedule": "0 0 * * *",
+  "columns": [
+    {
+      "name": "{{ _('Name') }}",
+      "column_type": "text"
+    },
+    {
+      "name": "{{ _('Age') }}",
+      "column_type": "number"
+    },
+    {
+      "name": "{{ _('Email') }}",
+      "column_type": "text"
+    }
+  ],
+  "update_config": {
+    "source": "url",
+    "url": "https://example.com/data.csv",
+    "is_json": false,
+    "format": "csv"
+  },
+  "data_source_format": "csv",
+  "is_active": true,
+  "is_published": false,
+  "filter_enabled": false,
+  "ip_restriction_enabled": false,
+  "allowed_ips": "[]",
+  "max_results": 100
+}</code></pre>
+                    
+                    <h3 class="h6 mt-3">{{ _('Add a data row (admin only)') }}</h3>
+                    <pre><code>POST {{base_url}}/lists/{{list_id}}/data
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "data": {
+    "IP": "192.168.1.100",
+    "Country": "{{ _('France') }}",
+    "Date": "2025-05-19"
+  }
+}</code></pre>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">{{ _('Troubleshooting') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">{{ _('Error 401 (Unauthenticated)') }}</h3>
+                    <ul>
+                        <li>{{ _('Check that your API token is valid and has not expired') }}</li>
+                        <li>{{ _('Make sure the <code>token</code> environment variable is set correctly') }}</li>
+                        <li>{{ _('Check that Bearer Token authentication is configured at the collection level') }}</li>
+                    </ul>
+                    
+                    <h3 class="h6 mt-3">{{ _('Error 403 (Forbidden)') }}</h3>
+                    <ul>
+                        <li>{{ _('Check that you have the necessary rights to perform the operation') }}</li>
+                        <li>{{ _('For adding, modifying, and deleting data, you must have an administrator token') }}</li>
+                    </ul>
+                    
+                    <h3 class="h6 mt-3">{{ _('Error 404 (Not Found)') }}</h3>
+                    <ul>
+                        <li>{{ _('Check that the list or row ID exists') }}</li>
+                        <li>{{ _('Make sure the URL is formatted correctly') }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

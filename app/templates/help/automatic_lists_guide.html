@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Help - Automatic Lists') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('list_bp.lists_ui') }}">{{ _('Lists') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('Help - Automatic Lists') }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ _('Automatic Lists User Guide') }}</h1>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> {{ _('This page explains how to configure and use automatic lists to retrieve data from various sources.') }}
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group sticky-top" style="top: 20px;">
+                <a href="#types-sources" class="list-group-item list-group-item-action">{{ _('Data Source Types') }}</a>
+                <a href="#api-script" class="list-group-item list-group-item-action">{{ _('Configuration with API Script') }}</a>
+                <a href="#api-curl" class="list-group-item list-group-item-action">{{ _('Configuration with API Curl') }}</a>
+                <a href="#url" class="list-group-item list-group-item-action">{{ _('Configuration with URL') }}</a>
+                <a href="#planification" class="list-group-item list-group-item-action">{{ _('Scheduling Updates') }}</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card mb-4" id="types-sources">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Data Source Types') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ _('The application supports several types of data sources for automatic lists:') }}</p>
+                    <ol>
+                        <li><strong>{{ _('API Script') }}</strong>: {{ _('Use a custom script (Python, JavaScript, etc.)') }}</li>
+                        <li><strong>{{ _('API Curl') }}</strong>: {{ _('Use a curl command to retrieve data') }}</li>
+                        <li><strong>{{ _('URL') }}</strong>: {{ _('Direct data retrieval from a URL (JSON or CSV)') }}</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="api-script">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Configuration with API Script') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ _('This method allows you to use a custom script to retrieve and format data.') }}</p>
+                    
+                    <h3 class="h6 mt-3">{{ _('Configuration Steps') }}</h3>
+                    <ol>
+                        <li>{{ _('Create a new list or edit an existing one') }}</li>
+                        <li>{{ _('In the "Update Type" section, select "Automatic"') }}</li>
+                        <li>{{ _('In "Data Source", select "API"') }}</li>
+                        <li>{{ _('In "API Type", select "Script"') }}</li>
+                        <li>{{ _('Enter your script in the "Script Code" field') }}</li>
+                        <li>{{ _('Select the script language (Python, JavaScript, etc.)') }}</li>
+                        <li>{{ _('Configure the update schedule (cron format)') }}</li>
+                        <li>{{ _('Click "Save"') }}</li>
+                    </ol>
+
+                    <h3 class="h6 mt-3">{{ _('Python Script Format') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>import requests
+import json
+
+# Data retrieval
+response = requests.get("https://api.example.com/data")
+data = response.json()
+
+# Data processing
+result = []
+for item in data:
+    result.append({
+        "column1": item.get("field1"),
+        "column2": item.get("field2")
+    })
+
+# Important: print the result in JSON format
+print(json.dumps(result))</code></pre>
+
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important points:') }}</strong>
+                        <ul>
+                            <li>{{ _('The script must print the data in JSON format') }}</li>
+                            <li>{{ _('The data must match the columns defined in the list') }}</li>
+                            <li>{{ _('You can use standard Python modules and those installed in the environment (requests, pandas, etc.)') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="api-curl">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Configuration with API Curl') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ _('This method allows you to use a curl command to retrieve data from an API.') }}</p>
+                    
+                    <h3 class="h6 mt-3">{{ _('Configuration Steps') }}</h3>
+                    <ol>
+                        <li>{{ _('Create a new list or edit an existing one') }}</li>
+                        <li>{{ _('In the "Update Type" section, select "Automatic"') }}</li>
+                        <li>{{ _('In "Data Source", select "API"') }}</li>
+                        <li>{{ _('In "API Type", select "Curl"') }}</li>
+                        <li>{{ _('Enter your curl command in the designated field') }}</li>
+                        <li>{{ _('Configure the update schedule (cron format)') }}</li>
+                        <li>{{ _('Click "Save"') }}</li>
+                    </ol>
+
+                    <h3 class="h6 mt-3">{{ _('Example curl command') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.example.com/data" -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json"</code></pre>
+
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important points:') }}</strong>
+                        <ul>
+                            <li>{{ _('The curl command must return data in JSON format') }}</li>
+                            <li>{{ _('The data must match the columns defined in the list') }}</li>
+                            <li>{{ _('Make sure to include necessary authentication headers if required') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="url">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Configuration with URL') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ _('This method allows you to directly retrieve data from a URL that returns JSON or CSV.') }}</p>
+                    
+                    <h3 class="h6 mt-3">{{ _('Configuration Steps') }}</h3>
+                    <ol>
+                        <li>{{ _('Create a new list or edit an existing one') }}</li>
+                        <li>{{ _('In the "Update Type" section, select "Automatic"') }}</li>
+                        <li>{{ _('In "Data Source", select "Remote URL"') }}</li>
+                        <li>{{ _('Enter the URL in the designated field') }}</li>
+                        <li>{{ _('Select the data format (JSON or CSV)') }}</li>
+                        <li>{{ _('If necessary, configure authentication settings') }}</li>
+                        <li>{{ _('Configure the update schedule (cron format)') }}</li>
+                        <li>{{ _('Click "Save"') }}</li>
+                    </ol>
+
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important points:') }}</strong>
+                        <ul>
+                            <li>{{ _('The URL must be accessible from the server where the application is hosted') }}</li>
+                            <li>{{ _('For JSON data, the structure must be an array of objects') }}</li>
+                            <li>{{ _('For CSV data, the first row must contain the column names') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="planification">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Scheduling Updates') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ _('You can configure the update frequency for automatic lists using cron syntax.') }}</p>
+                    
+                    <h3 class="h6 mt-3">{{ _('Schedule Examples') }}</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{ _('Cron Expression') }}</th>
+                                <th>{{ _('Description') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>0 * * * *</code></td>
+                                <td>{{ _('Every hour (at minute 0)') }}</td>
+                            </tr>
+                            <tr>
+                                <td><code>0 0 * * *</code></td>
+                                <td>{{ _('Every day at midnight') }}</td>
+                            </tr>
+                            <tr>
+                                <td><code>0 8 * * 1-5</code></td>
+                                <td>{{ _('Monday to Friday at 8:00 AM') }}</td>
+                            </tr>
+                            <tr>
+                                <td><code>0 0 1 * *</code></td>
+                                <td>{{ _('On the first day of each month at midnight') }}</td>
+                            </tr>
+                            <tr>
+                                <td><code>*/15 * * * *</code></td>
+                                <td>{{ _('Every 15 minutes') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-info mt-3">
+                        <strong>{{ _('Note:') }}</strong> {{ _('Cron syntax consists of 5 fields: minute (0-59), hour (0-23), day of month (1-31), month (1-12), day of week (0-6, where 0 is Sunday).') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

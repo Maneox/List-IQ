@@ -1,0 +1,36 @@
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.1
+Flask-Login==0.6.3
+Flask-Migrate==4.0.5
+python-ldap==3.4.3
+ldap3==2.9.1
+PyMySQL==1.1.0
+cryptography==41.0.7
+croniter==2.0.1
+bcrypt==4.1.2
+requests==2.31.0
+pytest==7.4.3
+pytest-asyncio==0.23.2
+responses==0.24.1
+python-dotenv==1.0.0
+mysqlclient==2.2.1
+SQLAlchemy==2.0.25
+Werkzeug==3.0.1
+gunicorn==21.2.0
+mysql-connector-python
+
+# Bibliothèques pour manipulation JSON et API
+jsonpath-ng==1.5.3
+jmespath==1.0.1
+pandas==2.1.1
+requests-cache==1.1.0
+requests-ratelimiter==0.4.0
+APScheduler==3.10.4
+
+# Bibliothèques pour validation et sécurité
+ipaddress==1.0.23  # Pour la validation des adresses IP
+pytz==2023.3  # Pour la gestion des fuseaux horaires
+
+# Support multilingue
+Flask-Babel==4.0.0

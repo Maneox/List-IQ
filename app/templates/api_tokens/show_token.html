@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Your New API Token') }} - {{ _('List-IQ') }}{% endblock %}
+
+{% block head %}
+<!-- No external library needed for copying -->
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>{{ _('Your New API Token') }}</h1>
+            <p class="text-muted">{% trans %}This token will only be displayed once. Copy it now and keep it in a safe place.{% endtrans %}</p>
+        </div>
+    </div>
+
+    <div class="card border-primary mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-key me-2"></i>{{ _('Security Token') }}</h5>
+            <span class="badge bg-light text-primary">{{ token_name }}</span>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>{{ _('Warning:') }}</strong> {% trans %}This token will only be displayed once. Copy it now and keep it in a safe place.{% endtrans %}
+            </div>
+            
+            <div class="mb-4">
+                <label for="tokenValue" class="form-label">{{ _('Your API token:') }}</label>
+                <!-- The debug alert is intentionally left untranslated -->
+                <div class="alert alert-info mb-3 d-none">
+                    <strong>Valeur du token (pour débogage) :</strong> "{{ token_value }}"
+                </div>
+                
+                <div class="mb-3">
+                    <input type="text" class="form-control font-monospace" id="tokenValue" value="{{ token_value }}" readonly onclick="this.select();">
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary w-100" type="button" id="copyButton">
+                        <i class="fas fa-copy me-1"></i> {{ _('Copy Token') }}
+                    </button>
+                </div>
+                <small class="text-muted mt-1 d-block">{% trans %}Use this token in the <code>Authorization: Bearer <token></code> header{% endtrans %}</small>
+            </div>
+            
+            <div id="tokenCopiedAlert" class="alert alert-success d-none">
+                <i class="fas fa-check-circle me-2"></i> {{ _('Token copied to clipboard!') }}
+            </div>
+            
+            <div class="d-flex justify-content-between small text-muted mt-3">
+                <span><i class="fas fa-calendar-alt me-1"></i> {{ _('Created on:') }} {{ token_created_at|datetime }}</span>
+                {% if token_expires_at %}
+                <span><i class="fas fa-hourglass-end me-1"></i> {{ _('Expires on:') }} {{ token_expires_at|datetime }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">{{ _('How to use your API token') }}</h5>
+        </div>
+        <div class="card-body">
+            <p>{% trans %}To use the List-IQ API with this authentication token, include it in the <code>Authorization</code> header of your HTTP requests:{% endtrans %}</p>
+            
+            <div class="bg-light p-3 rounded mb-3">
+                <code>Authorization: Bearer {{ token_value }}</code>
+            </div>
+            
+            <p>{{ _('Example with cURL:') }}</p>
+            
+            <div class="bg-light p-3 rounded mb-3">
+                <pre><code>curl -X GET "{{ request.host_url }}api/lists" \
+  -H "Authorization: Bearer {{ token_value }}" \
+  -H "Content-Type: application/json"</code></pre>
+            </div>
+            
+            <p>{{ _('Example with Python:') }}</p>
+            
+            <div class="bg-light p-3 rounded">
+                <pre><code>import requests
+
+# {{ _('Configuration') }}
+base_url = "{{ request.host_url }}"
+api_token = "{{ token_value }}"
+
+# {{ _('Headers with the authentication token') }}
+headers = {
+    "Authorization": f"Bearer {api_token}",
+    "Content-Type": "application/json"
+}
+
+# {{ _('Example: get all lists') }}
+response = requests.get(f"{base_url}api/lists", headers=headers)
+lists = response.json()
+print(lists)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{{ url_for('api_auth.manage_tokens') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i> {{ _('Back to Token Management') }}
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tokenInput = document.getElementById('tokenValue');
+        const copyButton = document.getElementById('copyButton');
+        const alertElement = document.getElementById('tokenCopiedAlert');
+        
+        tokenInput.focus();
+        tokenInput.select();
+        
+        copyButton.addEventListener('click', function() {
+            copyButton.disabled = true;
+            const textToCopy = tokenInput.value;
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alertElement.classList.remove('d-none');
+                    
+                    const originalHTML = copyButton.innerHTML;
+                    copyButton.innerHTML = `<i class="fas fa-check me-1"></i> {{ _('Copied!') }}`;
+                    copyButton.classList.replace('btn-primary', 'btn-success');
+                    
+                    setTimeout(() => {
+                        alertElement.classList.add('d-none');
+                        copyButton.innerHTML = originalHTML;
+                        copyButton.classList.replace('btn-success', 'btn-primary');
+                        copyButton.disabled = false;
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error('{{ _("Error during copy:") }} ', err);
+                    alertElement.textContent = '{{ _("Error during copy. Please select manually.") }}';
+                    alertElement.classList.remove('d-none', 'alert-success');
+                    alertElement.classList.add('alert-danger');
+                    
+                    setTimeout(() => {
+                        alertElement.classList.add('d-none');
+                        alertElement.classList.remove('alert-danger');
+                        alertElement.textContent = `<i class="fas fa-check-circle me-2"></i> {{ _('Token copied to clipboard!') }}`;
+                        alertElement.classList.add('alert-success');
+                        copyButton.disabled = false;
+                    }, 3000);
+                });
+        });
+    });
+</script>
+{% endblock %}

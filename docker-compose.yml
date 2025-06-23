@@ -1,0 +1,112 @@
+# Common configuration for all services
+x-common-config: &common-config
+  environment:
+    - TZ=Europe/Paris
+    # Proxy variables
+    - HTTP_PROXY=${HTTP_PROXY:-}
+    - HTTPS_PROXY=${HTTPS_PROXY:-}
+    - NO_PROXY=${NO_PROXY:-localhost,127.0.0.1,db,web,nginx,.local}
+    - http_proxy=${http_proxy:-}
+    - https_proxy=${https_proxy:-}
+    - no_proxy=${no_proxy:-localhost,127.0.0.1,db,web,nginx,.local}
+  volumes:
+    #- /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
+  # dns:
+  #   - 10.9.40.59
+  #   - 10.9.40.60
+  # Log rotation configuration for all services
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+# Use environment variables from the .env file
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: /start.sh
+    <<: *common-config
+    env_file: app/.env
+    environment:
+      - TZ=Europe/Paris
+      - SSL_CERT_URL=https://listiq.domaine.local
+      - VERIFY_SSL_CERTIFICATES=true
+    volumes:
+      - ./app:/app
+      - listiq_public_files:/app/public_files
+      #- /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -H \"Host: $${SERVER_NAME:-localhost}\" http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - listiq_network
+
+  nginx:
+    image: nginx:latest
+    <<: *common-config
+    env_file: app/.env
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./app/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./app/ssl/cert.crt:/etc/nginx/ssl/cert.crt:ro
+      - ./app/ssl/cert.key:/etc/nginx/ssl/cert.key:ro
+      - ./app/ssl/CA.crt:/etc/nginx/ssl/CA.crt:ro
+      - ./app/static:/app/static:ro
+      - listiq_public_files:/app/public_files:ro
+      #- /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    networks:
+      - listiq_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  db:
+    image: mysql:8.0
+    <<: *common-config
+    env_file: app/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      TZ: Europe/Paris
+    volumes:
+      - listiq_mysql_data:/var/lib/mysql
+      - ./app/init.sql:/docker-entrypoint-initdb.d/init.sql
+      #- /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - listiq_network
+
+volumes:
+  listiq_mysql_data:
+  listiq_public_files:
+
+networks:
+  listiq_network:
+    driver: bridge

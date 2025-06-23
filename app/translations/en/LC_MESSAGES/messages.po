@@ -1,0 +1,2571 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-06-21 18:31+0200\n"
+"PO-Revision-Date: 2025-06-22 00:25+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: templates/api_docs.html:3 templates/api_docs.html:26 templates/base.html:48
+msgid "API Documentation"
+msgstr ""
+
+#: templates/admin/edit_user.html:3 templates/admin/new_user.html:3
+#: templates/admin/users.html:3 templates/api_docs.html:3
+#: templates/api_docs_postman.html:3 templates/api_tokens/index.html:3
+#: templates/api_tokens/show_token.html:3
+#: templates/api_tokens/token_display.html:3 templates/auth/login.html:3
+#: templates/lists/edit.html:3 templates/lists/index.html:3
+msgid "List-IQ"
+msgstr ""
+
+#: templates/api_docs.html:28
+msgid ""
+"This page presents the interactive documentation for the List-IQ API. You"
+" can explore the available endpoints, their parameters, and test the "
+"requests directly from this interface."
+msgstr ""
+
+#: templates/api_docs.html:30 templates/api_docs_postman.html:51
+#: templates/help/automatic_lists_guide.html:197
+msgid "Note:"
+msgstr ""
+
+#: templates/api_docs.html:30
+msgid ""
+"Some operations require administrator rights. See the \"Access "
+"Restrictions\" section for more information."
+msgstr ""
+
+#: templates/api_docs.html:34
+msgid "Postman Integration Guide"
+msgstr ""
+
+#: templates/api_docs.html:37 templates/api_docs_postman.html:16
+msgid "Download OpenAPI File"
+msgstr ""
+
+#: templates/api_docs_postman.html:3 templates/api_docs_postman.html:9
+msgid "API Integration with Postman"
+msgstr ""
+
+#: templates/api_docs_postman.html:13
+msgid "Back to API Documentation"
+msgstr ""
+
+#: templates/api_docs_postman.html:19
+msgid "Download Postman Collection"
+msgstr ""
+
+#: templates/api_docs_postman.html:25
+msgid "Postman Configuration"
+msgstr ""
+
+#: templates/api_docs_postman.html:28
+msgid "Recommended Method: Direct Import of the Postman Collection"
+msgstr ""
+
+#: templates/api_docs_postman.html:29
+msgid "We have prepared a ready-to-use Postman collection that works immediately:"
+msgstr ""
+
+#: templates/api_docs_postman.html:31 templates/api_docs_postman.html:45
+msgid "Open Postman"
+msgstr ""
+
+#: templates/api_docs_postman.html:32 templates/api_docs_postman.html:46
+msgid "Click \"Import\" in the upper left corner"
+msgstr ""
+
+#: templates/api_docs_postman.html:33
+msgid "Select the \"Link\" tab"
+msgstr ""
+
+#: templates/api_docs_postman.html:34
+msgid "Paste the following URL:"
+msgstr ""
+
+#: templates/api_docs_postman.html:35
+msgid "Click \"Import\""
+msgstr ""
+
+#: templates/api_docs_postman.html:36
+msgid "Postman will import the complete collection with all configured endpoints"
+msgstr ""
+
+#: templates/api_docs_postman.html:39
+msgid "Recommended:"
+msgstr ""
+
+#: templates/api_docs_postman.html:39
+msgid ""
+"This method is more reliable than OpenAPI import and includes request and"
+" response examples."
+msgstr ""
+
+#: templates/api_docs_postman.html:42
+msgid "Alternative: OpenAPI Documentation Import"
+msgstr ""
+
+#: templates/api_docs_postman.html:43
+msgid "Postman can also directly import the OpenAPI documentation:"
+msgstr ""
+
+#: templates/api_docs_postman.html:47
+msgid "Select the \"Link\" tab and paste"
+msgstr ""
+
+#: templates/api_docs_postman.html:47
+msgid "or use the \"File\" tab and import the file"
+msgstr ""
+
+#: templates/api_docs_postman.html:47
+msgid "that you downloaded"
+msgstr ""
+
+#: templates/api_docs_postman.html:48
+msgid "Postman will generate a collection based on the OpenAPI specification"
+msgstr ""
+
+#: templates/api_docs_postman.html:51
+msgid ""
+"Importing via OpenAPI may sometimes fail to capture all the collection "
+"details."
+msgstr ""
+
+#: templates/api_docs_postman.html:54
+msgid "Environment Variables Configuration"
+msgstr ""
+
+#: templates/api_docs_postman.html:55
+msgid ""
+"To facilitate the use of the API, create an environment with the "
+"following variables:"
+msgstr ""
+
+#: templates/api_docs_postman.html:57
+msgid "Click the gear icon (⚙️) in the top right"
+msgstr ""
+
+#: templates/api_docs_postman.html:58
+msgid "Select \"Environments\" then \"Add\""
+msgstr ""
+
+#: templates/api_docs_postman.html:59
+msgid "Name your environment (e.g., \"List-IQ - Local\")"
+msgstr ""
+
+#: templates/api_docs_postman.html:60
+msgid "Add the following variables:"
+msgstr ""
+
+#: templates/api_docs_postman.html:62
+msgid "API base URL (e.g.:"
+msgstr ""
+
+#: templates/api_docs_postman.html:63
+msgid "Your API token (without the \"Bearer\" prefix)"
+msgstr ""
+
+#: templates/api_docs_postman.html:64
+msgid "ID of a list for testing (optional)"
+msgstr ""
+
+#: templates/api_docs_postman.html:65
+msgid "ID of a row for testing (optional)"
+msgstr ""
+
+#: templates/api_docs_postman.html:68
+#: templates/help/automatic_lists_guide.html:62
+#: templates/help/automatic_lists_guide.html:110
+#: templates/help/automatic_lists_guide.html:143
+msgid "Click \"Save\""
+msgstr ""
+
+#: templates/api_docs_postman.html:69
+msgid "Select your environment from the dropdown menu in the top right"
+msgstr ""
+
+#: templates/api_docs_postman.html:72
+msgid "Authentication Configuration"
+msgstr ""
+
+#: templates/api_docs_postman.html:73
+msgid "Configure token authentication for the entire collection:"
+msgstr ""
+
+#: templates/api_docs_postman.html:75
+msgid ""
+"In the imported collection, click the three dots (⋮) next to the "
+"collection name"
+msgstr ""
+
+#: templates/api_docs_postman.html:76
+msgid "Select \"Edit\""
+msgstr ""
+
+#: templates/api_docs_postman.html:77
+msgid "Go to the \"Authorization\" tab"
+msgstr ""
+
+#: templates/api_docs_postman.html:78
+msgid "Select the type \"Bearer Token\""
+msgstr ""
+
+#: templates/api_docs_postman.html:79
+msgid ""
+"In the \"Token\" field, enter <code>{{token}}</code> to use the "
+"environment variable"
+msgstr ""
+
+#: templates/api_docs_postman.html:80
+msgid "Click \"Update\""
+msgstr ""
+
+#: templates/api_docs_postman.html:87
+msgid "API Usage"
+msgstr ""
+
+#: templates/api_docs_postman.html:90
+msgid "Main Endpoints"
+msgstr ""
+
+#: templates/api_docs_postman.html:92
+msgid "List Management"
+msgstr ""
+
+#: templates/api_docs_postman.html:94
+msgid "Retrieve all accessible lists"
+msgstr ""
+
+#: templates/api_docs_postman.html:95
+msgid "Retrieve details of a specific list"
+msgstr ""
+
+#: templates/api_docs_postman.html:96
+msgid "Create a new list (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:97
+msgid "Update a list (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:98
+msgid "Delete a list (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:101
+msgid "Data Management"
+msgstr ""
+
+#: templates/api_docs_postman.html:103
+msgid "Retrieve all data from a list"
+msgstr ""
+
+#: templates/api_docs_postman.html:104
+msgid "Retrieve a specific row"
+msgstr ""
+
+#: templates/api_docs_postman.html:105 templates/api_docs_postman.html:164
+msgid "Add a data row (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:106
+msgid "Update a row (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:107
+msgid "Delete a row (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:111 templates/help/curl_api_help.html:42
+#: templates/help/json_config_help.html:101
+#: templates/help/python_api_help.html:62
+msgid "Important:"
+msgstr ""
+
+#: templates/api_docs_postman.html:111
+msgid ""
+"In accordance with the project rules, list administration actions "
+"(creation, structure modification, column management) are only available "
+"via the web interface and not via the API."
+msgstr ""
+
+#: templates/api_docs_postman.html:118
+msgid "Request Examples"
+msgstr ""
+
+#: templates/api_docs_postman.html:121
+msgid "Retrieve all lists"
+msgstr ""
+
+#: templates/api_docs_postman.html:125
+msgid "Create a new URL CSV list (admin only)"
+msgstr ""
+
+#: templates/api_docs_postman.html:131
+msgid "My URLCSVAPI List"
+msgstr ""
+
+#: templates/api_docs_postman.html:132
+msgid "Description of my CSV list imported from a URL"
+msgstr ""
+
+#: templates/api_docs_postman.html:137 templates/api_tokens/index.html:29
+#: templates/lists/edit.html:32
+msgid "Name"
+msgstr ""
+
+#: templates/api_docs_postman.html:141
+msgid "Age"
+msgstr ""
+
+#: templates/admin/edit_user.html:35 templates/admin/new_user.html:33
+#: templates/admin/users.html:23 templates/api_docs_postman.html:145
+msgid "Email"
+msgstr ""
+
+#: templates/api_docs_postman.html:172
+msgid "France"
+msgstr ""
+
+#: templates/api_docs_postman.html:181
+msgid "Troubleshooting"
+msgstr ""
+
+#: templates/api_docs_postman.html:184
+msgid "Error 401 (Unauthenticated)"
+msgstr ""
+
+#: templates/api_docs_postman.html:186
+msgid "Check that your API token is valid and has not expired"
+msgstr ""
+
+#: templates/api_docs_postman.html:187
+msgid "Make sure the <code>token</code> environment variable is set correctly"
+msgstr ""
+
+#: templates/api_docs_postman.html:188
+msgid ""
+"Check that Bearer Token authentication is configured at the collection "
+"level"
+msgstr ""
+
+#: templates/api_docs_postman.html:191
+msgid "Error 403 (Forbidden)"
+msgstr ""
+
+#: templates/api_docs_postman.html:193
+msgid "Check that you have the necessary rights to perform the operation"
+msgstr ""
+
+#: templates/api_docs_postman.html:194
+msgid ""
+"For adding, modifying, and deleting data, you must have an administrator "
+"token"
+msgstr ""
+
+#: templates/api_docs_postman.html:197
+msgid "Error 404 (Not Found)"
+msgstr ""
+
+#: templates/api_docs_postman.html:199
+msgid "Check that the list or row ID exists"
+msgstr ""
+
+#: templates/api_docs_postman.html:200
+msgid "Make sure the URL is formatted correctly"
+msgstr ""
+
+#: templates/base.html:32 templates/help/automatic_lists_guide.html:9
+#: templates/help/curl_api_help.html:9 templates/help/json_config_help.html:9
+#: templates/help/python_api_help.html:9 templates/lists/edit.html:10
+#: templates/lists/index.html:3 templates/lists/index.html:8
+#: templates/lists/view.html:25
+msgid "Lists"
+msgstr ""
+
+#: templates/base.html:36 templates/lists/edit.html:3
+#: templates/lists/edit.html:15 templates/lists/edit.html:24
+#: templates/lists/index.html:13
+msgid "New List"
+msgstr ""
+
+#: templates/base.html:40
+msgid "Help"
+msgstr ""
+
+#: templates/base.html:43
+msgid "Automatic Lists Guide"
+msgstr ""
+
+#: templates/base.html:44
+msgid "Python Scripts"
+msgstr ""
+
+#: templates/base.html:45
+msgid "Curl Commands"
+msgstr ""
+
+#: templates/base.html:46 templates/lists/edit.html:277
+#: templates/lists/view.html:79
+msgid "JSON Configuration"
+msgstr ""
+
+#: templates/base.html:65 templates/lists/edit.html:116
+msgid "Language"
+msgstr ""
+
+#: templates/base.html:68
+msgid "French"
+msgstr ""
+
+#: templates/base.html:69
+msgid "English"
+msgstr ""
+
+#: templates/base.html:78
+msgid "Theme"
+msgstr ""
+
+#: templates/api_tokens/index.html:3 templates/api_tokens/index.html:8
+#: templates/base.html:114
+msgid "API Tokens"
+msgstr ""
+
+#: templates/base.html:119
+msgid "User Management"
+msgstr ""
+
+#: templates/admin/ldap_config.html:3 templates/base.html:123
+msgid "LDAP Configuration"
+msgstr ""
+
+#: templates/base.html:126
+msgid "Logout"
+msgstr ""
+
+#: templates/auth/login.html:3 templates/auth/login.html:11
+#: templates/auth/login.html:39 templates/base.html:131
+msgid "Login"
+msgstr ""
+
+#: templates/base.html:158
+msgid "All rights reserved"
+msgstr ""
+
+#: templates/admin/edit_user.html:3 templates/admin/edit_user.html:11
+msgid "Edit User"
+msgstr ""
+
+#: templates/admin/edit_user.html:19 templates/admin/ldap_config.html:233
+#: templates/admin/ldap_config.html:255 templates/admin/new_user.html:19
+#: templates/api_tokens/index.html:152 templates/api_tokens/index.html:185
+#: templates/api_tokens/index.html:261
+msgid "Close"
+msgstr ""
+
+#: templates/admin/edit_user.html:29 templates/admin/new_user.html:28
+#: templates/admin/users.html:22 templates/auth/login.html:28
+msgid "Username"
+msgstr ""
+
+#: templates/admin/edit_user.html:42
+msgid "New Password"
+msgstr ""
+
+#: templates/admin/edit_user.html:43
+msgid "(leave blank to not change)"
+msgstr ""
+
+#: templates/admin/edit_user.html:51 templates/admin/new_user.html:44
+#: templates/admin/users.html:42
+msgid "Administrator"
+msgstr ""
+
+#: templates/admin/edit_user.html:57 templates/admin/new_user.html:49
+#: templates/admin/users.html:37 templates/api_tokens/index.html:58
+#: templates/lists/index.html:40
+msgid "Active"
+msgstr ""
+
+#: templates/admin/edit_user.html:61 templates/admin/new_user.html:53
+#: templates/api_tokens/index.html:171 templates/lists/edit.html:280
+#: templates/lists/edit.html:283 templates/lists/view.html:197
+#: templates/lists/view.html:255 templates/lists/view.html:291
+msgid "Cancel"
+msgstr ""
+
+#: templates/admin/edit_user.html:62
+msgid "Save Changes"
+msgstr ""
+
+#: templates/admin/ldap_config.html:12
+msgid "LDAP/LDAPS Configuration"
+msgstr ""
+
+#: templates/admin/ldap_config.html:15
+msgid ""
+"Configure the connection settings to your LDAP/Active Directory service "
+"to enable user authentication and authorization."
+msgstr ""
+
+#: templates/admin/ldap_config.html:23
+msgid "Connection Settings"
+msgstr ""
+
+#: templates/admin/ldap_config.html:29
+msgid "Enable LDAP Authentication"
+msgstr ""
+
+#: templates/admin/ldap_config.html:35
+msgid "LDAP Server"
+msgstr ""
+
+#: templates/admin/ldap_config.html:37
+msgid "Hostname or IP address of the LDAP server"
+msgstr ""
+
+#: templates/admin/ldap_config.html:40
+msgid "Port"
+msgstr ""
+
+#: templates/admin/ldap_config.html:42
+msgid "Default port: 389 (LDAP) or 636 (LDAPS)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:51
+msgid "Use SSL (LDAPS)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:59
+msgid "Use TLS (StartTLS)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:67
+msgid "Verify SSL/TLS Certificate"
+msgstr ""
+
+#: templates/admin/ldap_config.html:69
+msgid "Enable to verify the LDAP server certificate"
+msgstr ""
+
+#: templates/admin/ldap_config.html:78
+msgid "CA Certificate for SSL/TLS"
+msgstr ""
+
+#: templates/admin/ldap_config.html:82
+msgid ""
+"If you are using LDAPS or StartTLS with a certificate issued by a private"
+" PKI, you must provide the CA certificate in PEM format."
+msgstr ""
+
+#: templates/admin/ldap_config.html:87
+msgid "A CA certificate is currently configured."
+msgstr ""
+
+#: templates/admin/ldap_config.html:92
+msgid "Remove current CA certificate"
+msgstr ""
+
+#: templates/admin/ldap_config.html:98
+msgid "CA Certificate (PEM format)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:100
+msgid ""
+"File containing the certificate in PEM format (starts with -----BEGIN "
+"CERTIFICATE-----)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:111
+msgid "Authentication Settings"
+msgstr ""
+
+#: templates/admin/ldap_config.html:115
+msgid "Bind DN"
+msgstr ""
+
+#: templates/admin/ldap_config.html:117
+msgid ""
+"DN of the service account used to connect to the LDAP server. For Active "
+"Directory, use the format: username@domain.com"
+msgstr ""
+
+#: templates/admin/ldap_config.html:121
+msgid "Bind Password"
+msgstr ""
+
+#: templates/admin/ldap_config.html:122 templates/admin/new_user.html:38
+#: templates/auth/login.html:32
+msgid "Password"
+msgstr ""
+
+#: templates/admin/ldap_config.html:123
+msgid "Leave blank to keep the current password"
+msgstr ""
+
+#: templates/admin/ldap_config.html:130
+msgid "Search Settings"
+msgstr ""
+
+#: templates/admin/ldap_config.html:134
+msgid "Base DN"
+msgstr ""
+
+#: templates/admin/ldap_config.html:136
+msgid "Base DN for all LDAP searches"
+msgstr ""
+
+#: templates/admin/ldap_config.html:140
+msgid "User DN"
+msgstr ""
+
+#: templates/admin/ldap_config.html:142
+msgid "DN where users are searched (leave blank to use the base DN)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:146
+msgid "Group DN"
+msgstr ""
+
+#: templates/admin/ldap_config.html:148
+msgid "DN where groups are searched (leave blank to use the base DN)"
+msgstr ""
+
+#: templates/admin/ldap_config.html:153
+msgid "User RDN Attribute"
+msgstr ""
+
+#: templates/admin/ldap_config.html:155 templates/admin/ldap_config.html:160
+msgid "For AD: sAMAccountName"
+msgstr ""
+
+#: templates/admin/ldap_config.html:158
+msgid "Login Attribute"
+msgstr ""
+
+#: templates/admin/ldap_config.html:163
+msgid "User Object Class"
+msgstr ""
+
+#: templates/admin/ldap_config.html:165
+msgid "For AD: person or user"
+msgstr ""
+
+#: templates/admin/ldap_config.html:173
+msgid "Authorization Settings"
+msgstr ""
+
+#: templates/admin/ldap_config.html:177
+msgid ""
+"Users must belong to at least the user group to be able to log in. "
+"Administrators must belong to the administrator group."
+msgstr ""
+
+#: templates/admin/ldap_config.html:181
+msgid "Administrator Group"
+msgstr ""
+
+#: templates/admin/ldap_config.html:188
+msgid "DN of the group whose members will have administrator rights"
+msgstr ""
+
+#: templates/admin/ldap_config.html:192
+msgid "User Group"
+msgstr ""
+
+#: templates/admin/ldap_config.html:199
+msgid "DN of the group whose members will have standard user rights"
+msgstr ""
+
+#: templates/admin/ldap_config.html:204
+msgid "Member Attribute"
+msgstr ""
+
+#: templates/admin/ldap_config.html:206
+msgid "For AD: member"
+msgstr ""
+
+#: templates/admin/ldap_config.html:209
+msgid "Group Object Class"
+msgstr ""
+
+#: templates/admin/ldap_config.html:211
+msgid "For AD: group"
+msgstr ""
+
+#: templates/admin/ldap_config.html:219
+msgid "Test Connection"
+msgstr ""
+
+#: templates/admin/ldap_config.html:222
+msgid "Save Configuration"
+msgstr ""
+
+#: templates/admin/ldap_config.html:232
+msgid "Select a Group"
+msgstr ""
+
+#: templates/admin/ldap_config.html:238
+msgid "Loading..."
+msgstr ""
+
+#: templates/admin/ldap_config.html:240
+msgid "Loading groups..."
+msgstr ""
+
+#: templates/admin/ldap_config.html:247
+msgid "Search for a group..."
+msgstr ""
+
+#: templates/admin/ldap_config.html:275
+msgid "Testing..."
+msgstr ""
+
+#: templates/admin/ldap_config.html:289
+msgid "Connection Successful"
+msgstr ""
+
+#: templates/admin/ldap_config.html:291 templates/admin/ldap_config.html:298
+#: templates/admin/ldap_config.html:307
+msgid "OK"
+msgstr ""
+
+#: templates/admin/ldap_config.html:296
+msgid "Connection Failed"
+msgstr ""
+
+#: templates/admin/ldap_config.html:302
+msgid "Error during connection test:"
+msgstr ""
+
+#: templates/admin/ldap_config.html:305
+msgid "Error"
+msgstr ""
+
+#: templates/admin/ldap_config.html:306
+msgid "An error occurred during the connection test"
+msgstr ""
+
+#: templates/admin/ldap_config.html:393
+msgid "No groups found"
+msgstr ""
+
+#: templates/admin/ldap_config.html:398
+msgid "Error loading groups:"
+msgstr ""
+
+#: templates/admin/ldap_config.html:399
+msgid "An error occurred while loading groups"
+msgstr ""
+
+#: templates/admin/new_user.html:3 templates/admin/new_user.html:11
+#: templates/admin/users.html:10
+msgid "New User"
+msgstr ""
+
+#: templates/admin/new_user.html:54
+msgid "Create User"
+msgstr ""
+
+#: templates/admin/users.html:3 templates/admin/users.html:8
+msgid "User Administration"
+msgstr ""
+
+#: templates/admin/users.html:24 templates/api_tokens/index.html:33
+msgid "Status"
+msgstr ""
+
+#: templates/admin/users.html:25
+msgid "Role"
+msgstr ""
+
+#: templates/admin/users.html:26
+msgid "Last Login"
+msgstr ""
+
+#: templates/admin/users.html:27 templates/api_tokens/index.html:34
+msgid "Actions"
+msgstr ""
+
+#: templates/admin/users.html:37 templates/api_tokens/index.html:60
+#: templates/lists/index.html:40
+msgid "Inactive"
+msgstr ""
+
+#: templates/admin/users.html:42
+msgid "User"
+msgstr ""
+
+#: templates/admin/users.html:49 templates/lists/index.html:33
+msgid "Never"
+msgstr ""
+
+#: templates/api_tokens/index.html:9
+msgid "Manage your access tokens for the List-IQ API"
+msgstr ""
+
+#: templates/api_tokens/index.html:13
+msgid "New Token"
+msgstr ""
+
+#: templates/api_tokens/index.html:21
+msgid "Your API Tokens"
+msgstr ""
+
+#: templates/api_tokens/index.html:30
+msgid "Created On"
+msgstr ""
+
+#: templates/api_tokens/index.html:31
+msgid "Expires On"
+msgstr ""
+
+#: templates/api_tokens/index.html:32
+msgid "Last Used"
+msgstr ""
+
+#: templates/api_tokens/index.html:46
+msgid "No expiration"
+msgstr ""
+
+#: templates/api_tokens/index.html:53
+msgid "Never used"
+msgstr ""
+
+#: templates/api_tokens/index.html:64
+msgid "Are you sure you want to revoke this token? This action is irreversible."
+msgstr ""
+
+#: templates/api_tokens/index.html:67
+msgid "Revoke"
+msgstr ""
+
+#: templates/api_tokens/index.html:78
+msgid "You have not created any API tokens yet."
+msgstr ""
+
+#: templates/api_tokens/index.html:80
+msgid "Create a token"
+msgstr ""
+
+#: templates/api_tokens/index.html:90
+msgid "How to use your API tokens"
+msgstr ""
+
+#: templates/api_tokens/index.html:93
+msgid ""
+"To use the List-IQ API with an authentication token, include the token in"
+" the <code>Authorization</code> header of your HTTP requests:"
+msgstr ""
+
+#: templates/api_tokens/index.html:99 templates/api_tokens/index.html:226
+#: templates/api_tokens/show_token.html:71
+#: templates/api_tokens/token_display.html:64
+msgid "Example with cURL:"
+msgstr ""
+
+#: templates/api_tokens/index.html:107 templates/api_tokens/index.html:233
+#: templates/api_tokens/show_token.html:79
+#: templates/api_tokens/token_display.html:72
+msgid "Example with Python:"
+msgstr ""
+
+#: templates/api_tokens/index.html:112 templates/api_tokens/index.html:237
+#: templates/api_tokens/show_token.html:84
+#: templates/api_tokens/token_display.html:77
+msgid "Configuration"
+msgstr ""
+
+#: templates/api_tokens/index.html:116 templates/api_tokens/index.html:241
+#: templates/api_tokens/show_token.html:88
+#: templates/api_tokens/token_display.html:81
+msgid "Headers with the authentication token"
+msgstr ""
+
+#: templates/api_tokens/index.html:122 templates/api_tokens/index.html:247
+#: templates/api_tokens/show_token.html:94
+#: templates/api_tokens/token_display.html:87
+msgid "Example: get all lists"
+msgstr ""
+
+#: templates/api_tokens/index.html:133
+msgid "Security Best Practices"
+msgstr ""
+
+#: templates/api_tokens/index.html:137
+msgid "Secure Storage"
+msgstr ""
+
+#: templates/api_tokens/index.html:137
+msgid ""
+"Never store your API tokens in plaintext in your source code or in "
+"unsecured files."
+msgstr ""
+
+#: templates/api_tokens/index.html:138
+msgid "Always use HTTPS in production to prevent token interception."
+msgstr ""
+
+#: templates/api_tokens/index.html:139
+msgid "Expiration"
+msgstr ""
+
+#: templates/api_tokens/index.html:139
+msgid "Set an expiration date for sensitive tokens."
+msgstr ""
+
+#: templates/api_tokens/index.html:140
+msgid "Regular Revocation"
+msgstr ""
+
+#: templates/api_tokens/index.html:140
+msgid "Revoke and renew your API tokens regularly."
+msgstr ""
+
+#: templates/api_tokens/index.html:141
+msgid "Monitoring"
+msgstr ""
+
+#: templates/api_tokens/index.html:141
+msgid "Monitor the usage of your tokens to detect any suspicious activity."
+msgstr ""
+
+#: templates/api_tokens/index.html:151
+msgid "Create a new API token"
+msgstr ""
+
+#: templates/api_tokens/index.html:159
+msgid "Token Name"
+msgstr ""
+
+#: templates/api_tokens/index.html:160
+msgid "E.g.: Sync script"
+msgstr ""
+
+#: templates/api_tokens/index.html:161
+msgid "Give your token a descriptive name to easily identify it."
+msgstr ""
+
+#: templates/api_tokens/index.html:165
+msgid "Expiration Date"
+msgstr ""
+
+#: templates/api_tokens/index.html:167
+msgid "Leave blank for a token without an expiration date."
+msgstr ""
+
+#: templates/api_tokens/index.html:172
+msgid "Create Token"
+msgstr ""
+
+#: templates/api_tokens/index.html:184 templates/api_tokens/show_token.html:3
+#: templates/api_tokens/show_token.html:13
+#: templates/api_tokens/token_display.html:3
+#: templates/api_tokens/token_display.html:9
+msgid "Your New API Token"
+msgstr ""
+
+#: templates/api_tokens/index.html:190 templates/api_tokens/show_token.html:26
+#: templates/api_tokens/token_display.html:27
+msgid "Warning:"
+msgstr ""
+
+#: templates/api_tokens/index.html:190 templates/api_tokens/show_token.html:14
+#: templates/api_tokens/show_token.html:26
+#: templates/api_tokens/token_display.html:10
+#: templates/api_tokens/token_display.html:27
+msgid ""
+"This token will only be displayed once. Copy it now and keep it in a safe"
+" place."
+msgstr ""
+
+#: templates/api_tokens/index.html:194
+msgid "Security Token:"
+msgstr ""
+
+#: templates/api_tokens/index.html:198
+#: templates/api_tokens/token_display.html:35
+msgid "Copy"
+msgstr ""
+
+#: templates/api_tokens/index.html:202 templates/api_tokens/show_token.html:48
+#: templates/api_tokens/show_token.html:148
+#: templates/api_tokens/token_display.html:39
+msgid "Token copied to clipboard!"
+msgstr ""
+
+#: templates/api_tokens/index.html:208 templates/api_tokens/show_token.html:52
+#: templates/api_tokens/token_display.html:45
+msgid "Created on:"
+msgstr ""
+
+#: templates/api_tokens/index.html:211 templates/api_tokens/show_token.html:54
+#: templates/api_tokens/token_display.html:47
+msgid "Expires on:"
+msgstr ""
+
+#: templates/api_tokens/index.html:217 templates/api_tokens/show_token.html:62
+#: templates/api_tokens/token_display.html:55
+msgid "How to use your API token"
+msgstr ""
+
+#: templates/api_tokens/index.html:220 templates/api_tokens/show_token.html:65
+#: templates/api_tokens/token_display.html:58
+msgid ""
+"To use the List-IQ API with this authentication token, include it in the "
+"<code>Authorization</code> header of your HTTP requests:"
+msgstr ""
+
+#: templates/api_tokens/index.html:223 templates/api_tokens/index.html:229
+#: templates/api_tokens/index.html:239
+msgid "your_token"
+msgstr ""
+
+#: templates/api_tokens/index.html:257
+msgid ""
+"For more information on how to use this token, see the \"How to use your "
+"API tokens\" section below."
+msgstr ""
+
+#: templates/api_tokens/index.html:262
+msgid "I have copied my token"
+msgstr ""
+
+#: templates/api_tokens/index.html:279
+msgid "Creating..."
+msgstr ""
+
+#: templates/api_tokens/index.html:305
+msgid "Server error"
+msgstr ""
+
+#: templates/api_tokens/index.html:333
+msgid "Error creating token:"
+msgstr ""
+
+#: templates/api_tokens/index.html:347 templates/api_tokens/show_token.html:129
+#: templates/api_tokens/token_display.html:120
+msgid "Copied!"
+msgstr ""
+
+#: templates/api_tokens/index.html:356
+msgid "Copy error. Please copy manually."
+msgstr ""
+
+#: templates/api_tokens/index.html:362
+msgid "Invalid date"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:20
+#: templates/api_tokens/token_display.html:21
+msgid "Security Token"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:30
+#: templates/api_tokens/token_display.html:31
+msgid "Your API token:"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:41
+msgid "Copy Token"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:44
+#: templates/api_tokens/token_display.html:41
+msgid "Use this token in the <code>Authorization: Bearer <token></code> header"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:104
+#: templates/api_tokens/token_display.html:14
+#: templates/api_tokens/token_display.html:97
+msgid "Back to Token Management"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:140
+msgid "Error during copy:"
+msgstr ""
+
+#: templates/api_tokens/show_token.html:141
+msgid "Error during copy. Please select manually."
+msgstr ""
+
+#: templates/api_tokens/token_display.html:131
+msgid "Copy error:"
+msgstr ""
+
+#: templates/api_tokens/token_display.html:132
+msgid "Could not copy. Please do it manually."
+msgstr ""
+
+#: templates/errors/403.html:3 templates/errors/403.html:16
+#: templates/errors/403.html:20
+msgid "Access Denied"
+msgstr ""
+
+#: templates/errors/403.html:8
+msgid "Redirecting..."
+msgstr ""
+
+#: templates/errors/403.html:21
+msgid "Contact the administrator."
+msgstr ""
+
+#: templates/errors/403.html:24
+msgid "Back to Home"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:3
+#: templates/help/automatic_lists_guide.html:10
+msgid "Help - Automatic Lists"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:14
+msgid "Automatic Lists User Guide"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:17
+msgid ""
+"This page explains how to configure and use automatic lists to retrieve "
+"data from various sources."
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:23
+#: templates/help/automatic_lists_guide.html:34
+msgid "Data Source Types"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:24
+#: templates/help/automatic_lists_guide.html:48
+msgid "Configuration with API Script"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:25
+#: templates/help/automatic_lists_guide.html:97
+msgid "Configuration with API Curl"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:26
+#: templates/help/automatic_lists_guide.html:129
+msgid "Configuration with URL"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:27
+#: templates/help/automatic_lists_guide.html:159
+msgid "Scheduling Updates"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:37
+msgid ""
+"The application supports several types of data sources for automatic "
+"lists:"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:39
+msgid "API Script"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:39
+msgid "Use a custom script (Python, JavaScript, etc.)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:40
+msgid "API Curl"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:40
+msgid "Use a curl command to retrieve data"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:41
+msgid "URL"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:41
+msgid "Direct data retrieval from a URL (JSON or CSV)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:51
+msgid "This method allows you to use a custom script to retrieve and format data."
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:53
+#: templates/help/automatic_lists_guide.html:102
+#: templates/help/automatic_lists_guide.html:134
+msgid "Configuration Steps"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:55
+#: templates/help/automatic_lists_guide.html:104
+#: templates/help/automatic_lists_guide.html:136
+msgid "Create a new list or edit an existing one"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:56
+#: templates/help/automatic_lists_guide.html:105
+#: templates/help/automatic_lists_guide.html:137
+msgid "In the \"Update Type\" section, select \"Automatic\""
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:57
+#: templates/help/automatic_lists_guide.html:106
+msgid "In \"Data Source\", select \"API\""
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:58
+msgid "In \"API Type\", select \"Script\""
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:59
+msgid "Enter your script in the \"Script Code\" field"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:60
+msgid "Select the script language (Python, JavaScript, etc.)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:61
+#: templates/help/automatic_lists_guide.html:109
+#: templates/help/automatic_lists_guide.html:142
+msgid "Configure the update schedule (cron format)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:65
+msgid "Python Script Format"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:85
+#: templates/help/automatic_lists_guide.html:117
+#: templates/help/automatic_lists_guide.html:147
+msgid "Important points:"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:87
+msgid "The script must print the data in JSON format"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:88
+#: templates/help/automatic_lists_guide.html:120
+msgid "The data must match the columns defined in the list"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:89
+msgid ""
+"You can use standard Python modules and those installed in the "
+"environment (requests, pandas, etc.)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:100
+msgid "This method allows you to use a curl command to retrieve data from an API."
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:107
+msgid "In \"API Type\", select \"Curl\""
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:108
+msgid "Enter your curl command in the designated field"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:113
+msgid "Example curl command"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:119
+msgid "The curl command must return data in JSON format"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:121
+msgid "Make sure to include necessary authentication headers if required"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:132
+msgid ""
+"This method allows you to directly retrieve data from a URL that returns "
+"JSON or CSV."
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:138
+msgid "In \"Data Source\", select \"Remote URL\""
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:139
+msgid "Enter the URL in the designated field"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:140
+msgid "Select the data format (JSON or CSV)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:141
+msgid "If necessary, configure authentication settings"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:149
+msgid "The URL must be accessible from the server where the application is hosted"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:150
+msgid "For JSON data, the structure must be an array of objects"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:151
+msgid "For CSV data, the first row must contain the column names"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:162
+msgid ""
+"You can configure the update frequency for automatic lists using cron "
+"syntax."
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:164
+msgid "Schedule Examples"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:168
+msgid "Cron Expression"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:169
+#: templates/help/json_config_help.html:72
+#: templates/help/json_config_help.html:156 templates/lists/edit.html:36
+msgid "Description"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:175
+msgid "Every hour (at minute 0)"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:179
+msgid "Every day at midnight"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:183
+msgid "Monday to Friday at 8:00 AM"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:187
+msgid "On the first day of each month at midnight"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:191
+msgid "Every 15 minutes"
+msgstr ""
+
+#: templates/help/automatic_lists_guide.html:197
+msgid ""
+"Cron syntax consists of 5 fields: minute (0-59), hour (0-23), day of "
+"month (1-31), month (1-12), day of week (0-6, where 0 is Sunday)."
+msgstr ""
+
+#: templates/help/curl_api_help.html:3 templates/help/curl_api_help.html:10
+msgid "Help - Curl Commands for APIs"
+msgstr ""
+
+#: templates/help/curl_api_help.html:14
+msgid "Guide for Curl Commands for APIs"
+msgstr ""
+
+#: templates/help/curl_api_help.html:17
+msgid ""
+"This page provides examples and best practices for creating Curl commands"
+" that retrieve data from APIs."
+msgstr ""
+
+#: templates/help/curl_api_help.html:23 templates/help/python_api_help.html:23
+msgid "Basic Structure"
+msgstr ""
+
+#: templates/help/curl_api_help.html:24 templates/help/python_api_help.html:24
+msgid "Simple REST API"
+msgstr ""
+
+#: templates/help/curl_api_help.html:25 templates/help/curl_api_help.html:72
+#: templates/help/python_api_help.html:25
+#: templates/help/python_api_help.html:103
+msgid "API with Authentication Key"
+msgstr ""
+
+#: templates/help/curl_api_help.html:26 templates/help/curl_api_help.html:86
+msgid "Custom Headers"
+msgstr ""
+
+#: templates/help/curl_api_help.html:27 templates/help/curl_api_help.html:106
+msgid "Sending Data (POST)"
+msgstr ""
+
+#: templates/help/curl_api_help.html:28 templates/help/curl_api_help.html:125
+#: templates/help/python_api_help.html:27
+#: templates/help/python_api_help.html:225
+msgid "Error Handling"
+msgstr ""
+
+#: templates/help/curl_api_help.html:29 templates/help/curl_api_help.html:141
+#: templates/help/python_api_help.html:29
+#: templates/help/python_api_help.html:340
+msgid "Advanced Examples"
+msgstr ""
+
+#: templates/help/curl_api_help.html:36
+msgid "Basic Structure of a Curl Command"
+msgstr ""
+
+#: templates/help/curl_api_help.html:39
+msgid ""
+"Here is the basic structure of a Curl command to retrieve data from an "
+"API:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:42
+msgid ""
+"The Curl command must return data in JSON format for the application to "
+"process it correctly."
+msgstr ""
+
+#: templates/help/curl_api_help.html:44
+msgid "Common options:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:46
+msgid "Specifies the HTTP method (GET, POST, PUT, DELETE, etc.)"
+msgstr ""
+
+#: templates/help/curl_api_help.html:47
+msgid "Adds a header to the request"
+msgstr ""
+
+#: templates/help/curl_api_help.html:48
+msgid "Sends data in the request body"
+msgstr ""
+
+#: templates/help/curl_api_help.html:49
+msgid "Writes the output to a file"
+msgstr ""
+
+#: templates/help/curl_api_help.html:50
+msgid "Silent mode (does not show the progress bar)"
+msgstr ""
+
+#: templates/help/curl_api_help.html:51
+msgid "Verbose mode (displays detailed information)"
+msgstr ""
+
+#: templates/help/curl_api_help.html:58 templates/help/python_api_help.html:69
+msgid "Example with a Simple REST API"
+msgstr ""
+
+#: templates/help/curl_api_help.html:61
+msgid "Example of a Curl command to retrieve data from the JSONPlaceholder API:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:63
+msgid "To retrieve a specific item:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:65
+msgid "To filter results with query parameters:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:75
+msgid ""
+"Example of a Curl command for an API requiring an API key (like "
+"OpenWeatherMap):"
+msgstr ""
+
+#: templates/help/curl_api_help.html:76 templates/help/curl_api_help.html:78
+#: templates/help/json_config_help.html:261
+#: templates/help/python_api_help.html:111
+#: templates/help/python_api_help.html:162
+msgid "your_api_key"
+msgstr ""
+
+#: templates/help/curl_api_help.html:77
+msgid "With the API key in the header:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:79
+msgid "With token authentication (Bearer Token):"
+msgstr ""
+
+#: templates/help/curl_api_help.html:80 templates/help/curl_api_help.html:162
+msgid "your_access_token"
+msgstr ""
+
+#: templates/help/curl_api_help.html:89
+msgid "Example of a Curl command with custom headers:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:94
+msgid "Common headers:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:96
+msgid "Type of content sent (e.g., application/json)"
+msgstr ""
+
+#: templates/help/curl_api_help.html:97
+msgid "Type of content accepted in response"
+msgstr ""
+
+#: templates/help/curl_api_help.html:98
+msgid "Authentication information"
+msgstr ""
+
+#: templates/help/curl_api_help.html:99
+msgid "Application identifier"
+msgstr ""
+
+#: templates/help/curl_api_help.html:109
+msgid "Example of a Curl command to send data in JSON format:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:113
+msgid "With form data:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:116
+msgid "With a JSON file:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:128
+msgid "To display HTTP status codes:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:130
+msgid "To display the headers and body of the response:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:132
+msgid "To display detailed information about the request and response:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:134
+msgid "To follow redirects:"
+msgstr ""
+
+#: templates/help/curl_api_help.html:144
+#: templates/help/python_api_help.html:343
+msgid "API with OAuth Authentication"
+msgstr ""
+
+#: templates/help/curl_api_help.html:154
+#: templates/help/python_api_help.html:374
+msgid "API with Token Authentication"
+msgstr ""
+
+#: templates/help/curl_api_help.html:155
+msgid "Step 1: Get the authentication token"
+msgstr ""
+
+#: templates/help/curl_api_help.html:158
+#: templates/help/python_api_help.html:379
+msgid "your_username"
+msgstr ""
+
+#: templates/help/curl_api_help.html:158
+#: templates/help/python_api_help.html:380
+msgid "your_password"
+msgstr ""
+
+#: templates/help/curl_api_help.html:160
+msgid "Step 2: Use the token to access data"
+msgstr ""
+
+#: templates/help/curl_api_help.html:164
+msgid "API with Pagination"
+msgstr ""
+
+#: templates/help/curl_api_help.html:165
+#: templates/help/python_api_help.html:171
+msgid "Get the first page"
+msgstr ""
+
+#: templates/help/curl_api_help.html:168
+msgid "Get the next page"
+msgstr ""
+
+#: templates/help/curl_api_help.html:171
+msgid "API with Filtering and Sorting"
+msgstr ""
+
+#: templates/help/curl_api_help.html:174
+msgid "API with Timeout"
+msgstr ""
+
+#: templates/help/json_config_help.html:3
+#: templates/help/json_config_help.html:10
+msgid "Help - JSON Configuration"
+msgstr ""
+
+#: templates/help/json_config_help.html:14
+msgid "JSON Configuration Guide for APIs"
+msgstr ""
+
+#: templates/help/json_config_help.html:17
+msgid ""
+"This page explains how to configure JSON data processing in the List-IQ "
+"application."
+msgstr ""
+
+#: templates/help/json_config_help.html:23
+#: templates/help/json_config_help.html:35
+msgid "JSON Basics"
+msgstr ""
+
+#: templates/help/json_config_help.html:24
+#: templates/help/json_config_help.html:62
+msgid "Data Path"
+msgstr ""
+
+#: templates/help/json_config_help.html:25
+#: templates/help/json_config_help.html:108
+msgid "Column Selection"
+msgstr ""
+
+#: templates/help/json_config_help.html:26
+#: templates/help/json_config_help.html:147
+msgid "Data Types"
+msgstr ""
+
+#: templates/help/json_config_help.html:27
+#: templates/help/json_config_help.html:190
+msgid "Common JSON Structures"
+msgstr ""
+
+#: templates/help/json_config_help.html:28
+#: templates/help/json_config_help.html:232
+msgid "Practical Examples"
+msgstr ""
+
+#: templates/help/json_config_help.html:38
+msgid ""
+"JSON (JavaScript Object Notation) is a lightweight data format used for "
+"data exchange. Here are the basic elements:"
+msgstr ""
+
+#: templates/help/json_config_help.html:40
+msgid "Objects"
+msgstr ""
+
+#: templates/help/json_config_help.html:40
+#, python-brace-format
+msgid "collections of key/value pairs enclosed in curly braces <code>{ }</code>"
+msgstr ""
+
+#: templates/help/json_config_help.html:41
+msgid "Arrays"
+msgstr ""
+
+#: templates/help/json_config_help.html:41
+msgid "ordered collections of values enclosed in square brackets <code>[ ]</code>"
+msgstr ""
+
+#: templates/help/json_config_help.html:42
+msgid "Values"
+msgstr ""
+
+#: templates/help/json_config_help.html:42
+msgid "can be strings, numbers, booleans, null, objects, or arrays"
+msgstr ""
+
+#: templates/help/json_config_help.html:44
+msgid "Example JSON structure:"
+msgstr ""
+
+#: templates/help/json_config_help.html:65
+msgid ""
+"The data path allows you to specify where the relevant data is located in"
+" the JSON response. In the List-IQ application, you use dot notation to "
+"access nested objects."
+msgstr ""
+
+#: templates/help/json_config_help.html:67
+msgid "Path Examples"
+msgstr ""
+
+#: templates/help/json_config_help.html:71
+msgid "Path"
+msgstr ""
+
+#: templates/help/json_config_help.html:73
+msgid "Example JSON"
+msgstr ""
+
+#: templates/help/json_config_help.html:79
+msgid "Accesses the \"data\" property at the root"
+msgstr ""
+
+#: templates/help/json_config_help.html:84
+msgid "Accesses the \"items\" property within the \"data\" object"
+msgstr ""
+
+#: templates/help/json_config_help.html:89
+msgid "Accesses the \"results\" property at the root"
+msgstr ""
+
+#: templates/help/json_config_help.html:94
+msgid "Accesses \"items\" in \"body\" in \"response\""
+msgstr ""
+
+#: templates/help/json_config_help.html:101
+msgid ""
+"The path must point to an array of objects. If the response contains a "
+"single object, the application will automatically convert it to an array."
+msgstr ""
+
+#: templates/help/json_config_help.html:111
+msgid ""
+"After specifying the data path, you can select the columns (properties) "
+"you want to include in your list."
+msgstr ""
+
+#: templates/help/json_config_help.html:113
+#: templates/help/json_config_help.html:157
+msgid "Example"
+msgstr ""
+
+#: templates/help/json_config_help.html:114
+msgid "If your JSON looks like this:"
+msgstr ""
+
+#: templates/help/json_config_help.html:129
+msgid "You could select the following columns:"
+msgstr ""
+
+#: templates/help/json_config_help.html:131
+#: templates/help/json_config_help.html:135
+msgid "type: number"
+msgstr ""
+
+#: templates/help/json_config_help.html:132
+#: templates/help/json_config_help.html:133
+msgid "type: text"
+msgstr ""
+
+#: templates/help/json_config_help.html:134
+msgid "type: date"
+msgstr ""
+
+#: templates/help/json_config_help.html:137
+msgid ""
+"The application automatically extracts these properties from each object "
+"in the array."
+msgstr ""
+
+#: templates/help/json_config_help.html:140
+msgid "Tip:"
+msgstr ""
+
+#: templates/help/json_config_help.html:140
+msgid "For nested properties, use dot notation (e.g., <code>author.name</code>)."
+msgstr ""
+
+#: templates/help/json_config_help.html:150
+msgid "The List-IQ application supports several data types for columns:"
+msgstr ""
+
+#: templates/help/json_config_help.html:155
+msgid "Type"
+msgstr ""
+
+#: templates/help/json_config_help.html:162 templates/lists/edit.html:249
+#: templates/lists/edit.html:412
+msgid "Text"
+msgstr ""
+
+#: templates/help/json_config_help.html:163
+msgid "Strings of characters"
+msgstr ""
+
+#: templates/help/json_config_help.html:167 templates/lists/edit.html:251
+#: templates/lists/edit.html:414
+msgid "Number"
+msgstr ""
+
+#: templates/help/json_config_help.html:168
+msgid "Numeric values (integers or decimals)"
+msgstr ""
+
+#: templates/help/json_config_help.html:172 templates/lists/edit.html:252
+#: templates/lists/edit.html:415
+msgid "Date"
+msgstr ""
+
+#: templates/help/json_config_help.html:173
+msgid "Dates in ISO format or similar"
+msgstr ""
+
+#: templates/help/json_config_help.html:177 templates/lists/edit.html:250
+#: templates/lists/edit.html:413
+msgid "IP Address"
+msgstr ""
+
+#: templates/help/json_config_help.html:178
+msgid "IPv4 or IPv6 addresses"
+msgstr ""
+
+#: templates/help/json_config_help.html:184
+msgid ""
+"The application attempts to automatically detect the data type, but you "
+"can change it manually if necessary."
+msgstr ""
+
+#: templates/help/json_config_help.html:193
+msgid "Root-level array of objects"
+msgstr ""
+
+#: templates/help/json_config_help.html:199
+#: templates/help/json_config_help.html:210
+#: templates/help/json_config_help.html:226
+#: templates/help/json_config_help.html:255
+#: templates/help/json_config_help.html:299
+#: templates/help/json_config_help.html:329
+msgid "Data Path:"
+msgstr ""
+
+#: templates/help/json_config_help.html:199
+msgid "Leave empty (or simply use <code>.</code>)"
+msgstr ""
+
+#: templates/help/json_config_help.html:201
+msgid "Property containing an array of objects"
+msgstr ""
+
+#: templates/help/json_config_help.html:212
+msgid "Nested structure with pagination"
+msgstr ""
+
+#: templates/help/json_config_help.html:235
+msgid "Example 1: JSONPlaceholder API"
+msgstr ""
+
+#: templates/help/json_config_help.html:236
+#: templates/help/json_config_help.html:260
+#: templates/help/json_config_help.html:304
+msgid "Curl command:"
+msgstr ""
+
+#: templates/help/json_config_help.html:238
+#: templates/help/json_config_help.html:262
+#: templates/help/json_config_help.html:306
+msgid "JSON response (excerpt):"
+msgstr ""
+
+#: templates/help/json_config_help.html:253
+#: templates/help/json_config_help.html:297
+#: templates/help/json_config_help.html:327
+msgid "Configuration:"
+msgstr ""
+
+#: templates/help/json_config_help.html:255
+#: templates/help/json_config_help.html:329
+msgid "empty"
+msgstr ""
+
+#: templates/help/json_config_help.html:256
+#: templates/help/json_config_help.html:300
+#: templates/help/json_config_help.html:330
+msgid "Columns:"
+msgstr ""
+
+#: templates/help/json_config_help.html:256
+#: templates/help/json_config_help.html:300
+#: templates/help/json_config_help.html:330
+msgid "number"
+msgstr ""
+
+#: templates/help/json_config_help.html:256
+#: templates/help/json_config_help.html:300
+#: templates/help/json_config_help.html:330
+msgid "text"
+msgstr ""
+
+#: templates/help/json_config_help.html:259
+msgid "Example 2: OpenWeatherMap API"
+msgstr ""
+
+#: templates/help/json_config_help.html:300
+#: templates/help/json_config_help.html:330
+msgid "date"
+msgstr ""
+
+#: templates/help/json_config_help.html:303
+msgid "Example 3: GitHub API"
+msgstr ""
+
+#: templates/help/python_api_help.html:3 templates/help/python_api_help.html:10
+msgid "Help - Python Scripts for APIs"
+msgstr ""
+
+#: templates/help/python_api_help.html:14
+msgid "Guide for Python Scripts for APIs"
+msgstr ""
+
+#: templates/help/python_api_help.html:17
+msgid ""
+"This page provides examples and best practices for creating Python "
+"scripts that retrieve data from APIs."
+msgstr ""
+
+#: templates/help/python_api_help.html:26
+#: templates/help/python_api_help.html:154
+msgid "Handling Pagination"
+msgstr ""
+
+#: templates/help/python_api_help.html:28
+#: templates/help/python_api_help.html:287
+msgid "Data Transformation"
+msgstr ""
+
+#: templates/help/python_api_help.html:36
+msgid "Basic Structure of a Python Script for API"
+msgstr ""
+
+#: templates/help/python_api_help.html:39
+msgid ""
+"Here is the basic structure of a Python script to retrieve data from an "
+"API:"
+msgstr ""
+
+#: templates/help/python_api_help.html:45
+msgid "Your code to retrieve data"
+msgstr ""
+
+#: templates/help/python_api_help.html:48
+#: templates/help/python_api_help.html:83
+msgid "Check if the request was successful"
+msgstr ""
+
+#: templates/help/python_api_help.html:50
+#: templates/help/python_api_help.html:85
+msgid "Convert the response to JSON"
+msgstr ""
+
+#: templates/help/python_api_help.html:54
+#: templates/help/python_api_help.html:89
+#: templates/help/python_api_help.html:139
+#: templates/help/python_api_help.html:326
+#: templates/help/python_api_help.html:364
+#: templates/help/python_api_help.html:406
+msgid "Error:"
+msgstr ""
+
+#: templates/help/python_api_help.html:57
+msgid "This function is automatically called by the system"
+msgstr ""
+
+#: templates/help/python_api_help.html:60
+#: templates/help/python_api_help.html:281
+#: templates/help/python_api_help.html:334
+#: templates/help/python_api_help.html:372
+#: templates/help/python_api_help.html:414
+msgid "Number of items retrieved:"
+msgstr ""
+
+#: templates/help/python_api_help.html:62
+msgid ""
+"Your script must always contain a <code>main()</code> function that "
+"returns the data as a list of objects."
+msgstr ""
+
+#: templates/help/python_api_help.html:72
+msgid "Example of a script to retrieve data from the JSONPlaceholder API:"
+msgstr ""
+
+#: templates/help/python_api_help.html:76
+#: templates/help/python_api_help.html:355
+msgid "API URL"
+msgstr ""
+
+#: templates/help/python_api_help.html:80
+msgid "Make the GET request"
+msgstr ""
+
+#: templates/help/python_api_help.html:92
+#: templates/help/python_api_help.html:142
+#: templates/help/python_api_help.html:329
+#: templates/help/python_api_help.html:367
+#: templates/help/python_api_help.html:409
+msgid "An error occurred:"
+msgstr ""
+
+#: templates/help/python_api_help.html:97
+msgid "Number of articles retrieved:"
+msgstr ""
+
+#: templates/help/python_api_help.html:106
+msgid "Example of a script for an API requiring an API key (like OpenWeatherMap):"
+msgstr ""
+
+#: templates/help/python_api_help.html:110
+msgid "API Parameters"
+msgstr ""
+
+#: templates/help/python_api_help.html:111
+#: templates/help/python_api_help.html:162
+msgid "Replace with your API key"
+msgstr ""
+
+#: templates/help/python_api_help.html:115
+msgid "Request Parameters"
+msgstr ""
+
+#: templates/help/python_api_help.html:123
+msgid "Make the GET request with parameters"
+msgstr ""
+
+#: templates/help/python_api_help.html:129
+msgid "Transform the data to fit our format"
+msgstr ""
+
+#: templates/help/python_api_help.html:148
+msgid "Weather in"
+msgstr ""
+
+#: templates/help/python_api_help.html:157
+msgid ""
+"Example of a script to retrieve paginated data (like The Movie Database "
+"API):"
+msgstr ""
+
+#: templates/help/python_api_help.html:161
+msgid "Base Parameters"
+msgstr ""
+
+#: templates/help/python_api_help.html:176
+msgid "API Error:"
+msgstr ""
+
+#: templates/help/python_api_help.html:181
+msgid "Extract the total number of pages and the results from the first page"
+msgstr ""
+
+#: templates/help/python_api_help.html:182
+msgid "Limit to a maximum of 5 pages"
+msgstr ""
+
+#: templates/help/python_api_help.html:183
+msgid "Total number of pages:"
+msgstr ""
+
+#: templates/help/python_api_help.html:187
+msgid "Get the remaining pages"
+msgstr ""
+
+#: templates/help/python_api_help.html:193
+msgid "API error for page"
+msgstr ""
+
+#: templates/help/python_api_help.html:198
+msgid "Page"
+msgstr ""
+
+#: templates/help/python_api_help.html:198
+msgid "retrieved,"
+msgstr ""
+
+#: templates/help/python_api_help.html:198
+msgid "results"
+msgstr ""
+
+#: templates/help/python_api_help.html:200
+msgid "Transform the data to get only the necessary information"
+msgstr ""
+
+#: templates/help/python_api_help.html:214
+msgid "Error retrieving data:"
+msgstr ""
+
+#: templates/help/python_api_help.html:219
+msgid "Number of movies found:"
+msgstr ""
+
+#: templates/help/python_api_help.html:228
+msgid "Example of a script with robust error handling:"
+msgstr ""
+
+#: templates/help/python_api_help.html:229
+msgid "Logging configuration"
+msgstr ""
+
+#: templates/help/python_api_help.html:240
+msgid "seconds"
+msgstr ""
+
+#: templates/help/python_api_help.html:244
+msgid "Attempt"
+msgstr ""
+
+#: templates/help/python_api_help.html:245
+msgid "10-second timeout"
+msgstr ""
+
+#: templates/help/python_api_help.html:249
+msgid "Data retrieved successfully:"
+msgstr ""
+
+#: templates/help/python_api_help.html:249
+msgid "items"
+msgstr ""
+
+#: templates/help/python_api_help.html:253
+msgid "Request limit reached. Waiting for"
+msgstr ""
+
+#: templates/help/python_api_help.html:253
+msgid "seconds."
+msgstr ""
+
+#: templates/help/python_api_help.html:256
+msgid "HTTP Error:"
+msgstr ""
+
+#: templates/help/python_api_help.html:262
+msgid "The request timed out"
+msgstr ""
+
+#: templates/help/python_api_help.html:268
+msgid "Connection error"
+msgstr ""
+
+#: templates/help/python_api_help.html:274
+msgid "Unexpected error:"
+msgstr ""
+
+#: templates/help/python_api_help.html:290
+msgid "Example of a script with data transformation and filtering:"
+msgstr ""
+
+#: templates/help/python_api_help.html:303
+msgid "Get posts for each user"
+msgstr ""
+
+#: templates/help/python_api_help.html:305
+msgid "Limit to 5 users for the example"
+msgstr ""
+
+#: templates/help/python_api_help.html:312
+msgid "Filter and transform the data"
+msgstr ""
+
+#: templates/help/python_api_help.html:320
+msgid "Truncate the content"
+msgstr ""
+
+#: templates/help/python_api_help.html:348
+msgid "OAuth Authentication Parameters"
+msgstr ""
+
+#: templates/help/python_api_help.html:349
+msgid "your_client_key"
+msgstr ""
+
+#: templates/help/python_api_help.html:350
+msgid "your_client_secret"
+msgstr ""
+
+#: templates/help/python_api_help.html:352
+msgid "Create OAuth1 authentication"
+msgstr ""
+
+#: templates/help/python_api_help.html:378
+msgid "Authentication Parameters"
+msgstr ""
+
+#: templates/help/python_api_help.html:384
+msgid "Get the authentication token"
+msgstr ""
+
+#: templates/help/python_api_help.html:391
+msgid "Authentication error:"
+msgstr ""
+
+#: templates/help/python_api_help.html:397
+msgid "Use the token to access data"
+msgstr ""
+
+#: templates/lists/code.html:12 templates/lists/edit.html:30
+msgid "General Information"
+msgstr ""
+
+#: templates/lists/code.html:15 templates/lists/edit.html:161
+msgid "Security"
+msgstr ""
+
+#: templates/lists/code.html:18 templates/lists/edit.html:178
+msgid "Public Access"
+msgstr ""
+
+#: templates/lists/code.html:27 templates/lists/edit.html:238
+msgid "Columns"
+msgstr ""
+
+#: templates/lists/code.html:32 templates/lists/edit.html:264
+msgid "Add a column"
+msgstr ""
+
+#: templates/lists/edit.html:3 templates/lists/edit.html:24
+msgid "Edit "
+msgstr ""
+
+#: templates/lists/edit.html:13 templates/lists/index.html:52
+msgid "Edit"
+msgstr ""
+
+#: templates/lists/edit.html:40
+msgid "Update Type"
+msgstr ""
+
+#: templates/lists/edit.html:42
+msgid "Manual"
+msgstr ""
+
+#: templates/lists/edit.html:43
+msgid "Automatic"
+msgstr ""
+
+#: templates/lists/edit.html:50
+msgid ""
+"You can add data manually or import a CSV/JSON file from the list "
+"management page."
+msgstr ""
+
+#: templates/lists/edit.html:56
+msgid "Data Source"
+msgstr ""
+
+#: templates/lists/edit.html:59
+msgid "Remote URL"
+msgstr ""
+
+#: templates/lists/edit.html:63
+msgid "API"
+msgstr ""
+
+#: templates/lists/edit.html:69
+msgid "Curl"
+msgstr ""
+
+#: templates/lists/edit.html:73
+msgid "Script"
+msgstr ""
+
+#: templates/lists/edit.html:78
+msgid "JSON configuration will be available after saving the list."
+msgstr ""
+
+#: templates/lists/edit.html:85
+msgid "Source URL"
+msgstr ""
+
+#: templates/lists/edit.html:91
+msgid "Data Format"
+msgstr ""
+
+#: templates/lists/edit.html:96
+msgid "Choose the source file format (CSV or JSON)"
+msgstr ""
+
+#: templates/lists/edit.html:102
+msgid "Curl Command"
+msgstr ""
+
+#: templates/lists/edit.html:105
+msgid "See Curl command examples"
+msgstr ""
+
+#: templates/lists/edit.html:111
+msgid ""
+"Enter a complete curl command with necessary headers and options. The "
+"command will be executed as is."
+msgstr ""
+
+#: templates/lists/edit.html:111
+msgid "Example:"
+msgstr ""
+
+#: templates/lists/edit.html:122
+msgid "Source Code"
+msgstr ""
+
+#: templates/lists/edit.html:125
+msgid "See Python script examples"
+msgstr ""
+
+#: templates/lists/edit.html:129
+msgid "Your code here..."
+msgstr ""
+
+#: templates/lists/edit.html:135
+msgid "Schedule (Cron)"
+msgstr ""
+
+#: templates/lists/edit.html:139
+msgid "Format: minute hour day month day_of_week (0 */1 * * *)"
+msgstr ""
+
+#: templates/lists/edit.html:143
+msgid "Results Limit"
+msgstr ""
+
+#: templates/lists/edit.html:146
+msgid "Maximum number of results to import (0 = no limit)"
+msgstr ""
+
+#: templates/lists/edit.html:153
+msgid "Active list"
+msgstr ""
+
+#: templates/lists/edit.html:158
+msgid "Published list"
+msgstr ""
+
+#: templates/lists/edit.html:167
+msgid "Restrict access by IP address"
+msgstr ""
+
+#: templates/lists/edit.html:170
+msgid "Allowed IP Addresses"
+msgstr ""
+
+#: templates/lists/edit.html:173
+msgid ""
+"Accepted formats: Individual IPs, CIDR ranges, or IP ranges. Separate "
+"entries with commas or semicolons."
+msgstr ""
+
+#: templates/lists/edit.html:183
+msgid ""
+"The options below allow you to generate public URLs to access the list's "
+"data without authentication. IP restrictions also apply to these accesses"
+" if enabled."
+msgstr ""
+
+#: templates/lists/edit.html:189
+msgid "Enable public access in CSV format"
+msgstr ""
+
+#: templates/lists/edit.html:195
+msgid "Enable public access in JSON format"
+msgstr ""
+
+#: templates/lists/edit.html:201 templates/lists/edit.html:229
+msgid "Action required:"
+msgstr ""
+
+#: templates/lists/edit.html:201 templates/lists/edit.html:229
+msgid "Click \"Save\" to generate the public access URLs."
+msgstr ""
+
+#: templates/lists/edit.html:203
+msgid "Public Access URLs"
+msgstr ""
+
+#: templates/lists/edit.html:207
+msgid "CSV URL:"
+msgstr ""
+
+#: templates/lists/edit.html:215
+msgid "JSON URL:"
+msgstr ""
+
+#: templates/lists/edit.html:224
+msgid "Regenerate a new access token (invalidates existing URLs)"
+msgstr ""
+
+#: templates/lists/edit.html:239
+msgid "Are you sure you want to delete the column"
+msgstr ""
+
+#: templates/lists/edit.html:245 templates/lists/edit.html:408
+msgid "Column name"
+msgstr ""
+
+#: templates/lists/edit.html:271
+msgid "Are you sure you want to delete this list?"
+msgstr ""
+
+#: templates/lists/edit.html:271
+msgid "This action is irreversible."
+msgstr ""
+
+#: templates/lists/edit.html:272
+msgid "Delete List"
+msgstr ""
+
+#: templates/lists/edit.html:281
+msgid "Save"
+msgstr ""
+
+#: templates/lists/edit.html:284
+msgid "Create List"
+msgstr ""
+
+#: templates/lists/edit.html:356
+msgid "An error occurred while saving"
+msgstr ""
+
+#: templates/lists/edit.html:358
+msgid "Error details:"
+msgstr ""
+
+#: templates/lists/edit.html:365
+msgid "An error occurred while communicating with the server: "
+msgstr ""
+
+#: templates/lists/edit.html:429
+msgid "this column"
+msgstr ""
+
+#: templates/lists/edit.html:449
+msgid "Deletion error"
+msgstr ""
+
+#: templates/lists/edit.html:450
+msgid "List deleted successfully"
+msgstr ""
+
+#: templates/lists/edit.html:453
+msgid "An error occurred during deletion: "
+msgstr ""
+
+#: templates/lists/index.html:29
+msgid "Last update:"
+msgstr ""
+
+#: templates/lists/index.html:43
+msgid "IP Restricted"
+msgstr ""
+
+#: templates/lists/index.html:48
+msgid "View"
+msgstr ""
+
+#: templates/lists/index.html:68
+msgid "No lists available."
+msgstr ""
+
+#: templates/lists/index.html:70
+msgid "Create a new list"
+msgstr ""
+
+#: templates/lists/view.html:34
+msgid "Delete selection"
+msgstr ""
+
+#: templates/lists/view.html:38 templates/lists/view.html:198
+msgid "Add"
+msgstr ""
+
+#: templates/lists/view.html:41 templates/lists/view.html:292
+msgid "Import"
+msgstr ""
+
+#: templates/lists/view.html:46
+msgid "Export"
+msgstr ""
+
+#: templates/lists/view.html:55
+msgid "Settings"
+msgstr ""
+
+#: templates/lists/view.html:59 templates/lists/view.html:355
+msgid "Update data"
+msgstr ""
+
+#: templates/lists/view.html:73
+msgid "CSV Configuration"
+msgstr ""
+
+#: templates/lists/view.html:154
+msgid "Add a row"
+msgstr ""
+
+#: templates/lists/view.html:170 templates/lists/view.html:228
+msgid "Select a date"
+msgstr ""
+
+#: templates/lists/view.html:181 templates/lists/view.html:239
+msgid "e.g.: 192.168.1.1 or 192.168.1.0/24"
+msgstr ""
+
+#: templates/lists/view.html:190 templates/lists/view.html:248
+msgid ""
+"Accepted format: IPv4 (e.g., 192.168.1.1 or 192.168.1.0/24) or IPv6 "
+"(e.g., 2001:db8::1 or 2001:db8::/64)"
+msgstr ""
+
+#: templates/lists/view.html:211
+msgid "Edit a row"
+msgstr ""
+
+#: templates/lists/view.html:256
+msgid "Update"
+msgstr ""
+
+#: templates/lists/view.html:269
+msgid "Import data"
+msgstr ""
+
+#: templates/lists/view.html:275
+msgid "File to import"
+msgstr ""
+
+#: templates/lists/view.html:278
+msgid "The file (CSV or JSON) must have the following columns:"
+msgstr ""
+
+#: templates/lists/view.html:283
+msgid "Accepted formats:"
+msgstr ""
+
+#: templates/lists/view.html:285
+msgid "file with column headers and comma-separated values"
+msgstr ""
+
+#: templates/lists/view.html:286
+msgid "list of objects with column names as keys"
+msgstr ""
+
+#: templates/lists/view.html:361
+msgid "Update in progress..."
+msgstr ""
+
+#: templates/lists/view.html:378
+msgid "Execution logs"
+msgstr ""
+
+#: templates/lists/view.html:407
+msgid "Starting update..."
+msgstr ""
+
+#: templates/lists/view.html:454
+msgid "Data updated successfully"
+msgstr ""
+
+#: templates/lists/view.html:459
+msgid "Reload page to see changes"
+msgstr ""
+
+#: templates/lists/view.html:466
+msgid "Error updating data"
+msgstr ""
+
+#: templates/lists/view.html:475
+msgid "Error communicating with server"
+msgstr ""
+

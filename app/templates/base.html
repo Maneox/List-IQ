@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="{{ request.accept_languages.best_match(['en', 'fr']) or 'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}List-IQ{% endblock %}</title>
+    <!-- jQuery (local) -->
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <!-- Font Awesome (local) -->
+    <link href="{{ url_for('static', filename='css/all.min.css') }}?v={{ range(1, 10000) | random }}" rel="stylesheet">
+    <!-- Flatpickr (local) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/light.css') }}">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <!-- Bootstrap CSS (local) -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}?v={{ range(1, 10000) | random }}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('ui.index') }}"><img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" height="30" class="d-inline-block align-text-top me-2">List-IQ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ui.lists') }}">{{ _('Lists') }}</a>
+                    </li>
+                    {% if current_user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ui.new_list') }}">{{ _('New List') }}</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-question-circle"></i> {{ _('Help') }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="helpDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('help_bp.automatic_lists_guide') }}"><i class="fas fa-sync-alt"></i> {{ _('Automatic Lists Guide') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('help_bp.python_api_help') }}">{{ _('Python Scripts') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('help_bp.curl_api_help') }}">{{ _('Curl Commands') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('help_bp.json_config_help') }}">{{ _('JSON Configuration') }}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('api_docs.api_docs') }}"><i class="fas fa-book"></i> {{ _('API Documentation') }}</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i> {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <!-- Language selector -->
+                            <li>
+                                <div class="dropdown-item">
+                                    <i class="fas fa-language"></i> {{ _('Language') }}
+                                    <div class="dropdown-item-content mt-2">
+                                        <div class="d-flex justify-content-between">
+                                            <a href="{{ url_for('i18n.set_language', language='fr', next=request.path) }}" class="btn btn-sm {{ 'btn-primary' if session.get('language', 'fr') == 'fr' else 'btn-outline-primary' }} me-1">{{ _('French') }}</a>
+                                            <a href="{{ url_for('i18n.set_language', language='en', next=request.path) }}" class="btn btn-sm {{ 'btn-primary' if session.get('language', 'fr') == 'en' else 'btn-outline-primary' }}">{{ _('English') }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <!-- Theme selector -->
+                            <li>
+                                <div class="dropdown-item">
+                                    <i class="fas fa-palette"></i> {{ _('Theme') }}
+                                    <div class="dropdown-item-content mt-2">
+                                        <select id="themeSelector" class="form-select form-select-sm">
+                                            <option value="default">Bootstrap (default)</option>
+                                            <option value="cerulean">Cerulean</option>
+                                            <option value="cosmo">Cosmo</option>
+                                            <option value="cyborg">Cyborg</option>
+                                            <option value="darkly">Darkly</option>
+                                            <option value="flatly">Flatly</option>
+                                            <option value="journal">Journal</option>
+                                            <option value="litera">Litera</option>
+                                            <option value="lumen">Lumen</option>
+                                            <option value="lux">Lux</option>
+                                            <option value="materia">Materia</option>
+                                            <option value="minty">Minty</option>
+                                            <option value="morph">Morph</option>
+                                            <option value="pulse">Pulse</option>
+                                            <option value="quartz">Quartz</option>
+                                            <option value="sandstone">Sandstone</option>
+                                            <option value="simplex">Simplex</option>
+                                            <option value="sketchy">Sketchy</option>
+                                            <option value="slate">Slate</option>
+                                            <option value="solar">Solar</option>
+                                            <option value="spacelab">Spacelab</option>
+                                            <option value="superhero">Superhero</option>
+                                            <option value="united">United</option>
+                                            <option value="vapor">Vapor</option>
+                                            <option value="yeti">Yeti</option>
+                                            <option value="zephyr">Zephyr</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <!-- API token management -->
+                            <li><a class="dropdown-item" href="{{ url_for('api_auth.manage_tokens') }}">
+                                <i class="fas fa-key"></i> {{ _('API Tokens') }}
+                            </a></li>
+                            <!-- User management -->
+                            {% if current_user.is_admin %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin.users') }}">
+                                <i class="fas fa-users-cog"></i> {{ _('User Management') }}
+                            </a></li>
+                            <!-- LDAP configuration -->
+                            <li><a class="dropdown-item" href="{{ url_for('admin.ldap_config') }}">
+                                <i class="fas fa-address-book"></i> {{ _('LDAP Configuration') }}
+                            </a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted"> 2024 List-IQ. {{ _('All rights reserved') }}.</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper (local) -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <!-- DataTables (local) -->
+    <script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dataTables.bootstrap5.min.js') }}"></script>
+    <!-- Flatpickr (local) -->
+    <script src="{{ url_for('static', filename='js/flatpickr') }}"></script>
+    <script src="{{ url_for('static', filename='js/fr.js') }}"></script>
+    <!-- IMask (local) -->
+    <script src="{{ url_for('static', filename='js/imask.js') }}"></script>
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Theme Switcher JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeSelector = document.getElementById('themeSelector');
+        const themeLink = document.createElement('link');
+        themeLink.id = 'theme-stylesheet';
+        themeLink.rel = 'stylesheet';
+        document.head.appendChild(themeLink);
+        
+        // Load the theme from localStorage or use the default theme
+        const savedTheme = localStorage.getItem('selectedTheme') || 'default';
+        
+        // Apply the theme immediately, even on pages without a selector (like login)
+        applyTheme(savedTheme);
+        
+        // If the theme selector is present (logged-in user), configure events
+        if (themeSelector) {
+            themeSelector.value = savedTheme;
+            
+            // Handle theme change
+            themeSelector.addEventListener('change', function() {
+                const selectedTheme = this.value;
+                applyTheme(selectedTheme);
+                localStorage.setItem('selectedTheme', selectedTheme);
+            });
+        }
+        
+        function applyTheme(theme) {
+            if (theme === 'default') {
+                // Use the default Bootstrap theme (local)
+                themeLink.href = "{{ url_for('static', filename='css/bootstrap.min.css') }}";
+            } else {
+                // Use a local Bootswatch theme
+                themeLink.href = "{{ url_for('static', filename='css/bootswatch/dist/') }}" + theme + "/bootstrap.min.css";
+            }
+        }
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

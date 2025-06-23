@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}JSON Configuration - {{ list.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('list_bp.lists_ui') }}">Lists</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('list_bp.view_list', list_id=list.id) }}">{{ list.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">JSON Configuration</li>
+        </ol>
+    </nav>
+
+    <h2>JSON Import Configuration for list "{{ list.name }}"</h2>
+    
+    <div class="text-end mb-3">
+        <a href="{{ url_for('help_bp.json_config_help') }}" target="_blank" class="btn btn-outline-info">
+            <i class="fas fa-question-circle"></i> See the JSON configuration guide
+        </a>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Raw Data Preview</h5>
+        </div>
+        <div class="card-body">
+            {% if raw_data_preview %}
+            <div class="mb-3">
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#rawDataCollapse" aria-expanded="false" aria-controls="rawDataCollapse">
+                    Show/Hide Raw Data
+                </button>
+            </div>
+            <div class="collapse" id="rawDataCollapse">
+                <pre class="json-preview">{{ raw_data_preview }}</pre>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> Could not retrieve raw data. Please check your curl command.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <form id="jsonConfigForm" method="POST" action="{{ url_for('json_config_bp.json_config', list_id=list.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Path Configuration</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="data_path" class="form-label">Data Path</label>
+                    <input type="text" class="form-control" id="data_path" name="data_path" 
+                           value="{{ list.json_data_path or '' }}"
+                           placeholder="E.g.: results, data.items, genres">
+                    <small class="text-muted">Use dot notation to access nested objects</small>
+                </div>
+                
+                <button type="button" class="btn btn-outline-primary" id="testPathBtn">
+                    Test Path
+                </button>
+            </div>
+        </div>
+        
+        <!-- The pagination configuration section has been removed -->
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Column Selection</h5>
+            </div>
+            <div class="card-body">
+                <div id="columnsPreview">
+                    {% if columns_preview %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Type</th>
+                                    <th>Include <input type="checkbox" id="selectAllColumns" class="form-check-input ms-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for column in columns_preview %}
+                                <tr>
+                                    <td>{{ column.name }}</td>
+                                    <td>
+                                        <select class="form-select form-select-sm" name="column_type_{{ column.name }}">
+                                            <option value="text" {% if column.type == 'text' %}selected{% endif %}>Text</option>
+                                            <option value="number" {% if column.type == 'number' %}selected{% endif %}>Number</option>
+                                            <option value="date" {% if column.type == 'date' %}selected{% endif %}>Date</option>
+                                            <option value="ip" {% if column.type == 'ip' %}selected{% endif %}>IP Address</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input column-checkbox" name="include_column_{{ column.name }}" 
+                                               {% if column.include %}checked{% endif %}>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Test the data path to see a preview of available columns.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-end">
+            <a href="{{ url_for('list_bp.view_list', list_id=list.id) }}" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Configuration</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.json-preview {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handling of the path test
+    const testPathBtn = document.getElementById('testPathBtn');
+    const dataPathInput = document.getElementById('data_path');
+    const columnsPreview = document.getElementById('columnsPreview');
+    
+    // Function to handle select/deselect all columns
+    function setupSelectAllCheckbox(selectAllId) {
+        const selectAllCheckbox = document.getElementById(selectAllId);
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.column-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+        }
+    }
+    
+    // Configuration of the existing checkbox
+    setupSelectAllCheckbox('selectAllColumns');
+    
+    testPathBtn.addEventListener('click', async function() {
+        const dataPath = dataPathInput.value;
+        
+        try {
+            // Display a loading indicator
+            columnsPreview.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+            
+            console.log('Sending request with path:', dataPath);
+            
+            // Call the API to test the path
+            const response = await fetch('{{ url_for("json_config_bp.test_json_path", list_id=list.id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    data_path: dataPath
+                })
+            });
+            
+            console.log('Response received:', response.status, response.statusText);
+            
+            let data;
+            try {
+                data = await response.json();
+                console.log('JSON data received:', data);
+            } catch (jsonError) {
+                console.error('Error reading JSON response:', jsonError);
+                throw new Error('Error reading JSON response');
+            }
+            
+            if (response.ok) {
+                if (data && data.success) {
+                    // Build the column preview
+                    let columnsHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Type</th>
+                                    <th>Include <input type="checkbox" id="selectAllColumnsPreview" class="form-check-input ms-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    
+                    const sampleData = data.data;
+                    
+                    if (sampleData) {
+                        for (const [key, value] of Object.entries(sampleData)) {
+                            let type = 'text';
+                            if (typeof value === 'number') {
+                                type = 'number';
+                            } else if (typeof value === 'string') {
+                                // Date detection
+                                if (/\d{4}-\d{2}-\d{2}/.test(value)) {
+                                    type = 'date';
+                                }
+                                // IP address detection
+                                else if (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(value)) {
+                                    type = 'ip';
+                                }
+                            }
+                            
+                            columnsHtml += `
+                            <tr>
+                                <td>${key}</td>
+                                <td>
+                                    <select name="column_type_${key}" class="form-select form-select-sm">
+                                        <option value="text" ${type === 'text' ? 'selected' : ''}>Text</option>
+                                        <option value="number" ${type === 'number' ? 'selected' : ''}>Number</option>
+                                        <option value="date" ${type === 'date' ? 'selected' : ''}>Date</option>
+                                        <option value="ip" ${type === 'ip' ? 'selected' : ''}>IP</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input column-checkbox" type="checkbox" name="include_column_${key}" id="include_column_${key}" checked>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        }
+                    }
+                    
+                    columnsHtml += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-success">${data.message}</div>`;
+                    
+                    columnsPreview.innerHTML = columnsHtml;
+                    // Configure checkbox to select/deselect all columns
+                    setupSelectAllCheckbox('selectAllColumnsPreview');
+                } else {
+                    // The response is OK but processing failed
+                    const message = data && data.message ? data.message : 'Error processing JSON path';
+                    columnsPreview.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+                }
+            } else {
+                // The HTTP response is not OK
+                console.error('HTTP Error:', response.status, response.statusText);
+                let errorMessage = 'An error occurred while communicating with the server.';
+                if (data && data.message) {
+                    errorMessage += ` Detail: ${data.message}`;
+                }
+                columnsPreview.innerHTML = `<div class="alert alert-danger">${errorMessage}</div>`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            columnsPreview.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> An error occurred while communicating with the server.
+            </div>`;
+        }
+    });
+});
+</script>
+{% endblock %}

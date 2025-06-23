@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<!-- Flatpickr for dates -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/{{ g.language if g.language in ['fr', 'de'] else 'default' }}.js"></script> <!-- Adjust locale as needed -->
+<!-- IMask for IPs -->
+<script src="https://unpkg.com/imask"></script>
+{% endblock %}
+
+{% block content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<input type="hidden" id="listId" value="{{ list.id }}">
+
+<!-- Container for temporary notifications -->
+<div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('list_bp.lists_ui') }}">{{ _('Lists') }}</a></li>
+                    <li class="breadcrumb-item active">{{ list.name }}</li>
+                </ol>
+            </nav>
+            <h1>{{ list.name }}</h1>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger me-2" id="deleteSelectedBtn" style="display: none;">
+                <i class="fas fa-trash"></i>
+                {{ _('Delete selection') }}
+            </button>
+            {% if current_user.is_admin %}
+            <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                <i class="fas fa-plus"></i> {{ _('Add') }}
+            </button>
+            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#importModal">
+                <i class="fas fa-file-import"></i> {{ _('Import') }}
+            </button>
+            {% endif %}
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-file-export"></i> {{ _('Export') }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                    <li><a class="dropdown-item" href="{{ url_for('list_bp.export_list_data', list_id=list.id, format='csv') }}">CSV</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('list_bp.export_list_data', list_id=list.id, format='json') }}">JSON</a></li>
+                </ul>
+            </div>
+            {% if current_user.is_admin %}
+            <a href="{{ url_for('list_bp.edit_list_ui', list_id=list.id) }}" class="btn btn-primary">
+                <i class="fas fa-cog"></i> {{ _('Settings') }}
+            </a>
+            {% if list.update_type == 'automatic' %}
+            <button type="button" class="btn btn-info me-2" id="updateDataBtn">
+                <i class="fas fa-sync"></i> {{ _('Update data') }}
+            </button>
+            {% endif %}
+            {% endif %}
+            
+            {% set update_config = list.update_config %}
+            {% set source_type = update_config.get('source', '') %}
+            {% set is_csv_url = source_type == 'url' and update_config.get('format') == 'csv' %}
+            {% set is_json_api = source_type == 'api' and update_config.get('api_type') == 'curl' %}
+            {% set is_json_url = source_type == 'url' and (update_config.get('format') == 'json' or update_config.get('is_json') == True) %}
+            {% set is_script = source_type == 'script' %}
+            
+            {% if is_csv_url and current_user.is_admin %}
+            <a href="{{ url_for('list_bp.csv_config', list_id=list.id) }}" class="btn btn-warning">
+                <i class="fas fa-table"></i> {{ _('CSV Configuration') }}
+            </a>
+            {% endif %}
+            
+            {% if (is_json_api or is_json_url) and current_user.is_admin %}
+            <a href="{{ url_for('json_config_bp.json_config', list_id=list.id) }}" class="btn btn-warning">
+                <i class="fas fa-code"></i> {{ _('JSON Configuration') }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    {% if current_user.is_admin %}
+                    <th>
+                        <input type="checkbox" id="selectAll">
+                    </th>
+                    {% endif %}
+                    {% for column in list.columns|sort(attribute='position') %}
+                    <th>{{ column.name }}</th>
+                    {% endfor %}
+                    {% if current_user.is_admin %}
+                    <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr data-row-id="{{ row.row_id }}">
+                    {% if current_user.is_admin %}
+                    <td>
+                        <input type="checkbox" class="row-checkbox" data-row-id="{{ row.row_id }}">
+                    </td>
+                    {% endif %}
+                    {% for column in list.columns|sort(attribute='position') %}
+                    <td>
+                        {% if column.column_type == 'date' %}
+                            {% if column.name in row and row[column.name] %}
+                                {{ row[column.name]|format_date }}
+                            {% else %}
+                                {{ '' }}
+                            {% endif %}
+                        {% else %}
+                            {% if column.name in row %}
+                                {% if row[column.name] %}
+                                    {{ row[column.name] }}
+                                {% else %}
+                                    {{ '' }}
+                                {% endif %}
+                            {% else %}
+                                <!-- Debug: column not found in data -->
+                                <span class="text-danger">{{ column.name }} ({{ column.position }})</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                    {% if current_user.is_admin %}
+                    <td>
+                        <button type="button" class="btn btn-sm btn-primary edit-row-btn" data-row-id="{{ row.row_id }}" data-row-data='{{ row|tojson|safe }}'>
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteRow('{{ row.row_id }}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addRowModal" tabindex="-1" aria-labelledby="addRowModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRowModalLabel">{{ _('Add a row') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addRowForm" onsubmit="submitAddRow(event)">
+                    {% for column in list.columns|sort(attribute='position') %}
+                    <div class="mb-3">
+                        <label for="add_{{ column.name }}" class="form-label text-muted">
+                            {{ column.name }}
+                            {% if column.column_type %}
+                            <span class="text-muted">({{ column.column_type }})</span>
+                            {% endif %}
+                        </label>
+                        {% if column.column_type == 'date' %}
+                        <div class="input-group flatpickr">
+                            <input type="text" class="form-control datepicker" id="add_{{ column.name }}" name="{{ column.name }}" 
+                                   placeholder="{{ _('Select a date') }}" autocomplete="off" data-input required>
+                            <span class="input-group-text" data-toggle>
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                        {% elif column.column_type == 'number' %}
+                        <input type="number" class="form-control" id="add_{{ column.name }}" name="{{ column.name }}" 
+                               min="0" step="1" required>
+                        {% elif column.column_type == 'ip' %}
+                        <div class="input-group">
+                            <input type="text" class="form-control ip-input" id="add_{{ column.name }}" name="{{ column.name }}" 
+                                   placeholder="{{ _('e.g.: 192.168.1.1 or 192.168.1.0/24') }}" required>
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                IPv4
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item ip-type" href="#" data-type="ipv4">IPv4</a></li>
+                                <li><a class="dropdown-item ip-type" href="#" data-type="ipv6">IPv6</a></li>
+                            </ul>
+                        </div>
+                        <div class="form-text text-muted small">{{ _('Accepted format: IPv4 (e.g., 192.168.1.1 or 192.168.1.0/24) or IPv6 (e.g., 2001:db8::1 or 2001:db8::/64)') }}</div>
+                        {% else %}
+                        <input type="text" class="form-control" id="add_{{ column.name }}" name="{{ column.name }}" required>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <div class="modal-footer border-0 px-0 pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ _('Add') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editRowModal" tabindex="-1" aria-labelledby="editRowModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editRowModalLabel">{{ _('Edit a row') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editRowForm" onsubmit="submitEditRow(event)">
+                    <input type="hidden" id="editRowId" name="row_id">
+                    {% for column in list.columns|sort(attribute='position') %}
+                    <div class="mb-3">
+                        <label for="edit_{{ column.name }}" class="form-label text-muted">
+                            {{ column.name }}
+                            {% if column.column_type %}
+                            <span class="text-muted">({{ column.column_type }})</span>
+                            {% endif %}
+                        </label>
+                        {% if column.column_type == 'date' %}
+                        <div class="input-group flatpickr">
+                            <input type="text" class="form-control datepicker" id="edit_{{ column.name }}" name="{{ column.name }}" 
+                                   placeholder="{{ _('Select a date') }}" autocomplete="off" data-input required>
+                            <span class="input-group-text" data-toggle>
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                        {% elif column.column_type == 'number' %}
+                        <input type="number" class="form-control" id="edit_{{ column.name }}" name="{{ column.name }}" 
+                               min="0" step="1" required>
+                        {% elif column.column_type == 'ip' %}
+                        <div class="input-group">
+                            <input type="text" class="form-control ip-input" id="edit_{{ column.name }}" name="{{ column.name }}" 
+                                   placeholder="{{ _('e.g.: 192.168.1.1 or 192.168.1.0/24') }}" required>
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                IPv4
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item ip-type" href="#" data-type="ipv4">IPv4</a></li>
+                                <li><a class="dropdown-item ip-type" href="#" data-type="ipv6">IPv6</a></li>
+                            </ul>
+                        </div>
+                        <div class="form-text text-muted small">{{ _('Accepted format: IPv4 (e.g., 192.168.1.1 or 192.168.1.0/24) or IPv6 (e.g., 2001:db8::1 or 2001:db8::/64)') }}</div>
+                        {% else %}
+                        <input type="text" class="form-control" id="edit_{{ column.name }}" name="{{ column.name }}" required>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <div class="modal-footer border-0 px-0 pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ _('Update') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">{{ _('Import data') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm" enctype="multipart/form-data" onsubmit="submitImport(event)">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">{{ _('File to import') }}</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".csv,.json" required>
+                        <small class="form-text text-muted">
+                            {{ _('The file (CSV or JSON) must have the following columns:') }} {{ list.columns|sort(attribute='position')|map(attribute='name')|join(', ') }}
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-text">
+                            <strong>{{ _('Accepted formats:') }}</strong>
+                            <ul>
+                                <li><strong>CSV</strong>: {{ _('file with column headers and comma-separated values') }}</li>
+                                <li><strong>JSON</strong>: {{ _('list of objects with column names as keys') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 px-0 pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ _('Import') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dataTables.bootstrap5.min.js') }}"></script>
+<script>
+    // Global variable for the list ID
+    const listId = "{{ list.id }}";
+    
+    // Add an event handler for the multiple delete button
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        if (deleteSelectedBtn) {
+            deleteSelectedBtn.addEventListener('click', function() {
+                deleteSelectedRows();
+            });
+        }
+    });
+</script>
+<script src="{{ url_for('static', filename='js/list.js') }}"></script>
+<script>
+    // Initialize the add modal
+    const addRowModal = document.getElementById('addRowModal');
+    if (addRowModal) {
+        addRowModal.addEventListener('shown.bs.modal', function () {
+            // Reset Flatpickr for dates
+            const dateInputs = addRowModal.querySelectorAll('.datepicker');
+            dateInputs.forEach(input => {
+                // Destroy the existing instance if it exists
+                if (input._flatpickr) {
+                    input._flatpickr.destroy();
+                }
+                // Create a new instance
+                flatpickr(input, {
+                    dateFormat: "d/m/Y",
+                    locale: "en", // Changed from "fr"
+                    allowInput: true,
+                    altInput: true,
+                    altFormat: "F j, Y", // Changed format
+                    monthSelectorType: "static"
+                });
+            });
+        });
+    }
+</script>
+
+<!-- Script for temporary notifications -->
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+
+<!-- Fix script for editing new rows -->
+<script src="{{ url_for('static', filename='js/list-edit-fix.js') }}"></script>
+
+<!-- Script for updating data -->
+<script>
+    // Handle click on the update data button
+    const updateDataBtn = document.getElementById('updateDataBtn');
+    const updateDataText = "{{ _('Update data') }}";
+    if (updateDataBtn) {
+        updateDataBtn.addEventListener('click', async function() {
+            try {
+                // Disable the button during the update
+                updateDataBtn.disabled = true;
+                updateDataBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + "{{ _('Update in progress...') }}";
+                
+                // Get the list ID
+                const listId = document.getElementById('listId').value;
+                
+                // Create a div to display the logs
+                let logsContainer = document.getElementById('executionLogsContainer');
+                if (!logsContainer) {
+                    logsContainer = document.createElement('div');
+                    logsContainer.id = 'executionLogsContainer';
+                    logsContainer.className = 'mt-3 p-3 bg-dark text-light font-monospace rounded';
+                    logsContainer.style.maxHeight = '300px';
+                    logsContainer.style.overflowY = 'auto';
+                    logsContainer.style.display = 'none';
+                    
+                    // Add a title for the logs
+                    const logsTitle = document.createElement('h5');
+                    logsTitle.textContent = "{{ _('Execution logs') }}";
+                    logsTitle.className = 'mb-2';
+                    logsContainer.appendChild(logsTitle);
+                    
+                    // Add a button to close the logs
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'btn btn-sm btn-secondary float-end';
+                    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    closeBtn.onclick = function() {
+                        logsContainer.style.display = 'none';
+                    };
+                    logsTitle.appendChild(closeBtn);
+                    
+                    // Add the logs div after the update button
+                    updateDataBtn.parentNode.appendChild(logsContainer);
+                }
+                
+                // Clear previous logs
+                const logsList = document.createElement('div');
+                logsList.id = 'logsList';
+                if (logsContainer.querySelector('#logsList')) {
+                    logsContainer.removeChild(logsContainer.querySelector('#logsList'));
+                }
+                logsContainer.appendChild(logsList);
+                
+                // Display the logs div
+                logsContainer.style.display = 'block';
+                
+                // Add an initial message
+                logsList.innerHTML = '<div class="text-info">' + "{{ _('Starting update...') }}" + '</div>';
+                
+                // Call the API to update the data
+                const response = await fetch(`/lists/${listId}/update-data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                
+                const data = await response.json();
+                
+                // Display the execution logs
+                if (data.logs && Array.isArray(data.logs)) {
+                    logsList.innerHTML = ''; // Clear previous logs
+                    
+                    data.logs.forEach(log => {
+                        const logLine = document.createElement('div');
+                        
+                        // Apply a different style depending on the log type
+                        if (log.startsWith('ERROR:')) {
+                            logLine.className = 'text-danger';
+                            logLine.textContent = log.replace('ERROR: ', '');
+                        } else if (log.startsWith('TRACEBACK:')) {
+                            logLine.className = 'text-danger small';
+                            logLine.textContent = log.replace('TRACEBACK: ', '');
+                        } else if (log.startsWith('SCRIPT OUTPUT:')) {
+                            logLine.className = 'text-warning';
+                            logLine.textContent = log.replace('SCRIPT OUTPUT: ', '');
+                        } else if (log.includes('success')) {
+                            logLine.className = 'text-success';
+                            logLine.textContent = log;
+                        } else {
+                            logLine.className = 'text-info';
+                            logLine.textContent = log;
+                        }
+                        
+                        logsList.appendChild(logLine);
+                    });
+                    
+                    // Scroll to the bottom of the logs
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+                }
+                
+                if (data.success) {
+                    // Display a success notification
+                    showNotification('success', data.message || "{{ _('Data updated successfully') }}");
+                    
+                    // Add a button to reload the page
+                    const reloadBtn = document.createElement('button');
+                    reloadBtn.className = 'btn btn-sm btn-success mt-2';
+                    reloadBtn.textContent = "{{ _('Reload page to see changes') }}";
+                    reloadBtn.onclick = function() {
+                        window.location.reload();
+                    };
+                    logsList.appendChild(reloadBtn);
+                } else {
+                    // Display an error notification
+                    showNotification('danger', data.error || "{{ _('Error updating data') }}");
+                }
+                
+                // Re-enable the button
+                updateDataBtn.disabled = false;
+                updateDataBtn.innerHTML = '<i class="fas fa-sync"></i> ' + updateDataText;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('danger', "{{ _('Error communicating with server') }}");
+                
+                // Re-enable the button
+                updateDataBtn.disabled = false;
+                updateDataBtn.innerHTML = '<i class="fas fa-sync"></i> ' + updateDataText;
+            }
+        });
+    }
+</script>
+{% endblock %}

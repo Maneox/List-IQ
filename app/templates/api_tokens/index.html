@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('API Tokens') }} - {{ _('List-IQ') }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ _('API Tokens') }}</h1>
+        <p class="text-muted">{{ _('Manage your access tokens for the List-IQ API') }}</p>
+    </div>
+    <div class="col text-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTokenModal">
+            <i class="fas fa-plus"></i> {{ _('New Token') }}
+        </button>
+    </div>
+</div>
+
+<!-- List of existing tokens -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">{{ _('Your API Tokens') }}</h5>
+    </div>
+    <div class="card-body">
+        {% if tokens %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{{ _('Name') }}</th>
+                        <th>{{ _('Created On') }}</th>
+                        <th>{{ _('Expires On') }}</th>
+                        <th>{{ _('Last Used') }}</th>
+                        <th>{{ _('Status') }}</th>
+                        <th>{{ _('Actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in tokens %}
+                    <tr>
+                        <td>{{ token.name }}</td>
+                        <td>{{ token.created_at|datetime }}</td>
+                        <td>
+                            {% if token.expires_at %}
+                                {{ token.expires_at|datetime }}
+                            {% else %}
+                                <span class="badge bg-info">{{ _('No expiration') }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if token.last_used_at %}
+                                {{ token.last_used_at|datetime }}
+                            {% else %}
+                                <span class="text-muted">{{ _('Never used') }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if token.is_active %}
+                                <span class="badge bg-success">{{ _('Active') }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ _('Inactive') }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="{{ url_for('api_auth.revoke_token', token_id=token.id) }}" method="post" class="d-inline" onsubmit="return confirm('{{ _('Are you sure you want to revoke this token? This action is irreversible.') }}')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> {{ _('Revoke') }}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            {% trans %}You have not created any API tokens yet.{% endtrans %}
+            <button type="button" class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#createTokenModal">
+                {{ _('Create a token') }}
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Information on using tokens -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">{{ _('How to use your API tokens') }}</h5>
+    </div>
+    <div class="card-body">
+        <p>{% trans %}To use the List-IQ API with an authentication token, include the token in the <code>Authorization</code> header of your HTTP requests:{% endtrans %}</p>
+        
+        <div class="bg-light p-3 rounded mb-3">
+            <code>Authorization: Bearer YOUR_API_TOKEN</code>
+        </div>
+        
+        <p>{{ _('Example with cURL:') }}</p>
+        
+        <div class="bg-light p-3 rounded mb-3">
+            <pre><code>curl -X GET "{{ request.host_url }}api/lists" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json"</code></pre>
+        </div>
+        
+        <p>{{ _('Example with Python:') }}</p>
+        
+        <div class="bg-light p-3 rounded">
+            <pre><code>import requests
+
+# {{ _('Configuration') }}
+base_url = "{{ request.host_url }}"
+api_token = "YOUR_API_TOKEN"
+
+# {{ _('Headers with the authentication token') }}
+headers = {
+    "Authorization": f"Bearer {api_token}",
+    "Content-Type": "application/json"
+}
+
+# {{ _('Example: get all lists') }}
+response = requests.get(f"{base_url}api/lists", headers=headers)
+lists = response.json()
+print(lists)</code></pre>
+        </div>
+    </div>
+</div>
+
+<!-- Security best practices -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">{{ _('Security Best Practices') }}</h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li><strong>{{ _('Secure Storage') }}</strong>: {% trans %}Never store your API tokens in plaintext in your source code or in unsecured files.{% endtrans %}</li>
+            <li><strong>HTTPS</strong>: {% trans %}Always use HTTPS in production to prevent token interception.{% endtrans %}</li>
+            <li><strong>{{ _('Expiration') }}</strong>: {% trans %}Set an expiration date for sensitive tokens.{% endtrans %}</li>
+            <li><strong>{{ _('Regular Revocation') }}</strong>: {% trans %}Revoke and renew your API tokens regularly.{% endtrans %}</li>
+            <li><strong>{{ _('Monitoring') }}</strong>: {% trans %}Monitor the usage of your tokens to detect any suspicious activity.{% endtrans %}</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Token creation modal -->
+<div class="modal fade" id="createTokenModal" tabindex="-1" aria-labelledby="createTokenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTokenModalLabel">{{ _('Create a new API token') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
+            </div>
+            <form id="createTokenForm" action="{{ url_for('api_auth.create_token') }}" method="post" enctype="application/json">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-3">
+                        <label for="tokenName" class="form-label">{{ _('Token Name') }}</label>
+                        <input type="text" class="form-control" id="tokenName" name="name" required placeholder="{{ _('E.g.: Sync script') }}">
+                        <div class="form-text">{{ _('Give your token a descriptive name to easily identify it.') }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tokenExpiration" class="form-label">{{ _('Expiration Date') }}</label>
+                        <input type="datetime-local" class="form-control" id="tokenExpiration" name="expires_at">
+                        <div class="form-text">{{ _('Leave blank for a token without an expiration date.') }}</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ _('Create Token') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to display a new token -->
+<div class="modal fade" id="newTokenModal" tabindex="-1" aria-labelledby="newTokenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="newTokenModalLabel">{{ _('Your New API Token') }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>{{ _('Warning:') }}</strong> {% trans %}This token will only be displayed once. Copy it now and keep it in a safe place.{% endtrans %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="newTokenValue" class="form-label">{{ _('Security Token:') }} <span id="tokenNameDisplay" class="fw-bold"></span></label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control font-monospace" id="newTokenValue" readonly onclick="this.select();">
+                        <button class="btn btn-primary" type="button" id="copyTokenButton">
+                            <i class="fas fa-copy me-1"></i> {{ _('Copy') }}
+                        </button>
+                    </div>
+                    <div class="alert alert-success d-none" id="copySuccessMessage">
+                        <i class="fas fa-check-circle me-2"></i> {{ _('Token copied to clipboard!') }}
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between text-muted small mb-3">
+                    <div>
+                        <i class="fas fa-calendar-alt me-1"></i> {{ _('Created on:') }} <span id="tokenCreatedAt"></span>
+                    </div>
+                    <div id="tokenExpiresContainer" style="display: none;">
+                        <i class="fas fa-hourglass-end me-1"></i> {{ _('Expires on:') }} <span id="tokenExpiresAt"></span>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">{{ _('How to use your API token') }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <p>{% trans %}To use the List-IQ API with this authentication token, include it in the <code>Authorization</code> header of your HTTP requests:{% endtrans %}</p>
+                        
+                        <div class="bg-light p-2 rounded mb-3">
+                            <code id="authHeaderExample">Authorization: Bearer <span class="text-primary">{{ _('your_token') }}</span></code>
+                        </div>
+                        
+                        <h6>{{ _('Example with cURL:') }}</h6>
+                        <div class="bg-light p-2 rounded mb-3">
+                            <pre class="mb-0"><code id="curlExample">curl -X GET "http://your-server/api/lists" \
+  -H "Authorization: Bearer <span class="text-primary">{{ _('your_token') }}</span>" \
+  -H "Content-Type: application/json"</code></pre>
+                        </div>
+                        
+                        <h6>{{ _('Example with Python:') }}</h6>
+                        <div class="bg-light p-2 rounded">
+                            <pre class="mb-0"><code id="pythonExample">import requests
+
+# {{ _('Configuration') }}
+base_url = "http://your-server/"
+api_token = "<span class="text-primary">{{ _('your_token') }}</span>"
+
+# {{ _('Headers with the authentication token') }}
+headers = {
+    "Authorization": f"Bearer {api_token}",
+    "Content-Type": "application/json"
+}
+
+# {{ _('Example: get all lists') }}
+response = requests.get(f"{base_url}api/lists", headers=headers)
+lists = response.json()
+print(lists)</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% trans %}For more information on how to use this token, see the "How to use your API tokens" section below.{% endtrans %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ _('I have copied my token') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const createTokenForm = document.getElementById('createTokenForm');
+        if (createTokenForm) {
+            createTokenForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ _('Creating...') }}`;
+                submitBtn.disabled = true;
+                
+                const formData = {
+                    name: document.getElementById('tokenName').value,
+                    expires_at: document.getElementById('tokenExpiration').value || null
+                };
+                
+                if (formData.expires_at) {
+                    try {
+                        formData.expires_at = new Date(formData.expires_at).toISOString();
+                    } catch (error) { /* Handle error if necessary */ }
+                }
+                
+                const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    body: JSON.stringify(formData),
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || '{{ _("Server error") }}'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const createModal = bootstrap.Modal.getInstance(document.getElementById('createTokenModal'));
+                    createModal.hide();
+                    
+                    this.reset();
+                    
+                    document.getElementById('newTokenValue').value = data.token;
+                    document.getElementById('tokenNameDisplay').textContent = data.name;
+                    document.getElementById('tokenCreatedAt').textContent = formatDate(new Date(data.created_at));
+                    
+                    const expiresContainer = document.getElementById('tokenExpiresContainer');
+                    if (data.expires_at) {
+                        document.getElementById('tokenExpiresAt').textContent = formatDate(new Date(data.expires_at));
+                        expiresContainer.style.display = 'inline';
+                    } else {
+                        expiresContainer.style.display = 'none';
+                    }
+                    
+                    const newTokenModal = new bootstrap.Modal(document.getElementById('newTokenModal'));
+                    newTokenModal.show();
+                    
+                    document.getElementById('newTokenModal').addEventListener('hidden.bs.modal', () => window.location.reload(), { once: true });
+                })
+                .catch(error => {
+                    alert('{{ _("Error creating token:") }} ' + error.message);
+                });
+            });
+        }
+
+        const copyButton = document.getElementById('copyTokenButton');
+        if(copyButton) {
+            copyButton.addEventListener('click', function() {
+                const tokenInput = document.getElementById('newTokenValue');
+                navigator.clipboard.writeText(tokenInput.value).then(() => {
+                    const successMessage = document.getElementById('copySuccessMessage');
+                    const originalHTML = this.innerHTML;
+                    
+                    successMessage.classList.remove('d-none');
+                    this.innerHTML = `<i class="fas fa-check me-1"></i> {{ _('Copied!') }}`;
+                    this.classList.replace('btn-primary', 'btn-success');
+                    
+                    setTimeout(() => {
+                        successMessage.classList.add('d-none');
+                        this.innerHTML = originalHTML;
+                        this.classList.replace('btn-success', 'btn-primary');
+                    }, 3000);
+                }).catch(err => {
+                    alert('{{ _("Copy error. Please copy manually.") }}');
+                });
+            });
+        }
+
+        function formatDate(date) {
+            if (!(date instanceof Date) || isNaN(date)) return '{{ _("Invalid date") }}';
+            // Use local formatting options, which will depend on the user's locale
+            return new Intl.DateTimeFormat(undefined, { 
+                day: '2-digit', month: '2-digit', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit' 
+            }).format(date);
+        }
+    });
+</script>
+{% endblock %} 

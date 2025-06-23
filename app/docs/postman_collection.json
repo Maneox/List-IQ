@@ -1,0 +1,351 @@
+{
+  "info": {
+    "name": "List-IQ API",
+    "description": "API for managing lists in a cybersecurity context",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "6b2f5a9e-3f1d-4c2f-8c0c-8b7f2e3e4f5d",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost/api",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Lists",
+      "description": "Endpoints for list management",
+      "item": [
+        {
+          "name": "Get all lists",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lists",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists"]
+            },
+            "description": "Retrieves the list of all lists accessible to the current user. Administrators can see all lists, while standard users can only see published lists."
+          },
+          "response": [
+            {
+              "name": "Example response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/lists",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["lists"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Watchlist\",\n    \"description\": \"List of suspicious IP addresses\",\n    \"is_published\": true,\n    \"created_at\": \"2025-01-01T00:00:00Z\",\n    \"updated_at\": \"2025-01-02T10:30:00Z\",\n    \"columns\": [\n      {\n        \"id\": 1,\n        \"name\": \"IP\",\n        \"description\": \"IP Address\",\n        \"column_type\": \"text\",\n        \"column_position\": 1\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Country\",\n        \"description\": \"Country of origin\",\n        \"column_type\": \"text\",\n        \"column_position\": 2\n      }\n    ]\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get a specific list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}"]
+            },
+            "description": "Retrieves the details of a specific list, including its columns. Administrators can access all lists, while standard users can only access published lists."
+          },
+          "response": []
+        },
+        {
+          "name": "Create a new list (admin only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New List\",\n  \"description\": \"Description of the new list\",\n  \"is_published\": false,\n  \"columns\": [\n    {\n      \"name\": \"Name\",\n      \"description\": \"Item name\",\n      \"column_type\": \"text\"\n    },\n    {\n      \"name\": \"Value\",\n      \"description\": \"Numeric value\",\n      \"column_type\": \"number\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lists",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists"]
+            },
+            "description": "Creates a new list with the specified columns. This operation is reserved for administrators."
+          },
+          "response": []
+        },
+        {
+          "name": "Create URL CSV list (admin only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"My URLCSVAPI List\",\n  \"description\": \"Description of my CSV list imported from a URL\",\n  \"update_type\": \"automatic\",\n  \"update_schedule\": \"0 0 * * *\",\n  \"columns\": [\n    {\n      \"name\": \"Name\",\n      \"column_type\": \"text\"\n    },\n    {\n      \"name\": \"Age\",\n      \"column_type\": \"number\"\n    },\n    {\n      \"name\": \"Email\",\n      \"column_type\": \"text\"\n    }\n  ],\n  \"update_config\": {\n    \"source\": \"url\",\n    \"url\": \"https://example.com/data.csv\",\n    \"is_json\": false,\n    \"format\": \"csv\"\n  },\n  \"data_source_format\": \"csv\",\n  \"is_active\": true,\n  \"is_published\": false,\n  \"filter_enabled\": false,\n  \"ip_restriction_enabled\": false,\n  \"allowed_ips\": \"[]\",\n  \"max_results\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lists",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists"]
+            },
+            "description": "Creates a new CSV list with automatic updates from a URL. This operation is reserved for administrators."
+          },
+          "response": []
+        },
+        {
+          "name": "Update a list (admin only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated List\",\n  \"description\": \"Updated description\",\n  \"is_published\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}"]
+            },
+            "description": "Updates the details of an existing list. This operation is reserved for administrators."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a list (admin only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}"]
+            },
+            "description": "Deletes a list and all its associated data. This operation is reserved for administrators."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Data",
+      "description": "Endpoints for managing list data",
+      "item": [
+        {
+          "name": "Get all data from a list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}", "data"]
+            },
+            "description": "Retrieves all data from a specific list. Administrators can access all lists, while standard users can only access published lists."
+          },
+          "response": [
+            {
+              "name": "Example response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/lists/{{list_id}}/data",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["lists", "{{list_id}}", "data"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"IP\": \"192.168.1.1\",\n    \"Country\": \"France\",\n    \"Date\": \"2025-01-01\"\n  },\n  {\n    \"id\": 2,\n    \"IP\": \"10.0.0.1\",\n    \"Country\": \"Germany\",\n    \"Date\": \"2025-01-02\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get a specific row",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}/data/{{row_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}", "data", "{{row_id}}"]
+            },
+            "description": "Retrieves the data of a specific row from a list. Administrators can access all lists, while standard users can only access published lists."
+          },
+          "response": []
+        },
+        {
+          "name": "Add a data row (admin only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"IP\": \"172.16.0.1\",\n    \"Country\": \"Spain\",\n    \"Date\": \"2025-05-19\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}", "data"]
+            },
+            "description": "Adds a new data row to a list. This operation is reserved for administrators."
+          },
+          "response": []
+        },
+        {
+          "name": "Update a data row (admin only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"IP\": \"172.16.0.1\",\n    \"Country\": \"Spain\",\n    \"Date\": \"2025-05-19\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}/data/{{row_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}", "data", "{{row_id}}"]
+            },
+            "description": "Updates the data of an existing row. This operation is reserved for administrators."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a data row (admin only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lists/{{list_id}}/data/{{row_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lists", "{{list_id}}", "data", "{{row_id}}"]
+            },
+            "description": "Deletes a data row from a list. This operation is reserved for administrators."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "description": "Endpoints for API token management",
+      "item": [
+        {
+          "name": "Generate a new API token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Token for API integration\",\n  \"expires_at\": \"2025-12-31T23:59:59Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "token"]
+            },
+            "description": "Generates a new API token for the current user. This operation requires session-based authentication."
+          },
+          "response": []
+        },
+        {
+          "name": "List all API tokens",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/tokens",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "tokens"]
+            },
+            "description": "Retrieves the list of all API tokens for the current user. This operation requires session-based authentication."
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke an API token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/tokens/{{token_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "tokens", "{{token_id}}"]
+            },
+            "description": "Revokes a specific API token. This operation requires session-based authentication."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

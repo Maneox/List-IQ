@@ -1,0 +1,633 @@
+{% extends 'base.html' %}
+
+{% block title %}CSV Configuration - {{ list.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('ui.lists') }}">Lists</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('list_bp.view_list', list_id=list.id) }}">{{ list.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">CSV Configuration</li>
+                </ol>
+            </nav>
+            <h1>CSV Configuration - {{ list.name }}</h1>
+            <p class="lead">Configure the CSV import options for this list</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">CSV Options</h5>
+                </div>
+                <div class="card-body">
+                    <form id="csvConfigForm">
+                        <div class="mb-3">
+                            <label for="csv_separator" class="form-label">Separator</label>
+                            <select class="form-select" id="csv_separator">
+                                <option value=",">Comma (,)</option>
+                                <option value=";">Semicolon (;)</option>
+                                <option value="\t">Tab</option>
+                                <option value="|">Pipe (|)</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="custom_separator_container" style="display: none;">
+                            <label for="custom_separator" class="form-label">Custom Separator</label>
+                            <input type="text" class="form-control" id="custom_separator" maxlength="1">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="has_header" checked>
+                                <label class="form-check-label" for="has_header">
+                                    The first row contains headers
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="csv_columns" class="mb-3" style="display: none;">
+                            <label class="form-label">Column Names</label>
+                            <p class="text-muted">Define the column names if the first row does not contain headers</p>
+                            <div id="column_inputs">
+                                <!-- Input fields for column names will be added here dynamically -->
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary mt-2" id="add_column_btn">
+                                <i class="fas fa-plus"></i> Add a column
+                            </button>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="preview_csv" checked>
+                                <label class="form-check-label" for="preview_csv">
+                                    Preview and select columns to import
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="preview_container" style="display: none;">
+                            <!-- Preview content will be added here dynamically -->
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('list_bp.view_list', list_id=list.id) }}" class="btn btn-secondary">Cancel</a>
+                            <button type="button" id="save_config_btn" class="btn btn-primary">Save and Import</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Global variables
+    var csvSeparator = document.getElementById('csv_separator');
+    var customSeparatorContainer = document.getElementById('custom_separator_container');
+    var hasHeader = document.getElementById('has_header');
+    var csvColumns = document.getElementById('csv_columns');
+    var columnInputs = document.getElementById('column_inputs');
+    var previewCsv = document.getElementById('preview_csv');
+    var previewContainer = document.getElementById('preview_container');
+    var saveConfigBtn = document.getElementById('save_config_btn');
+    var addColumnBtn = document.getElementById('add_column_btn');
+    var columnCount = 0;
+    
+    // Handle display of custom separator field
+    csvSeparator.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customSeparatorContainer.style.display = 'block';
+        } else {
+            customSeparatorContainer.style.display = 'none';
+        }
+    });
+    
+    // Handle display of column name fields
+    hasHeader.addEventListener('change', function() {
+        if (this.checked) {
+            csvColumns.style.display = 'none';
+        } else {
+            csvColumns.style.display = 'block';
+        }
+    });
+    
+    // Function to add an input field for a column name
+    function addColumnInput() {
+        var columnDiv = document.createElement('div');
+        columnDiv.className = 'input-group mb-2';
+        columnDiv.setAttribute('data-column-id', columnCount);
+        
+        columnDiv.innerHTML = 
+            '<span class="input-group-text">Column ' + (columnCount + 1) + '</span>' +
+            '<input type="text" class="form-control" name="column_name_' + columnCount + '" placeholder="Column name">' +
+            '<button type="button" class="btn btn-outline-danger" onclick="removeColumn(' + columnCount + ')">' +
+            '<i class="fas fa-times"></i>' +
+            '</button>';
+        
+        columnInputs.appendChild(columnDiv);
+        columnCount++;
+        
+        // Update column numbers
+        updateColumnNumbers();
+    }
+    
+    // Function to update column numbers
+    function updateColumnNumbers() {
+        var columns = columnInputs.querySelectorAll('.input-group');
+        for (var i = 0; i < columns.length; i++) {
+            var span = columns[i].querySelector('.input-group-text');
+            span.textContent = 'Column ' + (i + 1);
+        }
+    }
+    
+    // Function to remove a column
+    window.removeColumn = function(id) {
+        var columnToRemove = columnInputs.querySelector('[data-column-id="' + id + '"]');
+        if (columnToRemove) {
+            columnToRemove.remove();
+            updateColumnNumbers();
+        }
+    };
+    
+    addColumnBtn.addEventListener('click', addColumnInput);
+    
+    // Add some default fields
+    for (var i = 0; i < 3; i++) {
+        addColumnInput();
+    }
+    
+    // Preview handling
+    previewCsv.addEventListener('change', function() {
+        if (this.checked) {
+            fetchPreview();
+        } else {
+            previewContainer.style.display = 'none';
+        }
+    });
+    
+    // Function to fetch and display the preview
+    function fetchPreview() {
+        // Get field values
+        var separator = csvSeparator.value === 'custom' 
+            ? document.getElementById('custom_separator').value 
+            : csvSeparator.value;
+        
+        var hasHeaderValue = hasHeader.checked;
+        
+        // Get custom column names if necessary
+        var columnNames = [];
+        if (!hasHeaderValue) {
+            var inputs = columnInputs.querySelectorAll('input');
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].value) {
+                    columnNames.push(inputs[i].value);
+                }
+            }
+        }
+        
+        // Prepare data for the request
+        var requestData = {
+            separator: separator,
+            has_header: hasHeaderValue,
+            column_names: columnNames
+        };
+        
+        // Display a loading indicator
+        previewContainer.innerHTML = 
+            '<div class="d-flex justify-content-center">' +
+            '<div class="spinner-border text-primary" role="status">' +
+            '<span class="visually-hidden">Loading...</span>' +
+            '</div>' +
+            '</div>';
+        previewContainer.style.display = 'block';
+        
+        // Send the request to get the preview
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{{ url_for("list_bp.preview_csv", list_id=list.id) }}', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token() }}');
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                console.log('Response received:', xhr.status, xhr.responseText);
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        console.log('Parsed response:', response);
+                        
+                        // Check if the response contains preview data
+                        if (response.preview) {
+                            console.log('Preview available:', response.preview);
+                            displayPreview(response.preview);
+                        } else if (response.success && response.data) {
+                            // Alternative response format
+                            console.log('Preview available (alternative format):', response);
+                            var previewData = {
+                                headers: response.headers || [],
+                                data: response.data || []
+                            };
+                            console.log('Adapted structure:', previewData);
+                            displayPreview(previewData);
+                        } else if (response.error) {
+                            // Explicit error in response
+                            console.error('Preview error:', response.error);
+                            previewContainer.innerHTML = 
+                                '<div class="alert alert-danger">' +
+                                '<i class="fas fa-exclamation-circle"></i> Error: ' + response.error +
+                                '</div>';
+                        } else {
+                            // No preview data found
+                            console.error('No preview data found in the response');
+                            previewContainer.innerHTML = 
+                                '<div class="alert alert-warning">' +
+                                '<i class="fas fa-exclamation-triangle"></i> No preview data available' +
+                                '</div>';
+                        }
+                    } catch (e) {
+                        console.error('Error processing the response:', e);
+                        previewContainer.innerHTML = 
+                            '<div class="alert alert-danger">' +
+                            '<i class="fas fa-exclamation-circle"></i> Error: Could not process the response' +
+                            '</div>';
+                    }
+                } else {
+                    previewContainer.innerHTML = 
+                        '<div class="alert alert-danger">' +
+                        '<i class="fas fa-exclamation-circle"></i> Error ' + xhr.status + ': ' + xhr.statusText +
+                        '</div>';
+                }
+            }
+        };
+        
+        var jsonData = JSON.stringify(requestData);
+        console.log('Sending preview request:', jsonData);
+        
+        // Send the request
+        xhr.send(jsonData);
+    }
+    
+    // Function to display the preview
+    function displayPreview(preview) {
+        // Reset the preview container content
+        previewContainer.innerHTML = 
+            '<h5>Data Preview</h5>' +
+            '<p class="text-muted">Select the columns you want to import and set their type</p>' +
+            '<div class="table-responsive">' +
+            '<table class="table table-sm table-bordered" id="preview_table">' +
+            '<thead>' +
+            '<tr id="preview_header"></tr>' +
+            '<tr id="preview_import"></tr>' +
+            '<tr id="preview_types"></tr>' +
+            '</thead>' +
+            '<tbody id="preview_body"></tbody>' +
+            '</table>' +
+            '</div>';
+        
+        var previewHeader = document.getElementById('preview_header');
+        var previewImport = document.getElementById('preview_import');
+        var previewTypes = document.getElementById('preview_types');
+        var previewBody = document.getElementById('preview_body');
+        
+        console.log('Displaying preview:', preview);
+        
+        // Add headers and checkboxes
+        if (preview && preview.headers && preview.headers.length > 0) {
+            // Add an empty cell for alignment
+            var thEmpty = document.createElement('th');
+            thEmpty.textContent = '#';
+            thEmpty.className = 'text-center';
+            previewHeader.appendChild(thEmpty);
+            
+            // Empty cell for the checkbox row
+            var tdEmpty = document.createElement('td');
+            tdEmpty.innerHTML = 
+                '<div class="form-check">' +
+                '<input class="form-check-input" type="checkbox" id="select_all_columns" checked>' +
+                '<label class="form-check-label" for="select_all_columns">All</label>' +
+                '</div>';
+            previewImport.appendChild(tdEmpty);
+            
+            // Empty cell for the data types row
+            var tdEmptyTypes = document.createElement('td');
+            tdEmptyTypes.innerHTML = '<strong>Type</strong>';
+            previewTypes.appendChild(tdEmptyTypes);
+            
+            // Add headers
+            for (var i = 0; i < preview.headers.length; i++) {
+                var header = preview.headers[i];
+                var index = i;
+                
+                var th = document.createElement('th');
+                th.textContent = header;
+                th.className = 'text-center';
+                previewHeader.appendChild(th);
+                
+                // Add checkboxes for import
+                var tdImport = document.createElement('td');
+                tdImport.className = 'text-center';
+                tdImport.innerHTML = 
+                    '<div class="form-check">' +
+                    '<input class="form-check-input column-checkbox" type="checkbox" id="import_col_' + index + '" data-col-index="' + index + '" checked>' +
+                    '</div>';
+                previewImport.appendChild(tdImport);
+                
+                // Add data type selectors
+                var tdType = document.createElement('td');
+                tdType.className = 'text-center';
+                
+                // Detect data type based on column name and samples
+                var detectedType = 'text'; // Default type
+                
+                // Detection based on column name
+                var headerLower = header.toLowerCase();
+                
+                // Keywords for dates
+                var dateKeywords = ['date', 'created', 'updated', 'time', 'jour', 'mois', 'année', 'year', 'month', 'day'];
+                for (var j = 0; j < dateKeywords.length; j++) {
+                    if (headerLower.indexOf(dateKeywords[j]) !== -1) {
+                        detectedType = 'date';
+                        break;
+                    }
+                }
+                
+                // Keywords for IP addresses
+                var ipKeywords = ['ip', 'ipv4', 'ipv6', 'address', 'adresse', 'subnet', 'mask', 'masque'];
+                for (var j = 0; j < ipKeywords.length; j++) {
+                    if (headerLower.indexOf(ipKeywords[j]) !== -1) {
+                        detectedType = 'ip';
+                        break;
+                    }
+                }
+                
+                // Keywords for numbers
+                var numberKeywords = ['number', 'nombre', 'num', 'count', 'quantité', 'qty', 'amount', 'montant', 'price', 'prix'];
+                for (var j = 0; j < numberKeywords.length; j++) {
+                    if (headerLower.indexOf(numberKeywords[j]) !== -1) {
+                        detectedType = 'number';
+                        break;
+                    }
+                }
+                
+                // Detection based on data samples
+                if (preview.data && preview.data.length > 0) {
+                    // Collect samples for this column
+                    var samples = [];
+                    for (var j = 0; j < preview.data.length; j++) {
+                        var val = preview.data[j][index];
+                        if (val !== null && val !== undefined && val !== '') {
+                            samples.push(val);
+                        }
+                    }
+                    
+                    if (samples.length > 0) {
+                        // Check if all values are IP addresses
+                        var ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^[0-9a-fA-F:]+$/;
+                        var allIps = true;
+                        for (var j = 0; j < samples.length; j++) {
+                            if (!ipRegex.test(String(samples[j]).trim())) {
+                                allIps = false;
+                                break;
+                            }
+                        }
+                        if (allIps) {
+                            detectedType = 'ip';
+                        }
+                        
+                        // Check if all values are dates
+                        var dateRegex = /^\d{4}-\d{2}-\d{2}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4}|\d{4}[\/.-]\d{1,2}[\/.-]\d{1,2}/;
+                        var allDates = true;
+                        for (var j = 0; j < samples.length; j++) {
+                            if (!dateRegex.test(String(samples[j]).trim())) {
+                                allDates = false;
+                                break;
+                            }
+                        }
+                        if (allDates) {
+                            detectedType = 'date';
+                        }
+                        
+                        // Check if all values are numbers
+                        var numberRegex = /^-?\d+(\.\d+)?$/;
+                        var allNumbers = true;
+                        for (var j = 0; j < samples.length; j++) {
+                            if (!numberRegex.test(String(samples[j]).trim().replace(',', '.'))) {
+                                allNumbers = false;
+                                break;
+                            }
+                        }
+                        if (allNumbers) {
+                            detectedType = 'number';
+                        }
+                    }
+                }
+                
+                tdType.innerHTML = 
+                    '<select class="form-select form-select-sm column-type" id="type_col_' + index + '" data-col-index="' + index + '">' +
+                    '<option value="text" ' + (detectedType === 'text' ? 'selected' : '') + '>Text</option>' +
+                    '<option value="number" ' + (detectedType === 'number' ? 'selected' : '') + '>Number</option>' +
+                    '<option value="date" ' + (detectedType === 'date' ? 'selected' : '') + '>Date</option>' +
+                    '<option value="ip" ' + (detectedType === 'ip' ? 'selected' : '') + '>IP</option>' +
+                    '</select>';
+                previewTypes.appendChild(tdType);
+            }
+            
+            // Add the data
+            if (preview.data && preview.data.length > 0) {
+                for (var i = 0; i < preview.data.length; i++) {
+                    var row = preview.data[i];
+                    var tr = document.createElement('tr');
+                    
+                    // Add the row number
+                    var tdRowNum = document.createElement('td');
+                    tdRowNum.textContent = i + 1;
+                    tdRowNum.className = 'text-muted text-center';
+                    tr.appendChild(tdRowNum);
+                    
+                    // Add data cells
+                    for (var j = 0; j < row.length; j++) {
+                        var td = document.createElement('td');
+                        td.textContent = row[j] || '';
+                        td.className = 'preview-cell';
+                        td.setAttribute('data-col-index', j);
+                        tr.appendChild(td);
+                    }
+                    
+                    previewBody.appendChild(tr);
+                }
+            } else {
+                var tr = document.createElement('tr');
+                var td = document.createElement('td');
+                td.colSpan = preview.headers.length + 1;
+                td.className = 'text-center';
+                td.textContent = 'No data available';
+                tr.appendChild(td);
+                previewBody.appendChild(tr);
+            }
+            
+            // Add an event handler for the "All" checkbox
+            document.getElementById('select_all_columns').addEventListener('change', function() {
+                var isChecked = this.checked;
+                var checkboxes = document.querySelectorAll('.column-checkbox');
+                for (var i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = isChecked;
+                    
+                    // Update cell appearance
+                    var colIndex = checkboxes[i].getAttribute('data-col-index');
+                    var cells = document.querySelectorAll('.preview-cell[data-col-index="' + colIndex + '"]');
+                    for (var j = 0; j < cells.length; j++) {
+                        cells[j].style.opacity = isChecked ? '1' : '0.3';
+                    }
+                }
+            });
+            
+            // Add event handlers for column checkboxes
+            var columnCheckboxes = document.querySelectorAll('.column-checkbox');
+            for (var i = 0; i < columnCheckboxes.length; i++) {
+                var checkbox = columnCheckboxes[i];
+                
+                // Update cell appearance on initial load
+                var colIndex = checkbox.getAttribute('data-col-index');
+                var cells = document.querySelectorAll('.preview-cell[data-col-index="' + colIndex + '"]');
+                for (var j = 0; j < cells.length; j++) {
+                    cells[j].style.opacity = checkbox.checked ? '1' : '0.3';
+                }
+                
+                // Add an event handler for state change
+                checkbox.addEventListener('change', function() {
+                    var isChecked = this.checked;
+                    var colIndex = this.getAttribute('data-col-index');
+                    
+                    // Update cell appearance
+                    var cells = document.querySelectorAll('.preview-cell[data-col-index="' + colIndex + '"]');
+                    for (var j = 0; j < cells.length; j++) {
+                        cells[j].style.opacity = isChecked ? '1' : '0.3';
+                    }
+                    
+                    // Update the "All" checkbox
+                    var allChecked = true;
+                    var checkboxes = document.querySelectorAll('.column-checkbox');
+                    for (var j = 0; j < checkboxes.length; j++) {
+                        if (!checkboxes[j].checked) {
+                            allChecked = false;
+                            break;
+                        }
+                    }
+                    document.getElementById('select_all_columns').checked = allChecked;
+                });
+            }
+        } else {
+            // No preview data available
+            previewContainer.innerHTML = 
+                '<div class="alert alert-warning">' +
+                '<i class="fas fa-exclamation-triangle"></i> No preview data available' +
+                '</div>';
+        }
+    }
+    
+    // Handling save and import
+    saveConfigBtn.addEventListener('click', function() {
+        // Display a loading indicator
+        var originalBtnText = this.innerHTML;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        this.disabled = true;
+        
+        // Prepare data for submission
+        var separator = csvSeparator.value === 'custom' 
+            ? document.getElementById('custom_separator').value 
+            : csvSeparator.value;
+        
+        var hasHeaderValue = hasHeader.checked;
+        var previewEnabled = previewCsv.checked;
+        
+        // Get selected columns and their types
+        var columnsToImport = [];
+        var columnTypes = {};
+        
+        var checkboxes = document.querySelectorAll('.column-checkbox:checked');
+        for (var i = 0; i < checkboxes.length; i++) {
+            var colIndex = parseInt(checkboxes[i].getAttribute('data-col-index'));
+            columnsToImport.push(colIndex);
+            
+            // Get the selected column type
+            var typeSelect = document.getElementById('type_col_' + colIndex);
+            if (typeSelect) {
+                columnTypes[colIndex] = typeSelect.value;
+            }
+        }
+        
+        // Get column names if no headers
+        var columnNames = [];
+        if (!hasHeaderValue) {
+            var inputs = document.querySelectorAll('#column_inputs input');
+            for (var i = 0; i < inputs.length; i++) {
+                columnNames.push(inputs[i].value.trim());
+            }
+        }
+        
+        // Prepare data for the request
+        var configData = {
+            separator: separator,
+            has_header: hasHeaderValue,
+            column_names: columnNames,
+            columns_to_import: columnsToImport,
+            column_types: columnTypes,
+            preview_enabled: previewEnabled
+        };
+        
+        console.log('Configuration data to send:', configData);
+        
+        // Send the request to save the configuration
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{{ url_for("list_bp.save_csv_config", list_id=list.id) }}', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token() }}');
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data.success) {
+                            // Redirect to the list page
+                            window.location.href = '{{ url_for("list_bp.view_list", list_id=list.id) }}';
+                        } else if (data.error) {
+                            // Display the error
+                            alert('Error: ' + data.error);
+                            // Restore the button
+                            saveConfigBtn.innerHTML = originalBtnText;
+                            saveConfigBtn.disabled = false;
+                        }
+                    } catch (e) {
+                        console.error('Error processing the response:', e);
+                        alert('Error processing the response');
+                        // Restore the button
+                        saveConfigBtn.innerHTML = originalBtnText;
+                        saveConfigBtn.disabled = false;
+                    }
+                } else {
+                    console.error('HTTP Error:', xhr.status);
+                    alert('HTTP Error: ' + xhr.status);
+                    // Restore the button
+                    saveConfigBtn.innerHTML = originalBtnText;
+                    saveConfigBtn.disabled = false;
+                }
+            }
+        };
+        
+        xhr.send(JSON.stringify(configData));
+    });
+    
+    // Load the preview on page load if the option is enabled
+    if (previewCsv.checked) {
+        fetchPreview();
+    }
+});
+</script>
+{% endblock %}

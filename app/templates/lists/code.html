@@ -1,0 +1,44 @@
+<!-- ... top code ... -->
+
+<div class="card-body">
+    <form method="post" id="listForm" ...>
+        
+        <!-- Start of the two-column grid -->
+        <div class="row">
+            
+            <!-- ====== LEFT COLUMN (All configurations) ====== -->
+            <div class="col-md-6">
+            
+                <h3>{{ _('General Information') }}</h3>
+                <!-- ... fields for name, description, update type, etc. ... -->
+
+                <h3 class="mt-4">{{ _('Security') }}</h3>
+                <!-- ... section for IP restriction ... -->
+
+                <h3 class="mt-4">{{ _('Public Access') }}</h3>
+                <!-- ... section for public URLs ... -->
+
+            </div> <!-- End of the left column -->
+            
+            
+            <!-- ====== RIGHT COLUMN (Only list column management) ====== -->
+            <div class="col-md-6">
+            
+                <h3>{{ _('Columns') }}</h3>
+                <div id="columns-container">
+                    <!-- ... code to display existing or new columns ... -->
+                </div>
+                <button type="button" class="btn btn-secondary mb-3" id="add-column">
+                    {{ _('Add a column') }}
+                </button>
+                
+            </div> <!-- End of the right column -->
+            
+        </div> <!-- End of the two-column grid -->
+
+        <!-- ... Save, Delete, Cancel buttons ... -->
+        
+    </form>
+</div>
+
+<!-- ... bottom code ... -->

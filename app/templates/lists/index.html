@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Lists') }} - {{ _('List-IQ') }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ _('Lists') }}</h1>
+    </div>
+    {% if current_user.is_admin %}
+    <div class="col text-end">
+        <a href="{{ url_for('ui.new_list') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {{ _('New List') }}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+{% for list in lists %}
+    {% if current_user.is_admin or list.is_published %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ list.name }}</h5>
+                <p class="card-text">{{ list.description }}</p>
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i> {{ _('Last update:') }} 
+                        {% if list.last_update %}
+                            {{ list.last_update.strftime('%d/%m/%Y %H:%M') }}
+                        {% else %}
+                            {{ _('Never') }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-{{ 'success' if list.is_active else 'danger' }}">
+                            {{ _('Active') if list.is_active else _('Inactive') }}
+                        </span>
+                        {% if list.ip_restriction_enabled %}
+                        <span class="badge bg-warning">{{ _('IP Restricted') }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="btn-group">
+                        <a href="{{ url_for('ui.view_list', list_id=list.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> {{ _('View') }}
+                        </a>
+                        {% if current_user.is_admin %}
+                        <a href="{{ url_for('ui.edit_list', list_id=list.id) }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> {{ _('Edit') }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+</div>
+
+{% if lists|length == 0 or (not current_user.is_admin and lists|selectattr('is_published')|list|length == 0) %}
+<div class="row">
+    <div class="col">
+        <div class="alert alert-info">
+            {{ _('No lists available.') }}
+            {% if current_user.is_admin %}
+            <a href="{{ url_for('ui.new_list') }}" class="alert-link">{{ _('Create a new list') }}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

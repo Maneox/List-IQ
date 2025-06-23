@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Help - JSON Configuration') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('list_bp.lists_ui') }}">{{ _('Lists') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('Help - JSON Configuration') }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ _('JSON Configuration Guide for APIs') }}</h1>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> {% trans %}This page explains how to configure JSON data processing in the List-IQ application.{% endtrans %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group sticky-top" style="top: 20px;">
+                <a href="#json-basics" class="list-group-item list-group-item-action">{{ _('JSON Basics') }}</a>
+                <a href="#data-path" class="list-group-item list-group-item-action">{{ _('Data Path') }}</a>
+                <a href="#column-selection" class="list-group-item list-group-item-action">{{ _('Column Selection') }}</a>
+                <a href="#data-types" class="list-group-item list-group-item-action">{{ _('Data Types') }}</a>
+                <a href="#common-patterns" class="list-group-item list-group-item-action">{{ _('Common JSON Structures') }}</a>
+                <a href="#examples" class="list-group-item list-group-item-action">{{ _('Practical Examples') }}</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card mb-4" id="json-basics">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('JSON Basics') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}JSON (JavaScript Object Notation) is a lightweight data format used for data exchange. Here are the basic elements:{% endtrans %}</p>
+                    <ul>
+                        <li><strong>{{ _('Objects') }}</strong>: {% trans %}collections of key/value pairs enclosed in curly braces <code>{ }</code>{% endtrans %}</li>
+                        <li><strong>{{ _('Arrays') }}</strong>: {% trans %}ordered collections of values enclosed in square brackets <code>[ ]</code>{% endtrans %}</li>
+                        <li><strong>{{ _('Values') }}</strong>: {% trans %}can be strings, numbers, booleans, null, objects, or arrays{% endtrans %}</li>
+                    </ul>
+                    <p>{{ _('Example JSON structure:') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "active": true,
+  "tags": ["admin", "user"],
+  "address": {
+    "street": "123 Main St",
+    "city": "New York",
+    "country": "USA"
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="data-path">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Data Path') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}The data path allows you to specify where the relevant data is located in the JSON response. In the List-IQ application, you use dot notation to access nested objects.{% endtrans %}</p>
+                    
+                    <h3 class="h6 mt-3">{{ _('Path Examples') }}</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>{{ _('Path') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th>{{ _('Example JSON') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>data</code></td>
+                                <td>{{ _('Accesses the "data" property at the root') }}</td>
+                                <td><pre><code>{ "data": [...] }</code></pre></td>
+                            </tr>
+                            <tr>
+                                <td><code>data.items</code></td>
+                                <td>{{ _('Accesses the "items" property within the "data" object') }}</td>
+                                <td><pre><code>{ "data": { "items": [...] } }</code></pre></td>
+                            </tr>
+                            <tr>
+                                <td><code>results</code></td>
+                                <td>{{ _('Accesses the "results" property at the root') }}</td>
+                                <td><pre><code>{ "results": [...] }</code></pre></td>
+                            </tr>
+                            <tr>
+                                <td><code>response.body.items</code></td>
+                                <td>{{ _('Accesses "items" in "body" in "response"') }}</td>
+                                <td><pre><code>{ "response": { "body": { "items": [...] } } }</code></pre></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <strong>{{ _('Important:') }}</strong> {% trans %}The path must point to an array of objects. If the response contains a single object, the application will automatically convert it to an array.{% endtrans %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="column-selection">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Column Selection') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}After specifying the data path, you can select the columns (properties) you want to include in your list.{% endtrans %}</p>
+                    
+                    <h3 class="h6 mt-3">{{ _('Example') }}</h3>
+                    <p>{% trans %}If your JSON looks like this:{% endtrans %}</p>
+                    <pre class="bg-light p-3 rounded"><code>[
+  {
+    "id": 1,
+    "title": "Article 1",
+    "author": {
+      "id": 101,
+      "name": "John Doe"
+    },
+    "tags": ["news", "tech"],
+    "published_at": "2023-01-15",
+    "views": 1250
+  },
+  ...
+]</code></pre>
+                    <p>{% trans %}You could select the following columns:{% endtrans %}</p>
+                    <ul>
+                        <li><code>id</code> ({{ _('type: number') }})</li>
+                        <li><code>title</code> ({{ _('type: text') }})</li>
+                        <li><code>author.name</code> ({{ _('type: text') }})</li>
+                        <li><code>published_at</code> ({{ _('type: date') }})</li>
+                        <li><code>views</code> ({{ _('type: number') }})</li>
+                    </ul>
+                    <p>{% trans %}The application automatically extracts these properties from each object in the array.{% endtrans %}</p>
+                    
+                    <div class="alert alert-info mt-3">
+                        <strong>{{ _('Tip:') }}</strong> {% trans %}For nested properties, use dot notation (e.g., <code>author.name</code>).{% endtrans %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="data-types">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Data Types') }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{% trans %}The List-IQ application supports several data types for columns:{% endtrans %}</p>
+                    
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>{{ _('Type') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th>{{ _('Example') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ _('Text') }}</td>
+                                <td>{{ _('Strings of characters') }}</td>
+                                <td><code>"John Doe"</code>, <code>"Hello, world!"</code></td>
+                            </tr>
+                            <tr>
+                                <td>{{ _('Number') }}</td>
+                                <td>{{ _('Numeric values (integers or decimals)') }}</td>
+                                <td><code>42</code>, <code>3.14</code></td>
+                            </tr>
+                            <tr>
+                                <td>{{ _('Date') }}</td>
+                                <td>{{ _('Dates in ISO format or similar') }}</td>
+                                <td><code>"2023-01-15"</code>, <code>"2023/01/15"</code></td>
+                            </tr>
+                            <tr>
+                                <td>{{ _('IP Address') }}</td>
+                                <td>{{ _('IPv4 or IPv6 addresses') }}</td>
+                                <td><code>"192.168.1.1"</code>, <code>"2001:0db8:85a3:0000:0000:8a2e:0370:7334"</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p class="mt-3">{% trans %}The application attempts to automatically detect the data type, but you can change it manually if necessary.{% endtrans %}</p>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="common-patterns">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Common JSON Structures') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">1. {{ _('Root-level array of objects') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>[
+  { "id": 1, "name": "Item 1" },
+  { "id": 2, "name": "Item 2" },
+  { "id": 3, "name": "Item 3" }
+]</code></pre>
+                    <p><strong>{{ _('Data Path:') }}</strong> {% trans %}Leave empty (or simply use <code>.</code>){% endtrans %}</p>
+                    
+                    <h3 class="h6 mt-3">2. {{ _('Property containing an array of objects') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>{
+  "items": [
+    { "id": 1, "name": "Item 1" },
+    { "id": 2, "name": "Item 2" },
+    { "id": 3, "name": "Item 3" }
+  ],
+  "total": 3
+}</code></pre>
+                    <p><strong>{{ _('Data Path:') }}</strong> <code>items</code></p>
+                    
+                    <h3 class="h6 mt-3">3. {{ _('Nested structure with pagination') }}</h3>
+                    <pre class="bg-light p-3 rounded"><code>{
+  "data": {
+    "results": [
+      { "id": 1, "name": "Item 1" },
+      { "id": 2, "name": "Item 2" }
+    ]
+  },
+  "meta": {
+    "page": 1,
+    "per_page": 2,
+    "total_pages": 2
+  }
+}</code></pre>
+                    <p><strong>{{ _('Data Path:') }}</strong> <code>data.results</code></p>
+                </div>
+            </div>
+
+            <div class="card mb-4" id="examples">
+                <div class="card-header">
+                    <h2 class="h5">{{ _('Practical Examples') }}</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6">{{ _('Example 1: JSONPlaceholder API') }}</h3>
+                    <p>{{ _('Curl command:') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://jsonplaceholder.typicode.com/posts"</code></pre>
+                    <p>{{ _('JSON response (excerpt):') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>[
+  {
+    "userId": 1,
+    "id": 1,
+    "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+    "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+  },
+  {
+    "userId": 1,
+    "id": 2,
+    "title": "qui est esse",
+    "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla"
+  }
+]</code></pre>
+                    <p><strong>{{ _('Configuration:') }}</strong></p>
+                    <ul>
+                        <li><strong>{{ _('Data Path:') }}</strong> ({{ _('empty') }})</li>
+                        <li><strong>{{ _('Columns:') }}</strong> id ({{ _('number') }}), userId ({{ _('number') }}), title ({{ _('text') }}), body ({{ _('text') }})</li>
+                    </ul>
+                    
+                    <h3 class="h6 mt-4">{{ _('Example 2: OpenWeatherMap API') }}</h3>
+                    <p>{{ _('Curl command:') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.openweathermap.org/data/2.5/forecast?q=Paris&appid={{ _('your_api_key') }}&units=metric"</code></pre>
+                    <p>{{ _('JSON response (excerpt):') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>{
+  "cod": "200",
+  "message": 0,
+  "cnt": 40,
+  "list": [
+    {
+      "dt": 1618315200,
+      "main": {
+        "temp": 12.5,
+        "feels_like": 11.8,
+        "temp_min": 12.5,
+        "temp_max": 13.1,
+        "pressure": 1021,
+        "humidity": 76
+      },
+      "weather": [
+        {
+          "id": 800,
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01d"
+        }
+      ],
+      "clouds": { "all": 0 },
+      "wind": { "speed": 2.06, "deg": 140 },
+      "dt_txt": "2021-04-13 12:00:00"
+    }
+  ],
+  "city": {
+    "id": 2988507,
+    "name": "Paris",
+    "country": "FR"
+  }
+}</code></pre>
+                    <p><strong>{{ _('Configuration:') }}</strong></p>
+                    <ul>
+                        <li><strong>{{ _('Data Path:') }}</strong> <code>list</code></li>
+                        <li><strong>{{ _('Columns:') }}</strong> dt_txt ({{ _('date') }}), main.temp ({{ _('number') }}), main.humidity ({{ _('number') }}), weather.0.description ({{ _('text') }}), wind.speed ({{ _('number') }})</li>
+                    </ul>
+                    
+                    <h3 class="h6 mt-4">{{ _('Example 3: GitHub API') }}</h3>
+                    <p>{{ _('Curl command:') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>curl -X GET "https://api.github.com/users/octocat/repos"</code></pre>
+                    <p>{{ _('JSON response (excerpt):') }}</p>
+                    <pre class="bg-light p-3 rounded"><code>[
+  {
+    "id": 1296269,
+    "name": "Hello-World",
+    "full_name": "octocat/Hello-World",
+    "owner": {
+      "login": "octocat",
+      "id": 1,
+      "avatar_url": "https://github.com/images/error/octocat_happy.gif"
+    },
+    "html_url": "https://github.com/octocat/Hello-World",
+    "description": "This your first repo!",
+    "created_at": "2011-01-26T19:01:12Z",
+    "updated_at": "2011-01-26T19:14:43Z",
+    "stargazers_count": 80,
+    "watchers_count": 80,
+    "language": "C",
+    "forks_count": 9
+  }
+]</code></pre>
+                    <p><strong>{{ _('Configuration:') }}</strong></p>
+                    <ul>
+                        <li><strong>{{ _('Data Path:') }}</strong> ({{ _('empty') }})</li>
+                        <li><strong>{{ _('Columns:') }}</strong> id ({{ _('number') }}), name ({{ _('text') }}), full_name ({{ _('text') }}), owner.login ({{ _('text') }}), created_at ({{ _('date') }}), language ({{ _('text') }}), stargazers_count ({{ _('number') }})</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

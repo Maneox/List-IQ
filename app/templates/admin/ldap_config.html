@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('LDAP Configuration') }}{% endblock %}
+
+{% block extra_css %}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ _('LDAP/LDAPS Configuration') }}</h1>
+    
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> {% trans %}Configure the connection settings to your LDAP/Active Directory service to enable user authentication and authorization.{% endtrans %}
+    </div>
+    
+    <form id="ldapConfigForm" method="POST" action="{{ url_for('admin.save_ldap_config') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>{{ _('Connection Settings') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="enabled" name="enabled" {% if config.enabled %}checked{% endif %}>
+                    <label class="form-check-label" for="enabled">
+                        {{ _('Enable LDAP Authentication') }}
+                    </label>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="host" class="form-label">{{ _('LDAP Server') }}</label>
+                        <input type="text" class="form-control" id="host" name="host" value="{{ config.host or '' }}" placeholder="ldap.example.com">
+                        <small class="text-muted">{{ _('Hostname or IP address of the LDAP server') }}</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="port" class="form-label">{{ _('Port') }}</label>
+                        <input type="number" class="form-control" id="port" name="port" value="{{ config.port or 389 }}" min="1" max="65535">
+                        <small class="text-muted">{{ _('Default port: 389 (LDAP) or 636 (LDAPS)') }}</small>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="use_ssl" name="use_ssl" {% if config.use_ssl %}checked{% endif %}>
+                            <label class="form-check-label" for="use_ssl">
+                                {{ _('Use SSL (LDAPS)') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="use_tls" name="use_tls" {% if config.use_tls %}checked{% endif %}>
+                            <label class="form-check-label" for="use_tls">
+                                {{ _('Use TLS (StartTLS)') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="verify_cert" name="verify_cert" {% if config.verify_cert %}checked{% endif %}>
+                            <label class="form-check-label" for="verify_cert">
+                                {{ _('Verify SSL/TLS Certificate') }}
+                            </label>
+                            <small class="form-text text-muted d-block">{{ _('Enable to verify the LDAP server certificate') }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card border-info mb-3">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">{{ _('CA Certificate for SSL/TLS') }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> {% trans %}If you are using LDAPS or StartTLS with a certificate issued by a private PKI, you must provide the CA certificate in PEM format.{% endtrans %}
+                                </div>
+                                
+                                {% if config.ca_cert %}
+                                <div class="alert alert-success mb-3">
+                                    <i class="fas fa-check-circle"></i> {{ _('A CA certificate is currently configured.') }}
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="remove_ca_cert" name="remove_ca_cert">
+                                    <label class="form-check-label" for="remove_ca_cert">
+                                        {{ _('Remove current CA certificate') }}
+                                    </label>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="mb-3">
+                                    <label for="ca_cert" class="form-label">{{ _('CA Certificate (PEM format)') }}</label>
+                                    <input class="form-control" type="file" id="ca_cert" name="ca_cert" accept=".pem,.crt,.cer">
+                                    <small class="text-muted">{{ _('File containing the certificate in PEM format (starts with -----BEGIN CERTIFICATE-----)') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>{{ _('Authentication Settings') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="bind_dn" class="form-label">{{ _('Bind DN') }}</label>
+                    <input type="text" class="form-control" id="bind_dn" name="bind_dn" value="{{ config.bind_dn or '' }}" placeholder="cn=admin,dc=example,dc=com">
+                    <small class="text-muted">{{ _('DN of the service account used to connect to the LDAP server. For Active Directory, use the format: username@domain.com') }}</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="bind_password" class="form-label">{{ _('Bind Password') }}</label>
+                    <input type="password" class="form-control" id="bind_password" name="bind_password" placeholder="{% if config.bind_password %}••••••••{% else %}{{ _('Password') }}{% endif %}">
+                    <small class="text-muted">{{ _('Leave blank to keep the current password') }}</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>{{ _('Search Settings') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="base_dn" class="form-label">{{ _('Base DN') }}</label>
+                    <input type="text" class="form-control" id="base_dn" name="base_dn" value="{{ config.base_dn or '' }}" placeholder="dc=example,dc=com">
+                    <small class="text-muted">{{ _('Base DN for all LDAP searches') }}</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="user_dn" class="form-label">{{ _('User DN') }}</label>
+                    <input type="text" class="form-control" id="user_dn" name="user_dn" value="{{ config.user_dn or '' }}" placeholder="ou=users,dc=example,dc=com">
+                    <small class="text-muted">{{ _('DN where users are searched (leave blank to use the base DN)') }}</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="group_dn" class="form-label">{{ _('Group DN') }}</label>
+                    <input type="text" class="form-control" id="group_dn" name="group_dn" value="{{ config.group_dn or '' }}" placeholder="ou=groups,dc=example,dc=com">
+                    <small class="text-muted">{{ _('DN where groups are searched (leave blank to use the base DN)') }}</small>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="user_rdn_attr" class="form-label">{{ _('User RDN Attribute') }}</label>
+                        <input type="text" class="form-control" id="user_rdn_attr" name="user_rdn_attr" value="{{ config.user_rdn_attr or 'sAMAccountName' }}">
+                        <small class="text-muted">{{ _('For AD: sAMAccountName') }}</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_login_attr" class="form-label">{{ _('Login Attribute') }}</label>
+                        <input type="text" class="form-control" id="user_login_attr" name="user_login_attr" value="{{ config.user_login_attr or 'sAMAccountName' }}">
+                        <small class="text-muted">{{ _('For AD: sAMAccountName') }}</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_object_class" class="form-label">{{ _('User Object Class') }}</label>
+                        <input type="text" class="form-control" id="user_object_class" name="user_object_class" value="{{ config.user_object_class or 'person' }}">
+                        <small class="text-muted">{{ _('For AD: person or user') }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>{{ _('Authorization Settings') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans %}Users must belong to at least the user group to be able to log in. Administrators must belong to the administrator group.{% endtrans %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="admin_group" class="form-label">{{ _('Administrator Group') }}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="admin_group" name="admin_group" value="{{ config.admin_group or '' }}" placeholder="CN=Administrators,OU=Groups,DC=example,DC=com">
+                        <button class="btn btn-outline-secondary" type="button" id="browseAdminGroups">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <small class="text-muted">{{ _('DN of the group whose members will have administrator rights') }}</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="user_group" class="form-label">{{ _('User Group') }}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="user_group" name="user_group" value="{{ config.user_group or '' }}" placeholder="CN=Users,OU=Groups,DC=example,DC=com">
+                        <button class="btn btn-outline-secondary" type="button" id="browseUserGroups">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <small class="text-muted">{{ _('DN of the group whose members will have standard user rights') }}</small>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="group_member_attr" class="form-label">{{ _('Member Attribute') }}</label>
+                        <input type="text" class="form-control" id="group_member_attr" name="group_member_attr" value="{{ config.group_member_attr or 'member' }}">
+                        <small class="text-muted">{{ _('For AD: member') }}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="group_object_class" class="form-label">{{ _('Group Object Class') }}</label>
+                        <input type="text" class="form-control" id="group_object_class" name="group_object_class" value="{{ config.group_object_class or 'group' }}">
+                        <small class="text-muted">{{ _('For AD: group') }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between mb-4">
+            <button type="button" id="testConnection" class="btn btn-outline-primary">
+                <i class="fas fa-plug"></i> {{ _('Test Connection') }}
+            </button>
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> {{ _('Save Configuration') }}
+            </button>
+        </div>
+    </form>
+    
+    <!-- Modal for group selection -->
+    <div class="modal fade" id="groupsModal" tabindex="-1" aria-labelledby="groupsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="groupsModalLabel">{{ _('Select a Group') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Close') }}"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="groupsLoading" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">{{ _('Loading...') }}</span>
+                        </div>
+                        <p>{{ _('Loading groups...') }}</p>
+                    </div>
+                    <div id="groupsError" class="alert alert-danger" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i> <span id="groupsErrorMessage"></span>
+                    </div>
+                    <div id="groupsList" style="display: none;">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="groupSearch" placeholder="{{ _('Search for a group...') }}">
+                        </div>
+                        <div class="list-group" id="groupsListItems">
+                            <!-- Groups will be added here dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Test LDAP connection
+    const testConnectionBtn = document.getElementById('testConnection');
+    
+    testConnectionBtn.addEventListener('click', async function() {
+        const originalText = testConnectionBtn.innerHTML;
+        try {
+            testConnectionBtn.disabled = true;
+            testConnectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {{ _("Testing...") }}';
+            
+            const formData = new FormData(document.getElementById('ldapConfigForm'));
+            
+            const response = await fetch('{{ url_for("admin.test_ldap_config") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '{{ _("Connection Successful") }}',
+                    text: data.message,
+                    confirmButtonText: '{{ _("OK") }}'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '{{ _("Connection Failed") }}',
+                    text: data.message,
+                    confirmButtonText: '{{ _("OK") }}'
+                });
+            }
+        } catch (error) {
+            console.error('{{ _("Error during connection test:") }}', error);
+            Swal.fire({
+                icon: 'error',
+                title: '{{ _("Error") }}',
+                text: '{{ _("An error occurred during the connection test") }}',
+                confirmButtonText: '{{ _("OK") }}'
+            });
+        } finally {
+            testConnectionBtn.disabled = false;
+            testConnectionBtn.innerHTML = originalText;
+        }
+    });
+    
+    // Group selection management
+    let currentGroupField = null;
+    const groupsModal = new bootstrap.Modal(document.getElementById('groupsModal'));
+    const browseAdminGroupsBtn = document.getElementById('browseAdminGroups');
+    const browseUserGroupsBtn = document.getElementById('browseUserGroups');
+    
+    if (browseAdminGroupsBtn) {
+        browseAdminGroupsBtn.addEventListener('click', function() {
+            currentGroupField = document.getElementById('admin_group');
+            loadGroups();
+            groupsModal.show();
+        });
+    }
+    
+    if (browseUserGroupsBtn) {
+        browseUserGroupsBtn.addEventListener('click', function() {
+            currentGroupField = document.getElementById('user_group');
+            loadGroups();
+            groupsModal.show();
+        });
+    }
+    
+    // Group search
+    const groupSearchInput = document.getElementById('groupSearch');
+    groupSearchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const groupItems = document.querySelectorAll('#groupsListItems .list-group-item');
+        
+        groupItems.forEach(item => {
+            const groupName = item.textContent.toLowerCase();
+            if (groupName.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+    
+    // Load groups
+    async function loadGroups() {
+        const groupsLoading = document.getElementById('groupsLoading');
+        const groupsError = document.getElementById('groupsError');
+        const groupsList = document.getElementById('groupsList');
+        const groupsListItems = document.getElementById('groupsListItems');
+        const groupsErrorMessage = document.getElementById('groupsErrorMessage');
+        
+        groupsLoading.style.display = 'block';
+        groupsError.style.display = 'none';
+        groupsList.style.display = 'none';
+        groupsListItems.innerHTML = '';
+        groupSearchInput.value = '';
+        
+        try {
+            const response = await fetch('{{ url_for("admin.get_ldap_groups") }}');
+            const data = await response.json();
+            
+            if (data.success && data.groups.length > 0) {
+                data.groups.forEach(group => {
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = group.name;
+                    item.dataset.dn = group.dn;
+                    
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (currentGroupField) {
+                            currentGroupField.value = this.dataset.dn;
+                        }
+                        groupsModal.hide();
+                    });
+                    
+                    groupsListItems.appendChild(item);
+                });
+                
+                groupsLoading.style.display = 'none';
+                groupsList.style.display = 'block';
+            } else {
+                groupsErrorMessage.textContent = data.message || '{{ _("No groups found") }}';
+                groupsLoading.style.display = 'none';
+                groupsError.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('{{ _("Error loading groups:") }}', error);
+            groupsErrorMessage.textContent = '{{ _("An error occurred while loading groups") }}';
+            groupsLoading.style.display = 'none';
+            groupsError.style.display = 'block';
+        }
+    }
+});
+</script>
+{% endblock %}

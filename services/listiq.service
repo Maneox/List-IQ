@@ -1,0 +1,15 @@
+[Unit]
+Description=List-IQ Application Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/list-iq
+ExecStart=/usr/bin/docker-compose -f config/docker-compose.yml up -d
+ExecStop=/usr/bin/docker-compose -f config/docker-compose.yml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

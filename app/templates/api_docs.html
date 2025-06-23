@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ _('API Documentation') }} - {{ _('List-IQ') }}{% endblock %}
+
+{% block extra_css %}
+<!-- Swagger UI CSS -->
+<link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
+<style>
+    .swagger-ui .topbar {
+        display: none;
+    }
+    .swagger-container {
+        margin: 0;
+        padding: 0;
+    }
+    .api-info {
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>{{ _('API Documentation') }}</h1>
+            <div class="api-info">
+                <p>{% trans %}This page presents the interactive documentation for the List-IQ API. You can explore the available endpoints, their parameters, and test the requests directly from this interface.{% endtrans %}</p>
+                <div class="alert alert-info">
+                    <strong>{{ _('Note:') }}</strong> {% trans %}Some operations require administrator rights. See the "Access Restrictions" section for more information.{% endtrans %}
+                </div>
+                <div class="mb-3">
+                    <a href="{{ url_for('api_docs.api_docs_postman') }}" class="btn btn-primary">
+                        <i class="fas fa-download"></i> {{ _('Postman Integration Guide') }}
+                    </a>
+                    <a href="{{ url_for('api_docs.serve_openapi_spec') }}" class="btn btn-secondary" download="openapi.yaml">
+                        <i class="fas fa-file-download"></i> {{ _('Download OpenAPI File') }}
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-0">
+                    <div id="swagger-ui" class="swagger-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Swagger UI JS -->
+<script src="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js"></script>
+<script>
+    window.onload = function() {
+        const ui = SwaggerUIBundle({
+            url: "{{ url_for('api_docs.serve_openapi_spec') }}",
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            layout: "BaseLayout",
+            requestInterceptor: (req) => {
+                // Add the CSRF token to requests if necessary
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                if (csrfToken) {
+                    req.headers['X-CSRFToken'] = csrfToken;
+                }
+                return req;
+            }
+        });
+        window.ui = ui;
+    };
+</script>
+{% endblock %}

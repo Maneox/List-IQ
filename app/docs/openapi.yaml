@@ -1,0 +1,571 @@
+openapi: 3.0.0
+info:
+  title: List-IQ API
+  description: |
+    API for managing lists in a cybersecurity context.
+    This API allows for the management of lists, their columns, and their data.
+  version: 1.0.0
+  contact:
+    name: List-IQ Support
+
+servers:
+  - url: http://localhost/api
+    description: Local server
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Use an API token generated from the web interface.
+        Example: Bearer your_api_token
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        status:
+          type: integer
+          description: HTTP error code
+      required:
+        - error
+
+    List:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the list
+        name:
+          type: string
+          description: Name of the list
+        description:
+          type: string
+          description: Description of the list
+        is_published:
+          type: boolean
+          description: Indicates if the list is published
+        created_at:
+          type: string
+          format: date-time
+          description: Creation date of the list
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update date of the list
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListColumn'
+          description: Columns of the list
+      required:
+        - id
+        - name
+
+    ListColumn:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the column
+        name:
+          type: string
+          description: Name of the column
+        description:
+          type: string
+          description: Description of the column
+        column_type:
+          type: string
+          enum: [text, number, date, boolean, select]
+          description: Data type of the column
+        column_position:
+          type: integer
+          description: Position of the column in the list
+      required:
+        - id
+        - name
+        - column_type
+        
+    ListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the data row
+        list_id:
+          type: integer
+          description: Identifier of the list this row belongs to
+        data:
+          type: object
+          additionalProperties: true
+          description: Row data as key-value pairs
+        created_at:
+          type: string
+          format: date-time
+          description: Creation date of the row
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update date of the row
+      required:
+        - id
+        - list_id
+        - data
+
+    ApiToken:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the token
+        token:
+          type: string
+          description: Value of the API token (only returned upon creation)
+        name:
+          type: string
+          description: Name of the token
+        user_id:
+          type: integer
+          description: Identifier of the user who owns the token
+        created_at:
+          type: string
+          format: date-time
+          description: Creation date of the token
+        expires_at:
+          type: string
+          format: date-time
+          description: Expiration date of the token (optional)
+      required:
+        - id
+        - name
+        - user_id
+        - created_at
+
+    NewList:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the list
+        description:
+          type: string
+          description: Description of the list
+        update_type:
+          type: string
+          enum: [manual, automatic]
+          description: Update type (manual or automatic)
+        update_schedule:
+          type: string
+          description: Update schedule in cron format (e.g., "0 0 * * *" for every day at midnight)
+        update_config:
+          type: object
+          description: Update configuration (URL, format, etc.)
+          properties:
+            source:
+              type: string
+              enum: [url, file, api]
+              description: Data source
+            url:
+              type: string
+              description: URL of the data source
+            is_json:
+              type: boolean
+              description: Indicates if the data is in JSON format
+            format:
+              type: string
+              enum: [csv, json]
+              description: Data format
+        data_source_format:
+          type: string
+          enum: [csv, json]
+          description: Explicit format of the source data
+        is_published:
+          type: boolean
+          description: Indicates if the list is published
+        is_active:
+          type: boolean
+          description: Indicates if the list is active
+        filter_enabled:
+          type: boolean
+          description: Indicates if filtering is enabled
+        filter_rules:
+          type: string
+          description: Filtering rules in JSON format
+        ip_restriction_enabled:
+          type: boolean
+          description: Indicates if IP restriction is enabled
+        allowed_ips:
+          type: string
+          description: List of allowed IPs in JSON format (e.g., "[]")
+        max_results:
+          type: integer
+          description: Maximum number of results to retrieve
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewListColumn'
+          description: Columns of the list
+      required:
+        - name
+
+    NewListColumn:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the column
+        description:
+          type: string
+          description: Description of the column
+        column_type:
+          type: string
+          enum: [text, number, date, boolean, select]
+          description: Data type of the column
+      required:
+        - name
+        - column_type
+
+    NewListData:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+          description: Row data as key-value pairs
+      required:
+        - data
+
+paths:
+  /lists:
+    get:
+      summary: Retrieve all accessible lists
+      description: |
+        Retrieves the list of all lists accessible to the current user.
+        Administrators can see all lists, while standard users can only see published lists.
+      operationId: getLists
+      tags:
+        - Lists
+      responses:
+        '200':
+          description: List of accessible lists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/List'
+              example:
+                - id: 1
+                  name: "Watchlist"
+                  description: "List of suspicious IP addresses"
+                  is_published: true
+                  created_at: "2025-01-01T00:00:00Z"
+                  updated_at: "2025-01-02T10:30:00Z"
+                  columns:
+                    - id: 1
+                      name: "IP"
+                      description: "IP Address"
+                      column_type: "text"
+                      column_position: 1
+                    - id: 2
+                      name: "Country"
+                      description: "Country of origin"
+                      column_type: "text"
+                      column_position: 2
+                - id: 2
+                  name: "Blocklist"
+                  description: "IP addresses to block"
+                  is_published: true
+                  created_at: "2025-01-03T00:00:00Z"
+                  updated_at: "2025-01-03T14:15:00Z"
+                  columns:
+                    - id: 3
+                      name: "IP"
+                      description: "IP Address"
+                      column_type: "text"
+                      column_position: 1
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Authentication required"
+                status: 401
+    
+    post:
+      summary: Create a new list
+      description: |
+        Creates a new list with the specified columns.
+        This operation is reserved for administrators.
+      operationId: createList
+      tags:
+        - Lists
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewList'
+            examples:
+              simple:
+                summary: Simple list
+                value:
+                  name: "New List"
+                  description: "Description of the new list"
+                  is_published: false
+                  columns:
+                    - name: "Name"
+                      description: "Item name"
+                      column_type: "text"
+                    - name: "Value"
+                      description: "Numeric value"
+                      column_type: "number"
+              url_csv:
+                summary: URL CSV list with automatic update
+                value:
+                  name: "My URLCSVAPI List"
+                  description: "Description of my CSV list imported from a URL"
+                  update_type: "automatic"
+                  update_schedule: "0 0 * * *"
+                  columns:
+                    - name: "Name"
+                      column_type: "text"
+                    - name: "Age"
+                      column_type: "number"
+                    - name: "Email"
+                      column_type: "text"
+                  update_config:
+                    source: "url"
+                    url: "https://example.com/data.csv"
+                    is_json: false
+                    format: "csv"
+                  data_source_format: "csv"
+                  is_active: true
+                  is_published: false
+                  filter_enabled: false
+                  ip_restriction_enabled: false
+                  allowed_ips: "[]"
+                  max_results: 100
+      responses:
+        '201':
+          description: List created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+              example:
+                id: 3
+                name: "New List"
+                description: "Description of the new list"
+                is_published: false
+                created_at: "2025-05-19T01:59:00Z"
+                updated_at: "2025-05-19T01:59:00Z"
+                columns:
+                  - id: 5
+                    name: "Name"
+                    description: "Item name"
+                    column_type: "text"
+                    column_position: 1
+                  - id: 6
+                    name: "Value"
+                    description: "Numeric value"
+                    column_type: "number"
+                    column_position: 2
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "List name required"
+                status: 400
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Access reserved for administrators"
+                status: 403
+
+  /lists/{list_id}:
+    get:
+      summary: Retrieve a specific list
+      description: |
+        Retrieves the details of a specific list, including its columns.
+        Administrators can access all lists, while standard users can only access published lists.
+      operationId: getList
+      tags:
+        - Lists
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          description: Identifier of the list
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "You do not have access to this list"
+                status: 403
+        '404':
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "List not found"
+                status: 404
+    
+    put:
+      summary: Update a list
+      description: |
+        Updates the details of an existing list.
+        This operation is reserved for administrators.
+      operationId: updateList
+      tags:
+        - Lists
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          description: Identifier of the list
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name for the list
+                description:
+                  type: string
+                  description: New description for the list
+                is_published:
+                  type: boolean
+                  description: New publication status
+            example:
+              name: "Updated List"
+              description: "Updated description"
+              is_published: true
+      responses:
+        '200':
+          description: List updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      summary: Delete a list
+      description: |
+        Deletes a list and all of its associated data.
+        This operation is reserved for administrators.
+      operationId: deleteList
+      tags:
+        - Lists
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          description: Identifier of the list
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Confirmation message
+              example:
+                message: "List deleted successfully"
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
