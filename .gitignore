@@ -1,15 +1,20 @@
 docs/Exemples de listes
 docs/exemples de listes
-.vscode/settings.json
-.sonarlint/connectedMode.json
-app/logs/*
-app/admin_logs/*
-app/cron_logs/*
-app/ssl/*
-app/cert/*
+.vscode
+.sonarlint
+
+# fichiers de configuration
+.env
+.env.example
+app/nginx.conf
+app/ini.sql
 docker-compose.yml
 Dockerfile
-ini.sql
-nginx.conf
-.env
-.gitignore
+
+#certificats
+app/ssl/*  
+app/cert/* 
+
+
+# fichiers de logs
+app/logs/*
