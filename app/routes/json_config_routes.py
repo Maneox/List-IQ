@@ -329,7 +329,7 @@ def _import_data(list_obj):
                     break
             
             if is_internal_url and PUBLIC_JSON_PATH in url:
-                current_app.logger.info(f"Detected an internal URL, using an alternative method")
+                current_app.logger.info("Detected an internal URL, using an alternative method")
                 
                 # Extract the public list identifier from the URL
                 # Expected format: .../public/json/IDENTIFIER
@@ -351,10 +351,10 @@ def _import_data(list_obj):
                         current_app.logger.info(f"JSON data retrieved directly: {output[:200]}...")
                     else:
                         current_app.logger.error(f"Internal list with public ID {public_id} not found")
-                        raise Exception(f"List with public ID {public_id} not found")
+                        raise ConfigurationError(f"List with public ID {public_id} not found")
                 else:
                     current_app.logger.error(f"Invalid internal URL format: {url}")
-                    raise Exception(f"Invalid internal URL format: {url}")
+                    raise ConfigurationError(f"Invalid internal URL format: {url}")
             else:
                 # Standard method for external URLs
                 import requests
