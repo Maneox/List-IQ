@@ -98,6 +98,165 @@ def create_list():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+def _validate_import_file(request_files):
+    """Validates the uploaded file."""
+    if 'file' not in request_files:
+        raise ValueError('No file provided')
+    file = request_files['file']
+    if file.filename == '':
+        raise ValueError('No file selected')
+    if not file.filename.endswith('.csv'):
+        raise ValueError('Unsupported file format. Use CSV.')
+    return file
+
+def _validate_csv_columns(csv_reader, list_columns):
+    """Validates the columns of the CSV file."""
+    if not csv_reader.fieldnames:
+        raise ValueError('The CSV file is empty or poorly formatted')
+    file_columns = set(csv_reader.fieldnames)
+    if not file_columns.issubset(list_columns):
+        invalid_columns = file_columns - list_columns
+        invalid_cols_str = ', '.join(invalid_columns)
+        raise ValueError(f'Invalid columns found: {invalid_cols_str}')
+
+def _process_import_row(row_num, row, columns_dict, list_id):
+    """Processes and validates a single row from the CSV."""
+    validated_data = {}
+    for col_name, value in row.items():
+        if col_name in columns_dict:
+            try:
+                validated_data[col_name] = validate_value(value, columns_dict[col_name].column_type)
+            except ValueError as ve:
+                raise ValueError(f"Row {row_num}, column '{col_name}': {str(ve)}")
+    
+    for col_name, value in validated_data.items():
+        column = columns_dict[col_name]
+        data = ListData(
+            list_id=list_id,
+            row_id=row_num,
+            column_position=column.position,
+            value=value
+        )
+        db.session.add(data)
+
+def _update_public_files_safely(list_obj):
+    """Updates public files and logs errors without raising them."""
+    if list_obj.public_csv_enabled or list_obj.public_json_enabled:
+        try:
+            update_public_files(list_obj)
+            current_app.logger.info(f"Public files updated for list {list_obj.id} after import")
+        except Exception as e:
+            current_app.logger.error(f"Error updating public files after import: {str(e)}")
+
+@api_bp.route('/api/lists/<int:list_id>/import', methods=['POST'])
+@login_required
+def import_data(list_id):
+    """Import data from a CSV file"""
+    if not current_user.is_admin:
+        return jsonify(UNAUTHORIZED_ACCESS), 403
+
+    list_obj = List.query.get_or_404(list_id)
+    
+    try:
+        file = _validate_import_file(request.files)
+        columns_dict = {col.name: col for col in list_obj.columns}
+        
+        csv_content = file.read().decode('utf-8-sig')
+        stream = io.StringIO(csv_content)
+        csv_reader = csv.DictReader(stream)
+        
+        _validate_csv_columns(csv_reader, set(columns_dict.keys()))
+        
+        row_count = 0
+        error_rows = []
+        for row_num, row in enumerate(csv_reader, start=1):
+            try:
+                _process_import_row(row_num, row, columns_dict, list_obj.id)
+                row_count += 1
+                if row_count % 100 == 0:
+                    db.session.commit()
+            except Exception as e:
+                error_rows.append({'row': row_num, 'error': str(e), 'data': row})
+                current_app.logger.error(f"Error on row {row_num}: {str(e)}")
+
+        db.session.commit()
+        list_obj.last_update = get_paris_now()
+        db.session.commit()
+        
+        _update_public_files_safely(list_obj)
+
+        response = {
+            'message': 'Import finished',
+            'stats': {
+                'total_rows': row_count + len(error_rows),
+                'successful_rows': row_count,
+                'error_rows': len(error_rows)
+            }
+        }
+        if error_rows:
+            response['errors'] = error_rows[:10]
+            response['message'] = 'Import finished with errors'
+        
+        return jsonify(response)
+
+    except Exception as e:
+        current_app.logger.error(f"Import error for list {list_id}: {str(e)}")
+        db.session.rollback()
+        return jsonify({'error': 'Error during import', 'details': str(e)}), 500
+
+def _update_basic_fields(list_obj, data):
+    """Updates basic fields of a list object from request data."""
+    if 'name' in data:
+        list_obj.name = data['name']
+    if 'description' in data:
+        list_obj.description = data['description']
+    if 'update_type' in data:
+        list_obj.update_type = data['update_type']
+    if 'is_active' in data:
+        list_obj.is_active = data['is_active']
+    if 'is_published' in data:
+        list_obj.is_published = data['is_published']
+    if 'update_config' in data and isinstance(data['update_config'], dict):
+        list_obj.set_update_config(data['update_config'])
+
+def _update_schedule(list_obj, data, app_context):
+    """Updates the schedule for a list and reschedules the task if necessary."""
+    old_schedule = list_obj.update_schedule
+    if 'update_schedule' in data:
+        list_obj.update_schedule = data['update_schedule']
+        
+        if old_schedule != list_obj.update_schedule and list_obj.update_type == 'automatic':
+            app_context.logger.info(f"API: Schedule changed for list {list_obj.id}: {old_schedule} -> {list_obj.update_schedule}")
+            try:
+                scheduler = SchedulerService(app_context)
+                scheduler._schedule_list(list_obj)
+                app_context.logger.info(f"API: Task rescheduled successfully for list {list_obj.id}")
+            except Exception as e:
+                app_context.logger.error(f"API: Error rescheduling task for list {list_obj.id}: {str(e)}")
+
+def _update_columns(list_obj, data):
+    """Updates the columns of a list from request data."""
+    if 'columns' in data:
+        existing_columns = {col.name: col for col in list_obj.columns}
+        new_columns = []
+        
+        for i, column_data in enumerate(data['columns']):
+            column_name = column_data['name']
+            if column_name in existing_columns:
+                column = existing_columns[column_name]
+                column.position = i
+                column.column_type = column_data.get('type', column.column_type)
+                new_columns.append(column)
+            else:
+                new_column = ListColumn(
+                    name=column_name,
+                    position=i,
+                    column_type=column_data.get('type', 'text')
+                )
+                new_columns.append(new_column)
+        
+        list_obj.columns = new_columns
+
 @api_bp.route('/api/lists/<int:list_id>', methods=['PUT'])
 @login_required
 def update_list(list_id):
@@ -109,60 +268,9 @@ def update_list(list_id):
     data = request.get_json()
     
     try:
-        # Update basic fields
-        if 'name' in data:
-            list_obj.name = data['name']
-        if 'description' in data:
-            list_obj.description = data['description']
-        if 'update_type' in data:
-            list_obj.update_type = data['update_type']
-        # Store the old schedule to detect changes
-        old_schedule = list_obj.update_schedule
-        if 'update_schedule' in data:
-            list_obj.update_schedule = data['update_schedule']
-            
-            # Check if the schedule has been changed
-            if old_schedule != list_obj.update_schedule and list_obj.update_type == 'automatic':
-                current_app.logger.info(f"API: Schedule changed for list {list_obj.id}: {old_schedule} -> {list_obj.update_schedule}")
-                try:
-                    # Reschedule the task with the new schedule
-                    scheduler = SchedulerService(current_app)
-                    scheduler._schedule_list(list_obj)
-                    current_app.logger.info(f"API: Task rescheduled successfully for list {list_obj.id}")
-                except Exception as e:
-                    current_app.logger.error(f"API: Error rescheduling task for list {list_obj.id}: {str(e)}")
-        if 'update_config' in data:
-            if isinstance(data['update_config'], dict):
-                list_obj.set_update_config(data['update_config'])
-        if 'is_active' in data:
-            list_obj.is_active = data['is_active']
-        if 'is_published' in data:
-            list_obj.is_published = data['is_published']
-        
-        # Update columns
-        if 'columns' in data:
-            existing_columns = {col.name: col for col in list_obj.columns}
-            new_columns = []
-            
-            for i, column_data in enumerate(data['columns']):
-                column_name = column_data['name']
-                if column_name in existing_columns:
-                    # Update existing column
-                    column = existing_columns[column_name]
-                    column.position = i
-                    column.column_type = column_data.get('type', column.column_type)
-                    new_columns.append(column)
-                else:
-                    # Create a new column
-                    new_column = ListColumn(
-                        name=column_name,
-                        position=i,
-                        column_type=column_data.get('type', 'text')
-                    )
-                    new_columns.append(new_column)
-            
-            # Update the columns
-            list_obj.columns = new_columns
+        _update_basic_fields(list_obj, data)
+        _update_schedule(list_obj, data, current_app)
+        _update_columns(list_obj, data)
         
         db.session.commit()
         return jsonify({
@@ -325,217 +433,3 @@ def update_row(list_id, row_id):
         current_app.logger.error(f"Error during update: {str(e)}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
-@api_bp.route('/api/lists/<int:list_id>/import', methods=['POST'])
-@login_required
-def import_data(list_id):
-    """Import data from a CSV file"""
-    if not current_user.is_admin:
-        return jsonify(UNAUTHORIZED_ACCESS), 403
-        
-    # Debug logs
-    current_app.logger.info(f"Looking for list with ID: {list_id}")
-    list_obj = List.query.get_or_404(list_id)
-    current_app.logger.info(f"Found list: {list_obj.name} (ID: {list_obj.id})")
-    current_app.logger.info(f"List columns: {[f'{col.name} (pos: {col.position})' for col in list_obj.columns]}")
-    
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-        
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-        
-    if not file.filename.endswith('.csv'):
-        return jsonify({'error': 'Unsupported file format. Use CSV.'}), 400
-    
-    try:
-        # Create a dictionary of columns for quick access
-        columns_dict = {col.name: col for col in list_obj.columns}
-        
-        # Read the CSV file
-        csv_content = file.read().decode('utf-8-sig')  # Handle UTF-8 BOM
-        stream = io.StringIO(csv_content)
-        csv_reader = csv.DictReader(stream)
-        
-        # Debug logs
-        current_app.logger.info(f"CSV fieldnames: {csv_reader.fieldnames}")
-        
-        # Check columns
-        if not csv_reader.fieldnames:
-            return jsonify({'error': 'The CSV file is empty or poorly formatted'}), 400
-            
-        file_columns = set(csv_reader.fieldnames)
-        list_columns = set(columns_dict.keys())
-        
-        if not file_columns.issubset(list_columns):
-            invalid_columns = file_columns - list_columns
-            return jsonify({
-                'error': f'Invalid columns found: {", ".join(invalid_columns)}',
-                'details': {
-                    'file_columns': list(file_columns),
-                    'expected_columns': list(list_columns)
-                }
-            }), 400
-            
-        # Import data
-        row_count = 0
-        error_rows = []
-        
-        for row_num, row in enumerate(csv_reader, start=1):
-            try:
-                # Validate and format the data
-                validated_data = {}
-                for col_name, value in row.items():
-                    if col_name in columns_dict:
-                        try:
-                            validated_data[col_name] = validate_value(value, columns_dict[col_name].column_type)
-                        except ValueError as ve:
-                            raise ValueError(f"Row {row_num}, column '{col_name}': {str(ve)}")
-                
-                # Add validated data
-                for col_name, value in validated_data.items():
-                    column = columns_dict[col_name]
-                    data = ListData(
-                        list_id=list_obj.id,
-                        row_id=row_num,
-                        column_position=column.position,
-                        value=value
-                    )
-                    db.session.add(data)
-                
-                row_count += 1
-                
-                # Commit every 100 rows to avoid memory overload
-                if row_count % 100 == 0:
-                    db.session.commit()
-                    current_app.logger.info(f"Committed {row_count} rows")
-                
-            except Exception as e:
-                error_rows.append({
-                    'row': row_num,
-                    'error': str(e),
-                    'data': row
-                })
-                current_app.logger.error(f"Error on row {row_num}: {str(e)}")
-                continue
-        
-        # Final commit
-        if row_count % 100 != 0:
-            db.session.commit()
-        
-        # Update the last update date
-        list_obj.last_update = get_paris_now()
-        db.session.commit()
-        
-        # Update public files if enabled
-        if list_obj.public_csv_enabled or list_obj.public_json_enabled:
-            try:
-                update_public_files(list_obj)
-                current_app.logger.info(f"Public files updated for list {list_id} after import")
-            except Exception as e:
-                current_app.logger.error(f"Error updating public files after import: {str(e)}")
-                # Do not block the response if updating public files fails
-        
-        # Prepare the response
-        response = {
-            'message': 'Import finished',
-            'stats': {
-                'total_rows': row_count,
-                'successful_rows': row_count - len(error_rows),
-                'error_rows': len(error_rows)
-            }
-        }
-        
-        if error_rows:
-            response['errors'] = error_rows[:10]  # Limit to 10 errors in the response
-            response['message'] = 'Import finished with errors'
-            
-        return jsonify(response)
-        
-    except Exception as e:
-        current_app.logger.error(f"Import error: {str(e)}")
-        db.session.rollback()
-        return jsonify({
-            'error': 'Error during import',
-            'details': str(e)
-        }), 500
-
-@api_bp.route('/api/lists/<int:list_id>/export', methods=['GET'])
-@login_required
-def export_list_data(list_id):
-    """Export list data in CSV or JSON format"""
-    if not current_user.is_admin:
-        return jsonify(UNAUTHORIZED_ACCESS), 403
-        
-    list_obj = List.query.get_or_404(list_id)
-    format_type = request.args.get('format', 'csv')
-    
-    if format_type not in ['csv', 'json']:
-        return jsonify({'error': 'Unsupported format'}), 400
-    
-    # Get the data
-    data = list_obj.get_data()
-    
-    if format_type == 'json':
-        return jsonify(data)
-    else:  # CSV
-        if not data:
-            return jsonify({'error': 'No data to export'}), 404
-            
-        # Create the CSV file in memory
-        output = io.StringIO()
-        writer = csv.writer(output)
-        
-        # Write the header
-        headers = [col.name for col in list_obj.columns]
-        writer.writerow(headers)
-        
-        # Write the data
-        for row in data:
-            writer.writerow([row.get(header, '') for header in headers])
-        
-        # Prepare the response
-        output.seek(0)
-        return send_file(
-            io.BytesIO(output.getvalue().encode('utf-8')),
-            mimetype='text/csv',
-            as_attachment=True,
-            download_name=f'{list_obj.name}_{get_paris_now().strftime("%Y%m%d_%H%M%S")}.csv'
-        )
-
-@api_bp.route('/api/lists/<int:list_id>/rows/delete-multiple', methods=['POST'])
-@login_required
-def delete_multiple_rows(list_id):
-    """Delete multiple data rows"""
-    if not current_user.is_admin:
-        return jsonify(UNAUTHORIZED_ACCESS), 403
-        
-    data = request.get_json()
-    
-    if not data or not data.get('row_ids'):
-        return jsonify({'error': 'Row IDs required'}), 400
-    
-    row_ids = data.get('row_ids')
-    
-    try:
-        # Delete the rows
-        deleted_count = 0
-        for row_id in row_ids:
-            row = ListData.query.filter_by(list_id=list_id, id=row_id).first()
-            if row:
-                db.session.delete(row)
-                deleted_count += 1
-        
-        db.session.commit()
-        return jsonify({
-            'success': True,
-            'message': f'{deleted_count} row(s) deleted successfully'
-        })
-    except Exception as e:
-        current_app.logger.error(f"Error during multiple deletion: {str(e)}")
-        db.session.rollback()
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
