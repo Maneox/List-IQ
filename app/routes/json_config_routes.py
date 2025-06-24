@@ -3,7 +3,14 @@ import json
 import subprocess
 import re
 import os
-from functools import wraps
+from werkzeug.utils import secure_filename
+from exceptions import ConfigurationError, CurlExecutionError
+
+# Constants for curl error messages
+CURL_COMMAND_NOT_DEFINED = "Curl command not defined"
+CURL_NO_OUTPUT = "Curl command returned no output"
+CURL_EXECUTION_FAILED = "Curl command failed: {error}"
+CURL_UNEXPECTED_ERROR = "An unexpected error occurred during curl execution: {error}"
 
 # Flask imports
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
@@ -14,11 +21,6 @@ from routes.decorators import admin_required
 from models.list import List
 from database import db, csrf
 from services.scheduler_service import SchedulerService
-
-# Custom Exceptions
-class UnsupportedDataSourceError(Exception):
-    """Raised when the data source is not supported."""
-    pass
 
 json_config_bp = Blueprint('json_config_bp', __name__)
 
@@ -165,8 +167,8 @@ def json_config(list_id):
             # Execute the curl command to get the data
             curl_command = config.get('curl_command', '')
             if not curl_command:
-                current_app.logger.error("Curl command not defined")
-                raise Exception("Curl error: command not defined")
+                current_app.logger.error(CURL_COMMAND_NOT_DEFINED)
+                raise ConfigurationError(CURL_COMMAND_NOT_DEFINED)
             
             current_app.logger.info(f"Executing curl command: {curl_command}")
             
@@ -176,15 +178,17 @@ def json_config(list_id):
                 output = result.stdout
                 
                 if not output:
-                    current_app.logger.error("Error executing curl command: no output")
-                    raise Exception("Curl error: no output")
+                    current_app.logger.error(CURL_NO_OUTPUT)
+                    raise CurlExecutionError(CURL_NO_OUTPUT)
             except subprocess.CalledProcessError as e:
+                error_message = CURL_EXECUTION_FAILED.format(error=e.stderr)
                 current_app.logger.error(f"Error executing curl command: {e}")
                 current_app.logger.error(f"Error output: {e.stderr}")
-                raise Exception(f"Curl error: {e}")
+                raise CurlExecutionError(error_message) from e
             except Exception as e:
+                error_message = CURL_UNEXPECTED_ERROR.format(error=e)
                 current_app.logger.error(f"Exception executing curl command: {e}")
-                raise Exception(f"Curl error: {e}")
+                raise CurlExecutionError(error_message) from e
         
         elif is_json_url:
             # Get the URL from the configuration
