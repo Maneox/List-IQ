@@ -133,7 +133,7 @@ def _prepare_preview(list_obj, config):
                     except ValueError:
                         output = response.text
                 except Exception as e:
-                    raise Exception(f"Error getting data: {str(e)}")
+                    raise CurlExecutionError(f"Error getting data: {str(e)}")
         else:
             raise ConfigurationError("Unsupported data source for preview")
         # 2. Parsing JSON
@@ -142,9 +142,10 @@ def _prepare_preview(list_obj, config):
             try:
                 raw_data = json.loads(output)
                 raw_data_preview = json.dumps(raw_data, indent=2, ensure_ascii=False)
-            except Exception:
-                raw_data_preview = output[:1000] + "..." if len(output) > 1000 else output
-                raw_data = {}
+            except Exception as e:
+                current_app.logger.error(f"Error parsing JSON: {str(e)}")
+                current_app.logger.error(f"Raw output: {output[:200]}...")
+                raise ConfigurationError(f"Erreur lors de l'analyse du JSON : {str(e)}")
         # 3. Navigation dans le chemin JSON (si défini)
         data = raw_data
         if getattr(list_obj, 'json_data_path', None):
@@ -252,7 +253,7 @@ def _import_data(list_obj):
         db.session.commit()
         db.session.refresh(list_obj)
     if not list_obj.update_from_url():
-        raise Exception("Erreur lors de la mise à jour des données")
+        raise ConfigurationError("Erreur lors de la mise à jour des données")
 
     
     # Get raw data for preview
@@ -306,8 +307,8 @@ def _import_data(list_obj):
             # Get the URL from the configuration
             url = config.get('url', '')
             if not url:
-                current_app.logger.error("URL not defined")
-                raise Exception("Error: URL not defined")
+                current_app.logger.error(CURL_URL_NOT_DEFINED)
+                raise ConfigurationError(CURL_URL_NOT_DEFINED)
             
             current_app.logger.info(f"Getting JSON data from URL: {url}")
             
@@ -376,10 +377,10 @@ def _import_data(list_obj):
                         current_app.logger.info(f"URL request result (raw text): {output[:200]}...")
                 except requests.exceptions.SSLError as ssl_err:
                     current_app.logger.error(f"SSL error while getting data: {str(ssl_err)}")
-                    raise Exception(f"SSL error: {str(ssl_err)}")
+                    raise CurlExecutionError(f"SSL error: {str(ssl_err)}")
                 except Exception as e:
                     current_app.logger.error(f"Error getting data from URL: {str(e)}")
-                    raise Exception(f"Error getting data: {str(e)}")
+                    raise CurlExecutionError(f"Error getting data: {str(e)}")
         
         else:
             current_app.logger.error("Unsupported data source")
@@ -389,16 +390,14 @@ def _import_data(list_obj):
         if output:
             try:
                 raw_data = json.loads(output)
-                current_app.logger.info(f"JSON data retrieved successfully")
+                current_app.logger.info("JSON data retrieved successfully")
                 
                 # Format the JSON data for display
                 raw_data_preview = json.dumps(raw_data, indent=2)
             except Exception as e:
                 current_app.logger.error(f"Error parsing JSON: {str(e)}")
                 current_app.logger.error(f"Raw output: {output[:200]}...")
-                # Do not raise an exception here, but set raw_data_preview with the raw data
-                raw_data_preview = output[:1000] + "..." if len(output) > 1000 else output
-                raw_data = {}
+                raise ConfigurationError(f"Erreur lors de l'analyse du JSON : {str(e)}")
         
         # Prepare the column preview if a path is defined
         data = raw_data
