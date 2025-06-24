@@ -39,109 +39,218 @@ def check_list_ownership(f):
 @login_required
 @admin_required
 def json_config(list_id):
-    """Configuration page for JSON import"""
-    current_app.logger.info(f"Accessing JSON configuration page for list {list_id}")
-    
-    # Explicitly import List in this function to avoid scope issues
+    """Page de configuration pour l'import JSON (refactorisée)"""
     from models.list import List
-    
-    # Get the list object
-    list_obj = List.query.get_or_404(list_id)
-    current_app.logger.info(f"List retrieved: {list_obj.name}")
-    
-    # Check if the list uses Curl API or JSON via URL
-    config = list_obj.update_config
-    current_app.logger.info(f"Configuration: {config}")
-    
-    # Check if it's a Curl API or JSON via URL type list
-    is_curl_api = (list_obj.update_type == 'automatic' and 
-                  config and 
-                  config.get('source') == 'api' and 
-                  config.get('api_type') == 'curl')
-    
-    is_json_url = (list_obj.update_type == 'automatic' and 
-                  config and 
-                  config.get('source') == 'url' and 
-                  (config.get('is_json') == True or config.get('format') == 'json'))
-    
-    if not (is_curl_api or is_json_url):
-        flash('This list does not require JSON configuration', 'warning')
-        return redirect(url_for('list_bp.view_list', list_id=list_id))
-    
-    # Form processing
+    list_obj, config = _get_list_and_config(list_id)
+
+    if not (_is_curl_api(list_obj, config) or _is_json_url(list_obj, config)):
+        return _handle_error('Cette liste ne nécessite pas de configuration JSON', 'list_bp.view_list', list_id)
+
     if request.method == 'POST':
-        # Get form data
-        data_path = request.form.get('data_path', '')
-        pagination_enabled = 'pagination_enabled' in request.form
-        next_page_path = request.form.get('next_page_path', '')
-        max_pages = int(request.form.get('max_pages', 10))
-        
-        # Get selected columns
-        selected_columns = []
-        for key, value in request.form.items():
-            if key.startswith('include_column_'):
-                column_name = key.replace('include_column_', '')
-                column_type = request.form.get(f'column_type_{column_name}', 'text')
-                selected_columns.append({
-                    'name': column_name,
-                    'type': column_type
-                })
-        
-        # Update the configuration
-        list_obj.json_data_path = data_path
-        list_obj.json_pagination_enabled = pagination_enabled
-        list_obj.json_next_page_path = next_page_path
-        list_obj.json_max_pages = max_pages
-        list_obj.json_selected_columns = json.dumps(selected_columns)
-        list_obj.json_config_status = 'configured'
-        
-        # Explicitly set the data format to "json"
+        form_data = _extract_form_data(request.form)
+        selected_columns = _get_selected_columns(request.form)
+        form_data['selected_columns'] = selected_columns
+        _update_list_config(list_obj, form_data)
+        try:
+            _import_data(list_obj)
+            flash('Configuration JSON enregistrée et import réussi', 'success')
+        except Exception as e:
+            current_app.logger.error(f"Erreur lors de l'import : {str(e)}")
+            flash(f'Configuration JSON enregistrée mais erreur lors de l\'import : {str(e)}', 'warning')
+        return redirect(url_for('list_bp.view_list', list_id=list_id))
+
+    # Préparation de l'aperçu
+    raw_data_preview, columns_preview = _prepare_preview(list_obj, config)
+    return render_template('lists/json_config.html', 
+                          list=list_obj, 
+                          raw_data_preview=raw_data_preview, 
+                          columns_preview=columns_preview)
+
+# --- Sous-fonction pour l’aperçu JSON/colonnes ---
+def _prepare_preview(list_obj, config):
+    """
+    Prépare l’aperçu des données JSON et des colonnes détectées
+    à partir de la configuration de la liste (Curl ou URL).
+    Retourne (raw_data_preview, columns_preview).
+    """
+    import re
+    import json
+    import subprocess
+    import requests
+    raw_data_preview = None
+    columns_preview = []
+    output = None
+    # 1. Détection de la source
+    is_curl_api = _is_curl_api(list_obj, config)
+    is_json_url = _is_json_url(list_obj, config)
+    try:
+        if is_curl_api:
+            curl_command = config.get('curl_command', '')
+            if not curl_command:
+                raise ConfigurationError("Curl command not defined")
+            try:
+                result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
+                output = result.stdout
+                if not output:
+                    raise CurlExecutionError("Curl command returned no output")
+            except subprocess.CalledProcessError as e:
+                raise CurlExecutionError(f"Curl command failed: {e.stderr}") from e
+            except Exception as e:
+                raise CurlExecutionError(f"Unexpected error during curl execution: {e}") from e
+        elif is_json_url:
+            url = config.get('url', '')
+            if not url:
+                raise Exception("URL not defined")
+            # Détection URL interne (application)
+            import os
+            app_domain = os.environ.get('SERVER_NAME') or (hasattr(current_app, 'config') and current_app.config.get('SERVER_NAME', 'localhost'))
+            internal_domains = ["localhost:5000", "web:5000", "nginx", app_domain]
+            is_internal_url = any(domain in url for domain in internal_domains)
+            if is_internal_url and "/public/json/" in url:
+                parts = url.split("/public/json/")
+                if len(parts) == 2:
+                    public_id = parts[1].split("?")[0].strip()
+                    from models.list import List
+                    source_list = List.query.filter_by(public_access_token=public_id).first()
+                    if source_list:
+                        json_data = source_list.generate_public_json()
+                        output = json.dumps(json_data)
+                    else:
+                        raise Exception(f"List with public ID {public_id} not found")
+                else:
+                    raise Exception(f"Invalid internal URL format: {url}")
+            else:
+                headers = {'Accept': 'application/json'}
+                try:
+                    response = requests.get(url, headers=headers, timeout=30, verify=False)
+                    response.raise_for_status()
+                    try:
+                        json_data = response.json()
+                        output = json.dumps(json_data)
+                    except ValueError:
+                        output = response.text
+                except Exception as e:
+                    raise Exception(f"Error getting data: {str(e)}")
+        else:
+            raise Exception("Unsupported data source for preview")
+        # 2. Parsing JSON
+        raw_data = {}
+        if output:
+            try:
+                raw_data = json.loads(output)
+                raw_data_preview = json.dumps(raw_data, indent=2, ensure_ascii=False)
+            except Exception:
+                raw_data_preview = output[:1000] + "..." if len(output) > 1000 else output
+                raw_data = {}
+        # 3. Navigation dans le chemin JSON (si défini)
+        data = raw_data
+        if getattr(list_obj, 'json_data_path', None):
+            try:
+                for key in list_obj.json_data_path.split('.'):
+                    if not key:
+                        continue
+                    if key.isdigit() and isinstance(data, list) and int(key) < len(data):
+                        data = data[int(key)]
+                    elif isinstance(data, dict) and key in data:
+                        data = data[key]
+                    elif isinstance(data, list) and len(data) > 0:
+                        data = data[0]
+                    else:
+                        data = None
+                        break
+            except Exception:
+                data = None
+        # 4. Extraction des colonnes (échantillon)
+        sample_data = {}
+        if data:
+            if isinstance(data, dict):
+                sample_data = data
+            elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+                sample_data = data[0]
+        for key, value in sample_data.items():
+            column_type = 'text'
+            if isinstance(value, (int, float)):
+                column_type = 'number'
+            elif isinstance(value, str):
+                if re.match(r'\d{4}-\d{2}-\d{2}', value):
+                    column_type = 'date'
+                elif re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', value):
+                    column_type = 'ip'
+            columns_preview.append({'name': key, 'type': column_type, 'include': True})
+    except Exception as e:
+        current_app.logger.error(f"Erreur lors de la préparation de l'aperçu JSON : {str(e)}")
+    return raw_data_preview, columns_preview
+
+# --- Sous-fonctions privées ---
+def _get_list_and_config(list_id):
+    from models.list import List
+    list_obj = List.query.get_or_404(list_id)
+    config = list_obj.update_config
+    return list_obj, config
+
+def _is_curl_api(list_obj, config):
+    return (
+        list_obj.update_type == 'automatic' and
+        config and
+        config.get('source') == 'api' and
+        config.get('api_type') == 'curl'
+    )
+
+def _is_json_url(list_obj, config):
+    return (
+        list_obj.update_type == 'automatic' and
+        config and
+        config.get('source') == 'url' and
+        (config.get('is_json') is True or config.get('format') == 'json')
+    )
+
+def _extract_form_data(form):
+    return {
+        'data_path': form.get('data_path', ''),
+        'pagination_enabled': 'pagination_enabled' in form,
+        'next_page_path': form.get('next_page_path', ''),
+        'max_pages': int(form.get('max_pages', 10)),
+    }
+
+def _get_selected_columns(form):
+    selected_columns = []
+    for key, value in form.items():
+        if key.startswith('include_column_'):
+            column_name = key.replace('include_column_', '')
+            column_type = form.get(f'column_type_{column_name}', 'text')
+            selected_columns.append({
+                'name': column_name,
+                'type': column_type
+            })
+    return selected_columns
+
+def _update_list_config(list_obj, form_data):
+    list_obj.json_data_path = form_data['data_path']
+    list_obj.json_pagination_enabled = form_data['pagination_enabled']
+    list_obj.json_next_page_path = form_data['next_page_path']
+    list_obj.json_max_pages = form_data['max_pages']
+    list_obj.json_selected_columns = json.dumps(form_data['selected_columns'])
+    list_obj.json_config_status = 'configured'
+    list_obj.data_source_format = 'json'
+    config = list_obj.update_config
+    config['format'] = 'json'
+    config['is_json'] = True
+    list_obj.update_config = config
+    db.session.commit()
+    db.session.refresh(list_obj)
+
+def _import_data(list_obj):
+    if list_obj.data_source_format != 'json':
         list_obj.data_source_format = 'json'
-        current_app.logger.info(f"Data format set to 'json' for list {list_id}")
-        
-        # Also update the configuration to ensure consistency
         config = list_obj.update_config
         config['format'] = 'json'
         config['is_json'] = True
         list_obj.update_config = config
-        current_app.logger.info(f"Configuration updated with format='json' and is_json=True for list {list_id}")
-        
-        # Save the changes
         db.session.commit()
-        
-        # Check after saving that the format is correctly set
         db.session.refresh(list_obj)
-        current_app.logger.info(f"After saving: format={list_obj.data_source_format}, config={list_obj.update_config}")
-        
-        # Trigger data import immediately
-        try:
-            # Check one last time that the format is correctly set to JSON
-            if list_obj.data_source_format != 'json':
-                current_app.logger.warning(f"Format still incorrect before import: {list_obj.data_source_format}. Forcing correction.")
-                list_obj.data_source_format = 'json'
-                config = list_obj.update_config
-                config['format'] = 'json'
-                config['is_json'] = True
-                list_obj.update_config = config
-                db.session.commit()
-                db.session.refresh(list_obj)
-            
-            current_app.logger.info(f"Triggering data import for list {list_id} with format={list_obj.data_source_format}")
-            
-            # Directly use the update_from_url method of the List object
-            # The update_from_url method already passes force_update=True to DataImporter.import_data
-            if list_obj.update_from_url():
-                current_app.logger.info(f"List {list_id} updated successfully")
-                flash('JSON configuration saved and data import successful', 'success')
-            else:
-                current_app.logger.error(f"Failed to update list {list_id}")
-                flash('JSON configuration saved but error during data import', 'warning')
-                
-        except Exception as e:
-            current_app.logger.error(f"Error during data import: {str(e)}")
-            flash(f'JSON configuration saved but error during data import: {str(e)}', 'warning')
-        
-        return redirect(url_for('list_bp.view_list', list_id=list_id))
+    if not list_obj.update_from_url():
+        raise Exception("Erreur lors de la mise à jour des données")
+
     
     # Get raw data for preview
     raw_data_preview = None
