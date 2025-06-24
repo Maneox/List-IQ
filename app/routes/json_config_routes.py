@@ -11,6 +11,8 @@ CURL_COMMAND_NOT_DEFINED = "Curl command not defined"
 CURL_NO_OUTPUT = "Curl command returned no output"
 CURL_EXECUTION_FAILED = "Curl command failed: {error}"
 CURL_UNEXPECTED_ERROR = "An unexpected error occurred during curl execution: {error}"
+CURL_URL_NOT_DEFINED = "URL not defined"
+MIME_TYPE_JSON = "application/json"
 
 # Flask imports
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
@@ -100,7 +102,7 @@ def _prepare_preview(list_obj, config):
         elif is_json_url:
             url = config.get('url', '')
             if not url:
-                raise Exception("URL not defined")
+                raise ConfigurationError(CURL_URL_NOT_DEFINED)
             # Détection URL interne (application)
             import os
             app_domain = os.environ.get('SERVER_NAME') or (hasattr(current_app, 'config') and current_app.config.get('SERVER_NAME', 'localhost'))
@@ -116,11 +118,11 @@ def _prepare_preview(list_obj, config):
                         json_data = source_list.generate_public_json()
                         output = json.dumps(json_data)
                     else:
-                        raise Exception(f"List with public ID {public_id} not found")
+                        raise ConfigurationError(f"List with public ID {public_id} not found")
                 else:
-                    raise Exception(f"Invalid internal URL format: {url}")
+                    raise ConfigurationError(f"Invalid internal URL format: {url}")
             else:
-                headers = {'Accept': 'application/json'}
+                headers = {'Accept': MIME_TYPE_JSON}
                 try:
                     response = requests.get(url, headers=headers, timeout=30, verify=False)
                     response.raise_for_status()
@@ -132,7 +134,7 @@ def _prepare_preview(list_obj, config):
                 except Exception as e:
                     raise Exception(f"Error getting data: {str(e)}")
         else:
-            raise Exception("Unsupported data source for preview")
+            raise ConfigurationError("Unsupported data source for preview")
         # 2. Parsing JSON
         raw_data = {}
         if output:
@@ -355,7 +357,7 @@ def _import_data(list_obj):
             else:
                 # Standard method for external URLs
                 import requests
-                headers = {'Accept': 'application/json'}
+                headers = {'Accept': MIME_TYPE_JSON}
                 try:
                     # Disable SSL verification to bypass certificate errors
                     response = requests.get(url, headers=headers, timeout=30, verify=False)
@@ -481,7 +483,7 @@ def test_json_path(list_id):
         data_path = ''
         
         # Check if data is in JSON or form-data format
-        if request.content_type and 'application/json' in request.content_type:
+        if request.content_type and MIME_TYPE_JSON in request.content_type:
             try:
                 # Use request.json instead of request.get_json()
                 data = request.json
@@ -549,7 +551,7 @@ def test_json_path(list_id):
             # Get data from the URL
             try:
                 import requests
-                headers = {'Accept': 'application/json'}
+                headers = {'Accept': MIME_TYPE_JSON}
                 # Disable SSL verification to bypass certificate errors
                 response = requests.get(url, headers=headers, timeout=30, verify=False)
                 response.raise_for_status()  # Raises an exception if the HTTP status is an error code
