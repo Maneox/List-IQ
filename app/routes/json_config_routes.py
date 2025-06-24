@@ -13,6 +13,7 @@ CURL_EXECUTION_FAILED = "Curl command failed: {error}"
 CURL_UNEXPECTED_ERROR = "An unexpected error occurred during curl execution: {error}"
 CURL_URL_NOT_DEFINED = "URL not defined"
 MIME_TYPE_JSON = "application/json"
+PUBLIC_JSON_PATH = "/public/json/"
 
 # Flask imports
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
@@ -108,8 +109,8 @@ def _prepare_preview(list_obj, config):
             app_domain = os.environ.get('SERVER_NAME') or (hasattr(current_app, 'config') and current_app.config.get('SERVER_NAME', 'localhost'))
             internal_domains = ["localhost:5000", "web:5000", "nginx", app_domain]
             is_internal_url = any(domain in url for domain in internal_domains)
-            if is_internal_url and "/public/json/" in url:
-                parts = url.split("/public/json/")
+            if is_internal_url and PUBLIC_JSON_PATH in url:
+                parts = url.split(PUBLIC_JSON_PATH)
                 if len(parts) == 2:
                     public_id = parts[1].split("?")[0].strip()
                     from models.list import List
@@ -327,12 +328,12 @@ def _import_data(list_obj):
                     is_internal_url = True
                     break
             
-            if is_internal_url and "/public/json/" in url:
+            if is_internal_url and PUBLIC_JSON_PATH in url:
                 current_app.logger.info(f"Detected an internal URL, using an alternative method")
                 
                 # Extract the public list identifier from the URL
                 # Expected format: .../public/json/IDENTIFIER
-                parts = url.split("/public/json/")
+                parts = url.split(PUBLIC_JSON_PATH)
                 if len(parts) == 2:
                     public_id = parts[1].split("?")[0].strip()
                     
