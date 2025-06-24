@@ -273,7 +273,7 @@
                 </button>
                 
                 {% if list.update_type == 'automatic' and (current_user.is_admin or current_user.id == list.owner_id) %}
-                    <a href="{{ url_for('list_bp.edit_json_config', list_id=list.id) }}" class="btn btn-info me-2">
+                    <a href="{{ url_for('json_config_bp.json_config', list_id=list.id) }}" class="btn btn-info me-2">
                         <i class="fas fa-code"></i> {{ _('JSON Configuration') }}
                     </a>
                 {% endif %}

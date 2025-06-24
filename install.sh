@@ -380,7 +380,7 @@ start_containers() {
     
     # Check if the containers are running
     if [ $? -eq 0 ]; then
-        print_success "Containers started successfully"
+        print_message "Containers started successfully"
     else
         print_error "Error starting containers"
         exit 1
@@ -403,9 +403,9 @@ stop_containers() {
     
     # Check if containers are stopped
     if [ -z "$(docker-compose ps -q 2>/dev/null)" ]; then
-        print_success "Containers stopped successfully"
+        print_message "Containers stopped successfully"
     else
-        print_error "Error stopping containers"
+        print_message "Error stopping containers"
         exit 1
     fi
 }
@@ -432,7 +432,7 @@ reset_variables() {
 
 # Function to generate the init.sql file
 generate_init_sql() {
-    print_section "Generating init.sql file"
+    print_message "Generating init.sql file"
     
     # Reload environment variables to get the latest values
     print_message "Reloading environment variables..."
@@ -668,7 +668,10 @@ if [ $# -gt 0 ]; then
             ;;
     esac
 fi
-
+print_error "error"
+print_message "message"
+print_success "success"
+print_warning "warning"
 # Main menu (if no arguments are passed)
 echo "==================================================="
 echo "      List-IQ Installation"

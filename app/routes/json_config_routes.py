@@ -15,6 +15,11 @@ from models.list import List
 from database import db, csrf
 from services.scheduler_service import SchedulerService
 
+# Custom Exceptions
+class UnsupportedDataSourceError(Exception):
+    """Raised when the data source is not supported."""
+    pass
+
 json_config_bp = Blueprint('json_config_bp', __name__)
 
 def check_list_ownership(f):
@@ -262,7 +267,7 @@ def json_config(list_id):
         
         else:
             current_app.logger.error("Unsupported data source")
-            raise Exception("Error: unsupported data source")
+            raise UnsupportedDataSourceError("Error: unsupported data source")
         
         # Parse the JSON output
         if output:

@@ -4,8 +4,8 @@ docs/exemples de listes
 .vscode/*
 .sonarlint/*
 # Docker configuration
-docker-compose.yml
-Dockerfile
+#docker-compose.yml
+#Dockerfile
 # Logs de l'application
 app/logs/*
 # Fichiers de configuration

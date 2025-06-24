@@ -9,6 +9,9 @@ from datetime import datetime
 import ipaddress
 from typing import Any, Dict
 
+# Constants
+UNAUTHORIZED_ACCESS = {'error': 'Unauthorized access'}
+
 # Import timezone utilities
 from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
 from services.public_files_service import update_public_files
@@ -36,7 +39,7 @@ def validate_value(value: str, column_type: str) -> str:
             return value.strip()
         else:  # text
             return value.strip()
-    except Exception as e:
+    except Exception:
         raise ValueError(f"Invalid value for type {column_type}: {value}")
 
 @api_bp.route('/api/lists', methods=['POST'])
@@ -44,7 +47,7 @@ def validate_value(value: str, column_type: str) -> str:
 def create_list():
     """Create a new list"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     try:
         data = request.get_json()
@@ -100,7 +103,7 @@ def create_list():
 def update_list(list_id):
     """Update an existing list"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     list_obj = List.query.get_or_404(list_id)
     data = request.get_json()
@@ -177,7 +180,7 @@ def delete_list(list_id):
     """Delete a list and all its associated data"""
     if not current_user.is_admin:
         current_app.logger.warning(f"Attempt to delete list {list_id} by a non-admin user")
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     try:
         # Get the list
@@ -226,7 +229,7 @@ def delete_list(list_id):
 def delete_row(list_id, row_id):
     """Delete a data row"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     list_obj = List.query.get_or_404(list_id)
     row = ListData.query.filter_by(list_id=list_id, id=row_id).first_or_404()
@@ -255,7 +258,7 @@ def delete_row(list_id, row_id):
 def get_row(list_id, row_id):
     """Get a data row"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     list_obj = List.query.get_or_404(list_id)
     data = list_obj.get_data()
@@ -271,7 +274,7 @@ def get_row(list_id, row_id):
 def update_row(list_id, row_id):
     """Update a data row"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     list_obj = List.query.get_or_404(list_id)
     data = request.get_json()
@@ -328,7 +331,7 @@ def update_row(list_id, row_id):
 def import_data(list_id):
     """Import data from a CSV file"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     # Debug logs
     current_app.logger.info(f"Looking for list with ID: {list_id}")
@@ -463,7 +466,7 @@ def import_data(list_id):
 def export_list_data(list_id):
     """Export list data in CSV or JSON format"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
     list_obj = List.query.get_or_404(list_id)
     format_type = request.args.get('format', 'csv')
@@ -506,9 +509,8 @@ def export_list_data(list_id):
 def delete_multiple_rows(list_id):
     """Delete multiple data rows"""
     if not current_user.is_admin:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return jsonify(UNAUTHORIZED_ACCESS), 403
         
-    list_obj = List.query.get_or_404(list_id)
     data = request.get_json()
     
     if not data or not data.get('row_ids'):
