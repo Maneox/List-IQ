@@ -284,11 +284,11 @@ def save_ldap_config():
         
         db.session.commit()
         
-        flash('LDAP configuration saved successfully', 'success')
+        flash('"LDAP configuration saved successfully"', 'success')
         return redirect(url_for('admin.ldap_config'))
     except Exception as e:
-        current_app.logger.error(f"Error saving LDAP configuration: {str(e)}")
-        flash(f"Error during save: {str(e)}", 'danger')
+        current_app.logger.error("Error saving LDAP configuration: " + str(e))
+        flash("Error during save: " + str(e), 'danger')
         return redirect(url_for('admin.ldap_config'))
 
 
