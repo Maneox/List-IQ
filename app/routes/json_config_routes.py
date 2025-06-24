@@ -125,7 +125,7 @@ def _prepare_preview(list_obj, config):
             else:
                 headers = {'Accept': MIME_TYPE_JSON}
                 try:
-                    response = requests.get(url, headers=headers, timeout=30, verify=False)
+                    response = requests.get(url, headers=headers, timeout=30, verify=os.environ.get('VERIFY_SSL', True)) #utiliser la variable d'environement VERIFY_SSL 
                     response.raise_for_status()
                     try:
                         json_data = response.json()
@@ -361,7 +361,7 @@ def _import_data(list_obj):
                 headers = {'Accept': MIME_TYPE_JSON}
                 try:
                     # Disable SSL verification to bypass certificate errors
-                    response = requests.get(url, headers=headers, timeout=30, verify=False)
+                    response = requests.get(url, headers=headers, timeout=30, verify=os.environ.get('VERIFY_SSL', True))
                     response.raise_for_status()  # Raises an exception if the HTTP status is an error code
                     
                     # Check if the response is valid JSON
@@ -554,7 +554,7 @@ def test_json_path(list_id):
                 import requests
                 headers = {'Accept': MIME_TYPE_JSON}
                 # Disable SSL verification to bypass certificate errors
-                response = requests.get(url, headers=headers, timeout=30, verify=False)
+                response = requests.get(url, headers=headers, timeout=30, verify=os.environ.get('VERIFY_SSL', True))
                 response.raise_for_status()  # Raises an exception if the HTTP status is an error code
                 
                 # Check if the response is valid JSON
