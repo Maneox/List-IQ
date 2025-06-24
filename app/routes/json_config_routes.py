@@ -87,12 +87,12 @@ def _prepare_preview(list_obj, config):
         if is_curl_api:
             curl_command = config.get('curl_command', '')
             if not curl_command:
-                raise ConfigurationError("Curl command not defined")
+                raise ConfigurationError(CURL_COMMAND_NOT_DEFINED)
             try:
                 result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
                 output = result.stdout
                 if not output:
-                    raise CurlExecutionError("Curl command returned no output")
+                    raise CurlExecutionError(CURL_NO_OUTPUT)
             except subprocess.CalledProcessError as e:
                 raise CurlExecutionError(f"Curl command failed: {e.stderr}") from e
             except Exception as e:
@@ -518,7 +518,7 @@ def test_json_path(list_id):
             # Execute the curl command to get the data
             curl_command = config.get('curl_command', '')
             if not curl_command:
-                result['message'] = "Curl command not defined"
+                result['message'] = CURL_COMMAND_NOT_DEFINED
                 return jsonify(result)
             
             current_app.logger.info(f"Executing curl command: {curl_command}")
@@ -541,7 +541,7 @@ def test_json_path(list_id):
             # Get the URL from the configuration
             url = config.get('url', '')
             if not url:
-                result['message'] = "URL not defined"
+                result['message'] = CURL_URL_NOT_DEFINED
                 return jsonify(result)
             
             current_app.logger.info(f"Getting JSON data from URL: {url}")
