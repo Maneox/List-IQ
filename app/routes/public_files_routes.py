@@ -135,9 +135,11 @@ def get_public_csv(token):
         output = io.StringIO()
         writer = csv.writer(output)
         
-        # Write the header
+        # Prepare the headers
         headers = [col.name for col in list_obj.columns]
-        writer.writerow(headers)
+        # Respect the option to include headers
+        if getattr(list_obj, 'public_csv_include_headers', True):
+            writer.writerow(headers)
         
         # Write the data
         for row in data:

@@ -188,6 +188,11 @@
                                        {{ 'checked' if list and list.public_csv_enabled else '' }} onchange="togglePublicAccess()">
                                 <label class="form-check-label" for="public_csv_enabled">{{ _('Enable public access in CSV format') }}</label>
                             </div>
+                            <div class="form-check mb-3 ms-4" id="public_csv_include_headers_container" style="display: {% if list and list.public_csv_enabled %}block{% else %}none{% endif %};">
+                                <input class="form-check-input" type="checkbox" id="public_csv_include_headers" name="public_csv_include_headers"
+                                    {% if list is none or list.public_csv_include_headers %}checked{% endif %}>
+                                <label class="form-check-label" for="public_csv_include_headers">{{ _('Inclure les entêtes dans le CSV public') }}</label>
+                            </div>
                             
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="public_json_enabled" name="public_json_enabled"
@@ -273,7 +278,7 @@
                 </button>
                 
                 {% if list.update_type == 'automatic' and (current_user.is_admin or current_user.id == list.owner_id) %}
-                    <a href="{{ url_for('list_bp.edit_json_config', list_id=list.id) }}" class="btn btn-info me-2">
+                    <a href="{{ url_for('list_bp.json_config_redirect', list_id=list.id) }}" class="btn btn-info me-2">
                         <i class="fas fa-code"></i> {{ _('JSON Configuration') }}
                     </a>
                 {% endif %}
@@ -305,6 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ip_restriction_enabled: document.getElementById('ip_restriction_enabled').checked,
             allowed_ips: document.getElementById('allowed_ips').value,
             public_csv_enabled: document.getElementById('public_csv_enabled').checked,
+            public_csv_include_headers: document.getElementById('public_csv_include_headers').checked,
             public_json_enabled: document.getElementById('public_json_enabled').checked,
             regenerate_token: document.getElementById('regenerate_token') ? document.getElementById('regenerate_token').checked : false,
             columns: Array.from(document.querySelectorAll('.column-item')).map(item => ({
@@ -503,6 +509,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    window.togglePublicCsvHeadersOption = function() {
+        var csvEnabled = document.getElementById('public_csv_enabled').checked;
+        var container = document.getElementById('public_csv_include_headers_container');
+        if (csvEnabled) {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+    
+    document.getElementById('public_csv_enabled').addEventListener('change', togglePublicCsvHeadersOption);
+    togglePublicCsvHeadersOption();
+
     // Initial calls to set the correct state on page load
     toggleDynamicSections();
     toggleIpRestriction();

@@ -1531,7 +1531,8 @@ def update_list(list_id):
         # Update public file options
         list_obj.public_csv_enabled = data.get('public_csv_enabled', list_obj.public_csv_enabled)
         list_obj.public_json_enabled = data.get('public_json_enabled', list_obj.public_json_enabled)
-        current_app.logger.info(f"Public access options - CSV: {list_obj.public_csv_enabled}, JSON: {list_obj.public_json_enabled}")
+        list_obj.public_csv_include_headers = data.get('public_csv_include_headers', True)
+        current_app.logger.info(f"Public access options - CSV: {list_obj.public_csv_enabled}, JSON: {list_obj.public_json_enabled}, Include headers: {list_obj.public_csv_include_headers}")
         
         # Generate an access token if necessary
         if (list_obj.public_csv_enabled or list_obj.public_json_enabled) and \
