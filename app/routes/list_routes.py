@@ -1415,8 +1415,13 @@ def update_list(list_id):
             data = request.form.to_dict()
             current_app.logger.info(f"Received form data for list {list_id}: {data}")
             
-            # Convert checkbox values to booleans
-            for key in ['is_active', 'is_published', 'ip_restriction_enabled', 'public_csv_enabled', 'public_json_enabled', 'regenerate_token']:
+            # Convertir toutes les cases à cocher en booléen (True si présente, False sinon)
+            checkbox_keys = [
+                'is_active', 'is_published', 'ip_restriction_enabled',
+                'public_csv_enabled', 'public_json_enabled', 'regenerate_token',
+                'public_csv_include_headers', 'public_txt_enabled', 'public_txt_include_headers'
+            ]
+            for key in checkbox_keys:
                 data[key] = key in data
                 current_app.logger.info(f"Value of {key}: {data[key]}")
         
@@ -1472,7 +1477,7 @@ def update_list(list_id):
             # Get the existing list
             list_obj = List.query.get(list_id)
         
-        data = request.get_json()
+        # data est déjà défini plus haut (JSON ou formulaire)
         if not data:
             return jsonify({'error': 'No data received'}), 400
             
@@ -1692,11 +1697,16 @@ def update_list(list_id):
         db.session.commit()
         current_app.logger.info(f"List {list_id} updated successfully")
         
-        # Return updated data with the redirection URL
-        return jsonify({
-            'message': 'List updated successfully',
-            'redirect': url_for('list_bp.view_list', list_id=list_id)
-        })
+        # Redirection adaptée selon le type de requête
+        wants_json = request.is_json or request.accept_mimetypes.best == 'application/json' or \
+            request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if wants_json:
+            return jsonify({
+                'message': 'List updated successfully',
+                'redirect': url_for('list_bp.view_list', list_id=list_id)
+            })
+        else:
+            return redirect(url_for('list_bp.view_list', list_id=list_id))
         
     except Exception as e:
         db.session.rollback()
