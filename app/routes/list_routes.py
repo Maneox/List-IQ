@@ -1532,10 +1532,14 @@ def update_list(list_id):
         list_obj.public_csv_enabled = data.get('public_csv_enabled', list_obj.public_csv_enabled)
         list_obj.public_json_enabled = data.get('public_json_enabled', list_obj.public_json_enabled)
         list_obj.public_csv_include_headers = data.get('public_csv_include_headers', True)
+        # Gestion des options TXT public
+        list_obj.public_txt_enabled = data.get('public_txt_enabled', list_obj.public_txt_enabled)
+        list_obj.public_txt_column = data.get('public_txt_column', list_obj.public_txt_column)
+        list_obj.public_txt_include_headers = data.get('public_txt_include_headers', True)
         current_app.logger.info(f"Public access options - CSV: {list_obj.public_csv_enabled}, JSON: {list_obj.public_json_enabled}, Include headers: {list_obj.public_csv_include_headers}")
         
         # Generate an access token if necessary
-        if (list_obj.public_csv_enabled or list_obj.public_json_enabled) and \
+        if (list_obj.public_csv_enabled or list_obj.public_json_enabled or list_obj.public_txt_enabled) and \
            (not list_obj.public_access_token or data.get('regenerate_token', False)):
             # Import the token generation function
             from routes.public_files_routes import generate_access_token

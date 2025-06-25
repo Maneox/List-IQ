@@ -195,12 +195,31 @@
                             </div>
                             
                             <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="public_txt_enabled" name="public_txt_enabled"
+                                       {% if list and list.public_txt_enabled %}checked{% endif %} onchange="togglePublicAccess()">
+                                <label class="form-check-label" for="public_txt_enabled">Export TXT public (une colonne)</label>
+                            </div>
+                            <div class="ms-4 mb-3" id="public_txt_options" style="display: {% if list and list.public_txt_enabled %}block{% else %}none{% endif %};">
+                                <label for="public_txt_column" class="form-label">Colonne à exporter</label>
+                                <select class="form-select" id="public_txt_column" name="public_txt_column">
+                                    {% if list and list.columns %}
+                                        {% for column in list.columns|sort(attribute='position') %}
+                                            <option value="{{ column.name }}" {% if list.public_txt_column==column.name %}selected{% endif %}>{{ column.name }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="public_txt_include_headers" name="public_txt_include_headers" {% if list is none or list.public_txt_include_headers %}checked{% endif %}>
+                                    <label class="form-check-label" for="public_txt_include_headers">Inclure l’entête dans le TXT</label>
+                                </div>
+                            </div>
+                            <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="public_json_enabled" name="public_json_enabled"
                                        {{ 'checked' if list and list.public_json_enabled else '' }} onchange="togglePublicAccess()">
                                 <label class="form-check-label" for="public_json_enabled">{{ _('Enable public access in JSON format') }}</label>
                             </div>
                             
-                            {% set show_public_urls_initially = list and (list.public_csv_enabled or list.public_json_enabled) %}
+                            {% set show_public_urls_initially = list and (list.public_csv_enabled or list.public_json_enabled or list.public_txt_enabled) %}
                             <div id="public_access_urls" class="mt-3" 
                                  data-has-token="{{ 'true' if list and list.public_access_token else 'false' }}"
                                  data-alert-message="<i class='fas fa-exclamation-triangle'></i> <strong>{{ _('Action required:') }}</strong> {{ _('Click "Save" to generate the public access URLs.') }}"
@@ -210,29 +229,6 @@
                                 {% if list and list.public_access_token %}
                                     <div id="csv-url-container" {% if not list.public_csv_enabled %}style="display:none;"{% endif %}>
                                         <label class="form-label">{{ _('CSV URL:') }}</label>
-                                        <div class="input-group mb-2">
-                                            <input type="text" class="form-control" value="{{ request.host_url }}public/csv/{{ list.public_access_token }}" readonly>
-                                            <button class="btn btn-outline-secondary copy-btn" type="button" data-clipboard-text="{{ request.host_url }}public/csv/{{ list.public_access_token }}"><i class="fas fa-copy"></i></button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="json-url-container" {% if not list.public_json_enabled %}style="display:none;"{% endif %}>
-                                        <label class="form-label">{{ _('JSON URL:') }}</label>
-                                        <div class="input-group mb-2">
-                                            <input type="text" class="form-control" value="{{ request.host_url }}public/json/{{ list.public_access_token }}" readonly>
-                                            <button class="btn btn-outline-secondary copy-btn" type="button" data-clipboard-text="{{ request.host_url }}public/json/{{ list.public_access_token }}"><i class="fas fa-copy"></i></button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" id="regenerate_token" name="regenerate_token">
-                                        <label class="form-check-label" for="regenerate_token">{{ _('Regenerate a new access token (invalidates existing URLs)') }}</label>
-                                    </div>
-                                {% else %}
-                                    <div id="public_access_alert" class="alert alert-warning">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <strong>{{ _('Action required:') }}</strong> {{ _('Click "Save" to generate the public access URLs.') }}
-                                    </div>
                                 {% endif %}
                             </div>
                         </div>
@@ -488,26 +484,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 publicAccessSection.appendChild(alertElement);
             }
             
-            // Display the alert only if no token exists
-            if (!hasExistingToken) {
-                alertElement.style.display = 'block';
-            } else {
-                alertElement.style.display = 'none';
-            }
-        } else {
-            publicAccessSection.style.display = 'none';
-        }
 
-        const csvUrlContainer = document.getElementById('csv-url-container');
-        if (csvUrlContainer) {
-            csvUrlContainer.style.display = csvEnabled ? 'block' : 'none';
-        }
-        
-        const jsonUrlContainer = document.getElementById('json-url-container');
-        if (jsonUrlContainer) {
-            jsonUrlContainer.style.display = jsonEnabled ? 'block' : 'none';
-        }
-    }
+        var txtEnabled = document.getElementById('public_txt_enabled').checked;
+        var txtOptions = document.getElementById('public_txt_options');
+        if (txtOptions) txtOptions.style.display = txtEnabled ? 'block' : 'none';
+        var txtUrlContainer = document.getElementById('txt-url-container');
+        if (txtUrlContainer) txtUrlContainer.style.display = txtEnabled ? '' : 'none';
+
+        var jsonEnabled = document.getElementById('public_json_enabled').checked;
+        var jsonUrlContainer = document.getElementById('json-url-container');
+        if (jsonUrlContainer) jsonUrlContainer.style.display = jsonEnabled ? '' : 'none';
+
+        var csvUrlContainer = document.getElementById('csv-url-container');
+        if (csvUrlContainer) csvUrlContainer.style.display = csvEnabled ? '' : 'none';
+
+        var showUrls = csvEnabled || jsonEnabled || txtEnabled;
+        var urlsBlock = document.getElementById('public_access_urls');
+        if (urlsBlock) urlsBlock.style.display = showUrls ? '' : 'none';
+    };
     
     window.togglePublicCsvHeadersOption = function() {
         var csvEnabled = document.getElementById('public_csv_enabled').checked;
