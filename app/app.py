@@ -118,10 +118,10 @@ def create_app(config_name=None):
     # Configure CSRF protection with exemption for token-authenticated APIs
     csrf.init_app(app)
 
-    # Rendre csrf_token disponible dans tous les templates
-    @app.context_processor
-    def inject_csrf_token():
-        return dict(csrf_token=generate_csrf)
+    # # Rendre csrf_token disponible dans tous les templates
+    # @app.context_processor
+    # def inject_csrf_token():
+    #     return dict(csrf_token=generate_csrf)
     
     # Define the CSRF exemption function
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
