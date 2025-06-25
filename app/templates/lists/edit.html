@@ -207,6 +207,11 @@
                                         {% for column in list.columns|sort(attribute='position') %}
                                             <option value="{{ column.name }}" {% if list.public_txt_column==column.name %}selected{% endif %}>{{ column.name }}</option>
                                         {% endfor %}
+                                    {% else %}
+                                        {# Afficher les colonnes du formulaire même pour une nouvelle liste #}
+                                        {% for column in columns if columns %}
+                                            <option value="{{ column.name }}">{{ column.name }}</option>
+                                        {% endfor %}
                                     {% endif %}
                                 </select>
                                 <div class="form-check mt-2">
@@ -230,6 +235,25 @@
                                 {% if list and list.public_access_token %}
                                     <div id="csv-url-container" {% if not list.public_csv_enabled %}style="display:none;"{% endif %}>
                                         <label class="form-label">{{ _('CSV URL:') }}</label>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}">
+                                            <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+                                        </div>
+                                    </div>
+                                    <div id="txt-url-container" {% if not list.public_txt_enabled %}style="display:none;"{% endif %}>
+                                        <label class="form-label">TXT URL :</label>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}">
+                                            <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+                                        </div>
+                                    </div>
+                                    <div id="json-url-container" {% if not list.public_json_enabled %}style="display:none;"{% endif %}>
+                                        <label class="form-label">{{ _('JSON URL:') }}</label>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}">
+                                            <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+                                        </div>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
