@@ -135,9 +135,11 @@ def get_public_csv(token):
         output = io.StringIO()
         writer = csv.writer(output)
         
-        # Write the header
+        # Prepare the headers
         headers = [col.name for col in list_obj.columns]
-        writer.writerow(headers)
+        # Respect the option to include headers
+        if getattr(list_obj, 'public_csv_include_headers', True):
+            writer.writerow(headers)
         
         # Write the data
         for row in data:
@@ -154,6 +156,53 @@ def get_public_csv(token):
         return response
     except Exception as e:
         current_app.logger.error(f"Error accessing public CSV file: {str(e)}")
+        abort(500)
+
+@public_files_bp.route('/public/txt/<token>')
+@public_route
+def get_public_txt(token):
+    """
+    Accès public à un fichier TXT d'une colonne de la liste (avec options)
+    """
+    list_obj = List.query.filter_by(public_access_token=token).first()
+    if not list_obj or not getattr(list_obj, 'public_txt_enabled', False):
+        abort(404)
+    # Vérification IP
+    if list_obj.ip_restriction_enabled and not check_ip_access(list_obj):
+        current_app.logger.warning(f"Tentative d'accès non autorisée à l'export TXT public de la liste {list_obj.id} depuis {request.remote_addr}")
+        session['ip_error_info'] = {
+            'detected_ip': request.remote_addr,
+            'original_header': request.headers.get('X-Forwarded-For', request.remote_addr),
+            'allowed_ips': list_obj.allowed_ips
+        }
+        abort(403)
+    try:
+        data = list_obj.get_data()
+        if not data:
+            return jsonify({'error': 'Aucune donnée disponible'}), 404
+        col_name = getattr(list_obj, 'public_txt_column', None)
+        if not col_name:
+            return jsonify({'error': 'Aucune colonne sélectionnée pour l’export TXT'}), 400
+        # Vérifie si la colonne existe
+        if not any(col.name == col_name for col in list_obj.columns):
+            return jsonify({'error': f'Colonne {col_name} introuvable'}), 400
+        output = io.StringIO()
+        # Option entête
+        if getattr(list_obj, 'public_txt_include_headers', True):
+            output.write(f"{col_name}\n")
+        for row in data:
+            val = row.get(col_name, '')
+            output.write(f"{val}\n")
+        output.seek(0)
+        response = send_file(
+            io.BytesIO(output.getvalue().encode('utf-8')),
+            mimetype='text/plain',
+            as_attachment=True,
+            download_name=f'{list_obj.name}_{col_name}_{get_paris_now().strftime("%Y%m%d_%H%M%S")}.txt'
+        )
+        return response
+    except Exception as e:
+        current_app.logger.error(f"Erreur accès TXT public : {str(e)}")
         abort(500)
 
 @public_files_bp.route('/public/json/<token>')

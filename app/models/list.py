@@ -128,6 +128,12 @@ class List(db.Model):
     public_csv_enabled = db.Column(db.Boolean, default=False)
     public_json_enabled = db.Column(db.Boolean, default=False)
     public_access_token = db.Column(db.String(64), unique=True)
+    # Option : inclure les entêtes dans l'export CSV public
+    public_csv_include_headers = db.Column(db.Boolean, default=True)
+    # Options pour l’export TXT public
+    public_txt_enabled = db.Column(db.Boolean, default=False)
+    public_txt_column = db.Column(db.String(255))
+    public_txt_include_headers = db.Column(db.Boolean, default=True)
 
     @property
     def formatted_allowed_ips(self):
