@@ -1551,10 +1551,10 @@ def update_list(list_id):
             list_obj.public_access_token = generate_access_token()
             current_app.logger.info(f"New access token generated for list {list_id}")
         
-        # If both options are disabled, delete the access token
-        if not list_obj.public_csv_enabled and not list_obj.public_json_enabled:
+        # Supprimer le token uniquement si AUCUN export public n'est activé (CSV, JSON, TXT)
+        if not list_obj.public_csv_enabled and not list_obj.public_json_enabled and not list_obj.public_txt_enabled:
             list_obj.public_access_token = None
-            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled")
+            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled (aucun format public)")
         
         # Update the configuration if necessary
         old_schedule = list_obj.update_schedule

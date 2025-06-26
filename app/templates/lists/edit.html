@@ -202,7 +202,7 @@
                             </div>
                             <div class="ms-4 mb-3" id="public_txt_options" style="display: {% if list and list.public_txt_enabled %}block{% else %}none{% endif %};">
                                 <label for="public_txt_column" class="form-label">Colonne à exporter</label>
-                                <select class="form-select" id="public_txt_column" name="public_txt_column">
+                                <select class="form-select" id="public_txt_column" name="public_txt_column" autocomplete="off">
                                     {% if list and list.columns %}
                                         {% for column in list.columns|sort(attribute='position') %}
                                             <option value="{{ column.name }}" {% if list.public_txt_column==column.name %}selected{% endif %}>{{ column.name }}</option>
@@ -225,37 +225,48 @@
                                 <label class="form-check-label" for="public_json_enabled">{{ _('Enable public access in JSON format') }}</label>
                             </div>
                             
-                            {% set show_public_urls_initially = list and (list.public_csv_enabled or list.public_json_enabled or list.public_txt_enabled) %}
-                            <div id="public_access_urls" class="mt-3" 
-                                 data-has-token="{{ 'true' if list and list.public_access_token else 'false' }}"
-                                 data-alert-message="<i class='fas fa-exclamation-triangle'></i> <strong>{{ _('Action required:') }}</strong> {{ _('Click "Save" to generate the public access URLs.') }}"
-                                 {% if not show_public_urls_initially %}style="display: none;"{% endif %}>
-                                <h5>{{ _('Public Access URLs') }}</h5>
-                                
-                                {% if list and list.public_access_token %}
-                                    <div id="csv-url-container" {% if not list.public_csv_enabled %}style="display:none;"{% endif %}>
-                                        <label class="form-label">{{ _('CSV URL:') }}</label>
-                                        <div class="input-group mb-2">
-                                            <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}">
-                                            <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
-                                        </div>
-                                    </div>
-                                    <div id="txt-url-container" {% if not list.public_txt_enabled %}style="display:none;"{% endif %}>
-                                        <label class="form-label">TXT URL :</label>
-                                        <div class="input-group mb-2">
-                                            <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}">
-                                            <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
-                                        </div>
-                                    </div>
-                                    <div id="json-url-container" {% if not list.public_json_enabled %}style="display:none;"{% endif %}>
-                                        <label class="form-label">{{ _('JSON URL:') }}</label>
-                                        <div class="input-group mb-2">
-                                            <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}">
-                                            <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
+                            <div id="public_access_urls" class="mt-3"
+     data-has-token="{{ 'true' if list and list.public_access_token else 'false' }}"
+     data-alert-message="<i class='fas fa-exclamation-triangle'></i> <strong>{{ _('Action required:') }}</strong> {{ _('Click \"Save\" to generate the public access URLs.') }}"
+     style="display: none;">
+    <h5>{{ _('Public Access URLs') }}</h5>
+    <div id="csv-url-container" style="display:none;">
+        <label class="form-label">{{ _('CSV URL:') }}</label>
+        <div class="input-group mb-2">
+            {% if list and list.public_access_token %}
+                <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}">
+                <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+            {% else %}
+                <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
+                <button class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+            {% endif %}
+        </div>
+    </div>
+    <div id="txt-url-container" style="display:none;">
+        <label class="form-label">TXT URL :</label>
+        <div class="input-group mb-2">
+            {% if list and list.public_access_token %}
+                <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}">
+                <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+            {% else %}
+                <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
+                <button class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+            {% endif %}
+        </div>
+    </div>
+    <div id="json-url-container" style="display:none;">
+        <label class="form-label">{{ _('JSON URL:') }}</label>
+        <div class="input-group mb-2">
+            {% if list and list.public_access_token %}
+                <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}">
+                <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+            {% else %}
+                <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
+                <button class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+            {% endif %}
+        </div>
+    </div>
+</div>
                         </div>
                     </div>
                 </div>
@@ -337,9 +348,13 @@ document.addEventListener('DOMContentLoaded', function() {
             columns: Array.from(document.querySelectorAll('.column-item')).map(item => ({
                 name: item.querySelector('input[name="column_name"]').value,
                 column_type: item.querySelector('select[name="column_type"]').value
-            }))
-            
+            })),
+            // Ajout des options TXT
+            public_txt_enabled: document.getElementById('public_txt_enabled').checked,
+            public_txt_column: document.getElementById('public_txt_column') ? document.getElementById('public_txt_column').value : null,
+            public_txt_include_headers: document.getElementById('public_txt_include_headers').checked
         };
+
         
         const maxResultsInput = document.getElementById('max_results');
         if (maxResultsInput) {
@@ -490,43 +505,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.togglePublicAccess = function() {
         const csvEnabled = document.getElementById('public_csv_enabled').checked;
+        const txtEnabled = document.getElementById('public_txt_enabled').checked;
         const jsonEnabled = document.getElementById('public_json_enabled').checked;
-        const publicAccessSection = document.getElementById('public_access_urls');
-        
-        if (csvEnabled || jsonEnabled) {
-            publicAccessSection.style.display = 'block';
-            
-            // Check if a public access token already exists
-            const hasExistingToken = publicAccessSection.dataset.hasToken === 'true';
-            
-            // Create or get the alert if it doesn't exist yet
-            let alertElement = document.getElementById('public_access_alert');
-            if (!alertElement) {
-                alertElement = document.createElement('div');
-                alertElement.id = 'public_access_alert';
-                alertElement.className = 'alert alert-warning mt-3';
-                alertElement.innerHTML = publicAccessSection.dataset.alertMessage;
-                publicAccessSection.appendChild(alertElement);
-            }
-            
 
-        var txtEnabled = document.getElementById('public_txt_enabled').checked;
+        // Affichage des options TXT
         var txtOptions = document.getElementById('public_txt_options');
         if (txtOptions) txtOptions.style.display = txtEnabled ? 'block' : 'none';
-        var txtUrlContainer = document.getElementById('txt-url-container');
-        if (txtUrlContainer) txtUrlContainer.style.display = txtEnabled ? '' : 'none';
 
-        var jsonEnabled = document.getElementById('public_json_enabled').checked;
-        var jsonUrlContainer = document.getElementById('json-url-container');
-        if (jsonUrlContainer) jsonUrlContainer.style.display = jsonEnabled ? '' : 'none';
-
+        // Affichage dynamique des blocs d'URL
         var csvUrlContainer = document.getElementById('csv-url-container');
         if (csvUrlContainer) csvUrlContainer.style.display = csvEnabled ? '' : 'none';
 
-        var showUrls = csvEnabled || jsonEnabled || txtEnabled;
+        var txtUrlContainer = document.getElementById('txt-url-container');
+        if (txtUrlContainer) txtUrlContainer.style.display = txtEnabled ? '' : 'none';
+
+        var jsonUrlContainer = document.getElementById('json-url-container');
+        if (jsonUrlContainer) jsonUrlContainer.style.display = jsonEnabled ? '' : 'none';
+
+        // Affichage du bloc URLs global
         var urlsBlock = document.getElementById('public_access_urls');
+        var showUrls = csvEnabled || txtEnabled || jsonEnabled;
         if (urlsBlock) urlsBlock.style.display = showUrls ? '' : 'none';
     };
+
     
     window.togglePublicCsvHeadersOption = function() {
         var csvEnabled = document.getElementById('public_csv_enabled').checked;
