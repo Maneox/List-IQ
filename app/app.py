@@ -310,6 +310,12 @@ def create_app(config_name=None):
     
     # Add custom filters
     app.jinja_env.filters['format_date'] = format_date
+
+    # Injecte debug_mode dans tous les templates Jinja2
+    @app.context_processor
+    def inject_debug_mode():
+        from flask import current_app
+        return dict(debug_mode=current_app.debug)
     
     # Healthcheck endpoint for Docker
     @app.route('/health')

@@ -235,10 +235,10 @@
         <div class="input-group mb-2">
             {% if list and list.public_access_token %}
                 <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}">
-                <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
             {% else %}
                 <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
-                <button class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
     </div>
@@ -247,10 +247,10 @@
         <div class="input-group mb-2">
             {% if list and list.public_access_token %}
                 <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}">
-                <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
             {% else %}
                 <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
-                <button class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
     </div>
@@ -259,10 +259,10 @@
         <div class="input-group mb-2">
             {% if list and list.public_access_token %}
                 <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}">
-                <button class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="Copier"><i class="fas fa-copy"></i></button>
             {% else %}
                 <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
-                <button class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
     </div>
@@ -552,14 +552,32 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="{{ url_for('static', filename='js/clipboard.min.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof ClipboardJS !== 'undefined') {
-        new ClipboardJS('.copy-btn').on('success', function(e) {
+    const DEBUG = {{ debug_mode | tojson }};
+    function debugLog(...args) {
+        if (DEBUG) console.log(...args);
+    }
+    debugLog('[DEBUG] ClipboardJS présent :', typeof ClipboardJS);
+    var copyBtns = document.querySelectorAll('.copy-btn');
+    debugLog('[DEBUG] Nombre de boutons .copy-btn :', copyBtns.length);
+    copyBtns.forEach(function(btn, idx) {
+        btn.addEventListener('click', function() {
+            debugLog('[DEBUG] Clic sur bouton .copy-btn', idx, btn);
+        });
+    });
+    var clipboard = new ClipboardJS('.copy-btn');
+    clipboard.on('success', function(e) {
+        debugLog('[DEBUG] ClipboardJS success', e);
+        if (e.trigger && (e.trigger.tagName === 'BUTTON' || e.trigger.classList.contains('copy-btn'))) {
+            e.clearSelection();
+            // Feedback visuel
             const originalIcon = e.trigger.innerHTML;
             e.trigger.innerHTML = '<i class="fas fa-check text-success"></i>';
-            setTimeout(() => { e.trigger.innerHTML = originalIcon; }, 2000);
-            e.clearSelection();
-        });
-    }
+            setTimeout(() => { e.trigger.innerHTML = originalIcon; }, 1500);
+        }
+    });
+    clipboard.on('error', function(e) {
+        debugLog('[DEBUG] ClipboardJS error', e);
+    });
 });
 </script>
 {% endblock %}
