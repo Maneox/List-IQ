@@ -46,7 +46,8 @@ def new_list():
     if not current_user.is_admin:
         flash('Unauthorized access', 'danger')
         return redirect(url_for('ui.lists'))
-    return render_template('lists/edit.html')
+    # Correction : passer list=None et columns=[] pour éviter erreur 500
+    return render_template('lists/edit.html', list=None, columns=[])
 
 @ui_bp.route('/lists/<int:list_id>')
 @login_required
