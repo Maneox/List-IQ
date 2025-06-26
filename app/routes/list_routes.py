@@ -1415,8 +1415,13 @@ def update_list(list_id):
             data = request.form.to_dict()
             current_app.logger.info(f"Received form data for list {list_id}: {data}")
             
-            # Convert checkbox values to booleans
-            for key in ['is_active', 'is_published', 'ip_restriction_enabled', 'public_csv_enabled', 'public_json_enabled', 'regenerate_token']:
+            # Convertir toutes les cases à cocher en booléen (True si présente, False sinon)
+            checkbox_keys = [
+                'is_active', 'is_published', 'ip_restriction_enabled',
+                'public_csv_enabled', 'public_json_enabled', 'regenerate_token',
+                'public_csv_include_headers', 'public_txt_enabled', 'public_txt_include_headers'
+            ]
+            for key in checkbox_keys:
                 data[key] = key in data
                 current_app.logger.info(f"Value of {key}: {data[key]}")
         
@@ -1472,7 +1477,7 @@ def update_list(list_id):
             # Get the existing list
             list_obj = List.query.get(list_id)
         
-        data = request.get_json()
+        # data est déjà défini plus haut (JSON ou formulaire)
         if not data:
             return jsonify({'error': 'No data received'}), 400
             
@@ -1532,20 +1537,24 @@ def update_list(list_id):
         list_obj.public_csv_enabled = data.get('public_csv_enabled', list_obj.public_csv_enabled)
         list_obj.public_json_enabled = data.get('public_json_enabled', list_obj.public_json_enabled)
         list_obj.public_csv_include_headers = data.get('public_csv_include_headers', True)
+        # Gestion des options TXT public
+        list_obj.public_txt_enabled = data.get('public_txt_enabled', list_obj.public_txt_enabled)
+        list_obj.public_txt_column = data.get('public_txt_column', list_obj.public_txt_column)
+        list_obj.public_txt_include_headers = data.get('public_txt_include_headers', True)
         current_app.logger.info(f"Public access options - CSV: {list_obj.public_csv_enabled}, JSON: {list_obj.public_json_enabled}, Include headers: {list_obj.public_csv_include_headers}")
         
         # Generate an access token if necessary
-        if (list_obj.public_csv_enabled or list_obj.public_json_enabled) and \
+        if (list_obj.public_csv_enabled or list_obj.public_json_enabled or list_obj.public_txt_enabled) and \
            (not list_obj.public_access_token or data.get('regenerate_token', False)):
             # Import the token generation function
             from routes.public_files_routes import generate_access_token
             list_obj.public_access_token = generate_access_token()
             current_app.logger.info(f"New access token generated for list {list_id}")
         
-        # If both options are disabled, delete the access token
-        if not list_obj.public_csv_enabled and not list_obj.public_json_enabled:
+        # Supprimer le token uniquement si AUCUN export public n'est activé (CSV, JSON, TXT)
+        if not list_obj.public_csv_enabled and not list_obj.public_json_enabled and not list_obj.public_txt_enabled:
             list_obj.public_access_token = None
-            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled")
+            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled (aucun format public)")
         
         # Update the configuration if necessary
         old_schedule = list_obj.update_schedule
@@ -1688,11 +1697,16 @@ def update_list(list_id):
         db.session.commit()
         current_app.logger.info(f"List {list_id} updated successfully")
         
-        # Return updated data with the redirection URL
-        return jsonify({
-            'message': 'List updated successfully',
-            'redirect': url_for('list_bp.view_list', list_id=list_id)
-        })
+        # Redirection adaptée selon le type de requête
+        wants_json = request.is_json or request.accept_mimetypes.best == 'application/json' or \
+            request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if wants_json:
+            return jsonify({
+                'message': 'List updated successfully',
+                'redirect': url_for('list_bp.view_list', list_id=list_id)
+            })
+        else:
+            return redirect(url_for('list_bp.view_list', list_id=list_id))
         
     except Exception as e:
         db.session.rollback()

@@ -338,7 +338,7 @@ start_containers() {
         print_message "No new installation, clearing the content of init.sql file..."
         clear_init_sql
     fi
-    
+
     # Stop existing containers
     docker-compose down
     
@@ -558,6 +558,10 @@ CREATE TABLE `lists` (
   `ip_restriction_enabled` tinyint(1) DEFAULT NULL,
   `allowed_ips` text,
   `public_csv_enabled` tinyint(1) DEFAULT NULL,
+  `public_csv_include_headers` tinyint(1) DEFAULT 1,
+  `public_txt_enabled` tinyint(1) DEFAULT 0,
+  `public_txt_column` varchar(100) DEFAULT NULL,
+  `public_txt_include_headers` tinyint(1) DEFAULT 1, 
   `public_json_enabled` tinyint(1) DEFAULT NULL,
   `public_access_token` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),

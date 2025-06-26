@@ -16,6 +16,7 @@
     <!-- Bootstrap CSS (local) -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}?v={{ range(1, 10000) | random }}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
+    {% block extra_js_head %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
