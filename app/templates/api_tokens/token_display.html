@@ -31,7 +31,7 @@
                 <label for="tokenValue" class="form-label">{{ _('Your API token:') }}</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control font-monospace" id="tokenValue" value="{{ token_value }}" readonly onclick="this.select();">
-                    <button class="btn btn-primary" type="button" id="copyButton">
+                    <button class="btn btn-primary" type="button" id="copyButton" data-clipboard-text="{{ token_value }}">
                         <i class="fas fa-copy me-1"></i> {{ _('Copy') }}
                     </button>
                 </div>
@@ -100,39 +100,91 @@ print(lists)</code></pre>
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js_head %}
+<!-- Pas besoin de ClipboardJS, on utilise l'API native -->
+{% endblock %}
+{% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('[DEBUG] DOM chargé sur token_display.html');
+        
         const tokenInput = document.getElementById('tokenValue');
         const copyButton = document.getElementById('copyButton');
         const alertElement = document.getElementById('tokenCopiedAlert');
         
-        tokenInput.focus();
-        tokenInput.select();
+        if (!copyButton) {
+            console.error('[DEBUG] Bouton de copie introuvable');
+            return;
+        }
         
-        copyButton.addEventListener('click', function() {
-            copyButton.disabled = true;
-            const originalHTML = copyButton.innerHTML;
+        console.log('[DEBUG] Bouton trouvé, ajout du listener');
+        
+        // Solution native simple sans ClipboardJS
+        copyButton.addEventListener('click', function(e) {
+            console.log('[DEBUG] Clic sur bouton détecté');
+            e.preventDefault();
             
-            navigator.clipboard.writeText(tokenInput.value)
-                .then(() => {
-                    alertElement.classList.remove('d-none');
-                    copyButton.innerHTML = `<i class="fas fa-check me-1"></i> {{ _('Copied!') }}`;
-                    copyButton.classList.replace('btn-primary', 'btn-success');
-                    
-                    setTimeout(() => {
-                        alertElement.classList.add('d-none');
-                        copyButton.innerHTML = originalHTML;
-                        copyButton.classList.replace('btn-success', 'btn-primary');
-                        copyButton.disabled = false;
-                    }, 3000);
-                })
-                .catch(err => {
-                    console.error('{{ _("Copy error:") }}', err);
-                    alert('{{ _("Could not copy. Please do it manually.") }}');
-                    copyButton.disabled = false;
-                });
+            // Sélectionne le texte
+            tokenInput.select();
+            tokenInput.setSelectionRange(0, 99999); // Pour mobile
+            
+            // Essaie d'abord l'API Clipboard moderne
+            if (navigator.clipboard) {
+                console.log('[DEBUG] Utilisation de navigator.clipboard');
+                navigator.clipboard.writeText(tokenInput.value)
+                    .then(function() {
+                        console.log('[DEBUG] Copie réussie via navigator.clipboard');
+                        showSuccess();
+                    })
+                    .catch(function(err) {
+                        console.error('[DEBUG] Erreur navigator.clipboard:', err);
+                        // Fallback à execCommand
+                        fallbackCopy();
+                    });
+            } else {
+                console.log('[DEBUG] navigator.clipboard non disponible, utilisation du fallback');
+                fallbackCopy();
+            }
         });
+        
+        function fallbackCopy() {
+            try {
+                const success = document.execCommand('copy');
+                if (success) {
+                    console.log('[DEBUG] Copie réussie via execCommand');
+                    showSuccess();
+                } else {
+                    console.error('[DEBUG] execCommand a échoué');
+                    showError();
+                }
+            } catch (err) {
+                console.error('[DEBUG] Erreur execCommand:', err);
+                showError();
+            }
+        }
+        
+        function showSuccess() {
+            // Feedback visuel sur le bouton
+            const originalText = copyButton.innerHTML;
+            copyButton.innerHTML = '<i class="fas fa-check text-success"></i>';
+            setTimeout(() => { copyButton.innerHTML = originalText; }, 1500);
+            
+            // Affiche l'alerte
+            alertElement.classList.remove('d-none');
+            setTimeout(() => { alertElement.classList.add('d-none'); }, 2000);
+        }
+        
+        function showError() {
+            alertElement.textContent = '{{ _("Error during copy. Please select manually.") }}';
+            alertElement.classList.remove('d-none', 'alert-success');
+            alertElement.classList.add('alert-danger');
+            setTimeout(() => {
+                alertElement.classList.add('d-none');
+                alertElement.classList.remove('alert-danger');
+                alertElement.textContent = '{{ _("Token copied to clipboard!") }}';
+                alertElement.classList.add('alert-success');
+            }, 3000);
+        }
     });
 </script>
 {% endblock %}
