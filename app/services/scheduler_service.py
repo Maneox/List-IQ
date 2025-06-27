@@ -163,6 +163,61 @@ class SchedulerService:
             # Replace the standard print function with our custom one
             script_globals['print'] = custom_print
             
+            # Fonction utilitaire pour accès direct aux données internes
+            def get_internal_list_data_from_url(url):
+                """
+                Si l'URL cible est interne (localhost, web:5000, nginx, domaine app, etc. + /public/json/<token>),
+                retourne directement les données via ORM (List.generate_public_json), sinon effectue un vrai appel HTTP.
+                Retourne un objet de type 'requests.Response' (MockResponse) ou la réponse requests réelle.
+                Ajoute des logs dans la console pour chaque étape.
+                """
+                import os
+                from flask import current_app
+                print(f"[get_internal_list_data_from_url] Appel avec url={url}")
+                # Détection des domaines internes
+                app_domain = os.environ.get('SERVER_NAME') or current_app.config.get('SERVER_NAME', 'localhost')
+                internal_domains = ["localhost:5000", "web:5000", "nginx", app_domain]
+                is_internal_url = any(domain in url for domain in internal_domains)
+                print(f"[get_internal_list_data_from_url] is_internal_url={is_internal_url} (domaines testés: {internal_domains})")
+
+                if is_internal_url and "/public/json/" in url:
+                    try:
+                        parts = url.split("/public/json/")
+                        if len(parts) == 2:
+                            public_id = parts[1].split("?")[0].strip()
+                            print(f"[get_internal_list_data_from_url] Token public détecté: {public_id}")
+                            from models.list import List
+                            list_obj = List.query.filter_by(public_access_token=public_id).first()
+                            if list_obj:
+                                print(f"[get_internal_list_data_from_url] Liste interne trouvée, id={list_obj.id}, récupération via ORM")
+                                json_data = list_obj.generate_public_json()
+                                class MockResponse:
+                                    def __init__(self, json_data):
+                                        self.json_data = json_data
+                                        self.headers = {"Content-Type": "application/json"}
+                                        self.status_code = 200
+                                    def json(self):
+                                        return self.json_data
+                                    def raise_for_status(self):
+                                        pass
+                                print(f"[get_internal_list_data_from_url] Retour MockResponse (source ORM)")
+                                return MockResponse(json_data)
+                            else:
+                                print(f"[get_internal_list_data_from_url] ERREUR: Aucune liste interne trouvée pour le token public : {public_id}")
+                                raise ValueError(f"Aucune liste interne trouvée pour le token public : {public_id}")
+                        else:
+                            print(f"[get_internal_list_data_from_url] ERREUR: Format d'URL interne invalide : {url}")
+                            raise ValueError(f"Format d'URL interne invalide : {url}")
+                    except Exception as e:
+                        print(f"[get_internal_list_data_from_url] ERREUR lors de la récupération interne : {e}")
+                        raise ValueError(f"Erreur lors de la récupération interne : {e}")
+                # Sinon, appel HTTP classique (requests.get patché)
+                print(f"[get_internal_list_data_from_url] Appel HTTP externe via requests.get")
+                import requests
+                return requests.get(url)
+
+            script_globals['get_internal_list_data_from_url'] = get_internal_list_data_from_url
+
             # Configure proxy and SSL, and patch requests.get for the script environment
             try:
                 from flask import current_app
