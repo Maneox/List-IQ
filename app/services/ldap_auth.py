@@ -1,8 +1,8 @@
 import ldap
 import ldap.filter
-from models.ldap_config import LDAPConfig
-from models.user import User
-from database import db
+from ..models.ldap_config import LDAPConfig
+from ..models.user import User
+from .. import db
 import logging
 import os
 import tempfile

@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create the application directory
-WORKDIR /app
+WORKDIR /code
 
 # Copy dependency files
 COPY app/requirements.txt .
@@ -23,14 +23,14 @@ COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the code
-COPY app .
+COPY app ./app
 
 # Create the directory for certificates
-RUN mkdir -p /app/certs
+RUN mkdir -p /code/app/certs
 
 # Compile translation files
-RUN if [ -d "translations" ]; then \
-    pybabel compile -d translations; \
+RUN if [ -d "app/translations" ]; then \
+    pybabel compile -d app/translations; \
 fi
 
 # Copy and configure the startup script

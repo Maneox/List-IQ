@@ -1,6 +1,7 @@
 from typing import List as TypeList, Dict, Any, Optional
 from datetime import datetime
-from models.list import List, ListColumn, ListData, db
+from ..models.list import List, ListColumn, ListData
+from .. import db
 import requests
 import json
 import os
@@ -115,7 +116,7 @@ class ListService:
             if data_source_url and data_source_format and update_type == 'automatic' and data_source_format.lower() != 'csv':
                 try:
                     print(f"Attempting to import from URL: {data_source_url}")
-                    from models.data_importer import DataImporter
+                    from ..models.data_importer import DataImporter
                     importer = DataImporter(list_obj)
                     importer.import_data(force_update=False)
                 except Exception as e:

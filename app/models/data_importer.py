@@ -10,7 +10,7 @@ from typing import Dict, Any, Optional, List as TypeList
 from sqlalchemy.exc import SQLAlchemyError
 
 from .list_components import ListColumn, ListData
-from database import db
+from .. import db
 
 try:
     from app.utils.date_utils import get_paris_now
@@ -471,6 +471,74 @@ class DataImporter:
         # Import rows
         return self._import_rows_from_json(records_list, columns_map)
 
+    def _import_rows_from_json(self, records_list: list, columns_map: Dict[str, ListColumn]) -> int:
+        """Import rows from JSON data into the database."""
+        rows_imported_count = 0
+        new_data_items = []
+        
+        # Get the configured row limit
+        max_results = getattr(self.list_instance, 'max_results', 0)
+        if max_results > 0:
+            self.logger.info(f"List {self.list_instance.id}: Limit configured to {max_results} rows for JSON import")
+        
+        # Get JSON configuration for column filtering
+        json_config = self.config.get('json_config', {})
+        columns_to_import = json_config.get('columns_to_import', [])
+        
+        # Counter for the row limit
+        row_count = 0
+        
+        for row_index, record in enumerate(records_list):
+            # Check if we have reached the configured limit
+            if max_results > 0 and row_count >= max_results:
+                self.logger.info(f"List {self.list_instance.id}: Limit of {max_results} rows reached, stopping JSON import")
+                break
+            
+            # Skip non-dict records
+            if not isinstance(record, dict):
+                self.logger.warning(f"List {self.list_instance.id}: Skipping non-dict record at index {row_index}: {type(record)}")
+                continue
+                
+            has_data_for_row = False
+            
+            # If we have specific columns to import, only use those
+            if columns_to_import:
+                for col_name, column_obj in columns_map.items():
+                    if col_name in columns_to_import and col_name in record:
+                        value = record[col_name]
+                        new_data_items.append(ListData(
+                            list_id=self.list_instance.id,
+                            row_id=row_index,
+                            column_position=column_obj.position,
+                            value=str(value) if value is not None else None
+                        ))
+                        has_data_for_row = True
+            else:
+                # Default behavior: import all available columns
+                for col_name, column_obj in columns_map.items():
+                    if col_name in record:
+                        value = record[col_name]
+                        new_data_items.append(ListData(
+                            list_id=self.list_instance.id,
+                            row_id=row_index,
+                            column_position=column_obj.position,
+                            value=str(value) if value is not None else None
+                        ))
+                        has_data_for_row = True
+            
+            if has_data_for_row:
+                rows_imported_count += 1
+                row_count += 1
+        
+        # Insert data into database
+        if new_data_items:
+            db.session.bulk_save_objects(new_data_items)
+            self.logger.info(f"List {self.list_instance.id}: Inserted {len(new_data_items)} data cells for {rows_imported_count} rows from JSON data.")
+        else:
+            self.logger.warning(f"List {self.list_instance.id}: No data items to insert from JSON records.")
+        
+        return rows_imported_count
+
     def _create_columns_from_csv_header(self, header_row: TypeList[str]) -> Dict[str, ListColumn]:
         existing_columns_map = {col.name: col for col in self.list_instance.columns}
         new_column_objects = []
@@ -741,7 +809,7 @@ class DataImporter:
                     public_id = parts[1].split("?")[0].strip()
                     
                     # Use an alternative method to fetch the data
-                    from models.list import List
+                    from .list import List
                     from flask import current_app
                     
                     # Find the list corresponding to this public identifier
@@ -988,24 +1056,62 @@ class DataImporter:
         # Ensure the configuration is saved before executing the command
         db.session.flush()
 
-        self.logger.info(f"List {self.list_instance.id}: Executing cURL command: {curl_command}")
-        try:
-            # Execute curl command and capture output
-            process = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=False, timeout=self.config.get('timeout', 60))
-            
-            if process.returncode != 0:
-                self.logger.error(f"List {self.list_instance.id}: cURL command failed with return code {process.returncode}: {process.stderr}")
-                raise ValueError(f"cURL command failed with return code {process.returncode}: {process.stderr}")
-            
-            output_data = process.stdout
-            if not output_data:
-                self.logger.warning(f"List {self.list_instance.id}: cURL command returned empty output.")
-                return 0
+        # Détection d'un curl auto-bouclant sur l'API publique JSON du service
+        from app.utils.internal_access import get_internal_list_data_from_public_json_url
+        import re
+        match = re.search(r"https?://[^\s'\"]+/public/json/[\w-]+", curl_command)
+        if match:
+            target_url = match.group(0)
+            self.logger.info(f"[OPTIM] DataImporter: Detected curl command targeting public JSON endpoint: {target_url}")
+            internal_data = get_internal_list_data_from_public_json_url(target_url)
+            if internal_data is not None:
+                output_data = json.dumps(internal_data)
+                self.logger.info(f"[OPTIM] DataImporter: JSON data retrieved directly via ORM (no curl): {output_data[:200]}...")
+                
+                # Traiter les données JSON récupérées via ORM
+                self.logger.info(f"List {self.list_instance.id}: Processing ORM-retrieved JSON data")
+                try:
+                    lines_imported = self._process_json_data(internal_data)
+                    self.logger.info(f"List {self.list_instance.id}: ORM optimization successful, {lines_imported} lines imported")
+                    return lines_imported
+                except Exception as e:
+                    self.logger.error(f"List {self.list_instance.id}: Error processing ORM-retrieved JSON data: {e}", exc_info=True)
+                    raise
+            else:
+                # Fallback : exécution shell si ce n'est pas interne
+                self.logger.info("[OPTIM] DataImporter: Target URL is not internal or data not found, executing curl as usual.")
+                try:
+                    process = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=False, timeout=self.config.get('timeout', 60))
+                    if process.returncode != 0:
+                        self.logger.error(f"List {self.list_instance.id}: cURL command failed with return code {process.returncode}: {process.stderr}")
+                        raise ValueError(f"cURL command failed with return code {process.returncode}: {process.stderr}")
+                    output_data = process.stdout
+                    if not output_data:
+                        self.logger.warning(f"List {self.list_instance.id}: cURL command returned empty output.")
+                        return 0
+                    output_sample = output_data[:500] + '...' if len(output_data) > 500 else output_data
+                    self.logger.info(f"List {self.list_instance.id}: cURL output sample: {output_sample}")
+                except Exception as e:
+                    self.logger.error(f"List {self.list_instance.id}: Error executing cURL command: {e}", exc_info=True)
+                    raise
+        else:
+            # Cas général : exécution shell normale
+            self.logger.info("[OPTIM] DataImporter: No public JSON endpoint detected in curl_command, executing curl as usual.")
+            try:
+                process = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=False, timeout=self.config.get('timeout', 60))
+                if process.returncode != 0:
+                    self.logger.error(f"List {self.list_instance.id}: cURL command failed with return code {process.returncode}: {process.stderr}")
+                    raise ValueError(f"cURL command failed with return code {process.returncode}: {process.stderr}")
+                output_data = process.stdout
+                if not output_data:
+                    self.logger.warning(f"List {self.list_instance.id}: cURL command returned empty output.")
+                    return 0
+                output_sample = output_data[:500] + '...' if len(output_data) > 500 else output_data
+                self.logger.info(f"List {self.list_instance.id}: cURL output sample: {output_sample}")
+            except Exception as e:
+                self.logger.error(f"List {self.list_instance.id}: Error executing cURL command: {e}", exc_info=True)
+                raise
 
-            # Log a sample of the output for debugging
-            output_sample = output_data[:500] + '...' if len(output_data) > 500 else output_data
-            self.logger.info(f"List {self.list_instance.id}: cURL output sample: {output_sample}")
-            
             # Use the same logic as for URL import
             # Determine the format based on configuration and content
             list_format_config = self.list_instance.data_source_format.lower() if self.list_instance.data_source_format else ''
@@ -1064,51 +1170,68 @@ class DataImporter:
                 else:
                     is_json = False
                     is_csv = True
-                    self.logger.info(f"List {self.list_instance.id}: Format forced to CSV according to configuration")
-            
-            # Process data according to the determined format
-            lines_imported = 0
-            if is_json:
-                self.logger.info(f"List {self.list_instance.id}: Processing cURL output as JSON")
-                # Create an object similar to requests' response.json()
-                class JsonResponse:
-                    def __init__(self, data):
-                        self._data = data
-                    
-                    def json(self):
-                        if isinstance(self._data, str):
-                            return json.loads(self._data)
-                        return self._data
+            else:
+                is_json = False
+                is_csv = True
+                self.logger.info(f"List {self.list_instance.id}: Format forced to CSV according to configuration")
+        
+        # Process data according to the determined format
+        lines_imported = 0
+        if is_json:
+            self.logger.info(f"List {self.list_instance.id}: Processing cURL output as JSON")
+            # Create an object similar to requests' response.json()
+            class JsonResponse:
+                def __init__(self, data):
+                    self._data = data
                 
+                def json(self):
+                    if isinstance(self._data, str):
+                        return json.loads(self._data)
+                    return self._data
+            
+            try:
                 # Use the exact same approach as for URL
                 self.logger.info(f"List {self.list_instance.id}: Creating a mock response.json() object for curl")
                 response = JsonResponse(output_data)
                 lines_imported = self._process_json_data(response.json())
-            elif is_csv:
-                self.logger.info(f"List {self.list_instance.id}: Processing cURL output as CSV")
+                
+                # Ensure we return the number of imported lines
+                if lines_imported is not None:
+                    self.logger.info(f"List {self.list_instance.id}: Successfully imported {lines_imported} lines from JSON data")
+                    return lines_imported
+                else:
+                    self.logger.warning(f"List {self.list_instance.id}: No lines were imported from JSON data")
+                    return 0
+            except Exception as e:
+                self.logger.error(f"List {self.list_instance.id}: Error processing JSON data: {e}", exc_info=True)
+                raise
+            
+        elif is_csv:
+            self.logger.info(f"List {self.list_instance.id}: Processing cURL output as CSV")
+            try:
                 csv_stream = io.StringIO(output_data)
                 lines_imported = self._process_csv_data(csv_stream)
-            else:
-                # Try JSON then CSV as fallback
-                self.logger.warning(f"List {self.list_instance.id}: Undetermined format, trying JSON then CSV")
+                self.logger.info(f"List {self.list_instance.id}: Successfully imported {lines_imported} lines from CSV data")
+                return lines_imported
+            except Exception as e:
+                self.logger.error(f"List {self.list_instance.id}: Error processing CSV data: {e}", exc_info=True)
+                raise
+        else:
+            self.logger.warning(f"List {self.list_instance.id}: Could not determine data format, trying JSON then CSV as fallback")
+            try:
+                self.logger.info(f"List {self.list_instance.id}: Attempting JSON parse")
+                json_data = json.loads(output_data)
+                lines_imported = self._process_json_data(json_data)
+                if lines_imported is not None and lines_imported > 0:
+                    self.logger.info(f"List {self.list_instance.id}: Successfully imported {lines_imported} lines from JSON data (fallback)")
+                    return lines_imported
+            except (json.JSONDecodeError, ValueError) as e_json:
+                self.logger.warning(f"List {self.list_instance.id}: JSON parse failed ({e_json}), attempting CSV")
                 try:
-                    self.logger.info(f"List {self.list_instance.id}: Attempting JSON parse")
-                    json_data = json.loads(output_data)
-                    lines_imported = self._process_json_data(json_data)
-                except (json.JSONDecodeError, ValueError) as e_json:
-                    self.logger.warning(f"List {self.list_instance.id}: JSON parse failed ({e_json}), attempting CSV")
-                    try:
-                        csv_stream = io.StringIO(output_data)
-                        lines_imported = self._process_csv_data(csv_stream)
-                    except Exception as e_csv:
-                        self.logger.error(f"List {self.list_instance.id}: CSV parse also failed ({e_csv})")
-                        raise ValueError("Could not determine data format") from e_csv
-            
-            return lines_imported
-            
-        except subprocess.TimeoutExpired:
-            self.logger.error(f"List {self.list_instance.id}: cURL command timed out after {self.config.get('timeout', 60)} seconds")
-            raise ValueError(f"cURL command timed out after {self.config.get('timeout', 60)} seconds")
-        except Exception as e:
-            self.logger.error(f"List {self.list_instance.id}: Error executing or processing cURL command: {e}", exc_info=True)
-            raise
+                    csv_stream = io.StringIO(output_data)
+                    lines_imported = self._process_csv_data(csv_stream)
+                    self.logger.info(f"List {self.list_instance.id}: Successfully imported {lines_imported} lines from CSV data (fallback)")
+                    return lines_imported
+                except Exception as e_csv:
+                    self.logger.error(f"List {self.list_instance.id}: CSV parse also failed ({e_csv})")
+                    raise ValueError("Could not determine data format") from e_csv

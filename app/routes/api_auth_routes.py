@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, current_app, render_template, redirect, url_for, flash, session
 from flask_login import login_required, current_user, login_user
-from models.api_token import ApiToken
-from models.user import User
-from database import db, csrf
+from ..models.api_token import ApiToken
+from ..models.user import User
+from ..database import db, csrf
 from datetime import datetime
 import secrets
 from functools import wraps

@@ -3,7 +3,7 @@ import json
 import csv
 import logging
 from flask import current_app
-from models.list import List
+from ..models.list import List
 
 logger = logging.getLogger(__name__)
 

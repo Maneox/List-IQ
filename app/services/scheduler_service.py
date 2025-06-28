@@ -2,7 +2,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import croniter
 from datetime import datetime
-from models.list import List, db
+from ..models.list import List
+from .. import db
 import logging
 from flask import current_app
 import json
@@ -11,9 +12,9 @@ import tempfile
 import os
 
 # Import timezone utilities
-from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
+from ..utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
 from typing import Dict, Any, Optional, List as TypeList, Tuple
-from services.list_service import ListService
+from .list_service import ListService
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +187,7 @@ class SchedulerService:
                         if len(parts) == 2:
                             public_id = parts[1].split("?")[0].strip()
                             print(f"[get_internal_list_data_from_url] Token public détecté: {public_id}")
-                            from models.list import List
+                            from ..models.list import List
                             list_obj = List.query.filter_by(public_access_token=public_id).first()
                             if list_obj:
                                 print(f"[get_internal_list_data_from_url] Liste interne trouvée, id={list_obj.id}, récupération via ORM")
@@ -656,7 +657,7 @@ class SchedulerService:
                                 execution_logs.append(log_msg)
                             
                             # Use DataImporter to import data from the URL
-                            from models.data_importer import DataImporter
+                            from ..models.data_importer import DataImporter
                             importer = DataImporter(list_obj)
                             row_count = importer.import_data(force_update=False)
                             

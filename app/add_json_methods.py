@@ -5,7 +5,7 @@ This script must be executed before starting the application.
 
 import json
 from flask import current_app
-from models.list import List
+from .models.list import List
 
 # Add the get_json_selected_columns property
 def get_json_selected_columns(self):

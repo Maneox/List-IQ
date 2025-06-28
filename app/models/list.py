@@ -1,4 +1,4 @@
-from database import db
+from .. import db
 import json
 import ipaddress
 from datetime import datetime, timezone
@@ -11,12 +11,11 @@ import io
 import csv
 from flask import current_app
 
-# The import of import_csv_data is moved into the _import_csv_data method to avoid a circular import
+# L'import de DataImporter doit être fait localement dans la/les méthode(s) qui en ont besoin pour éviter les imports circulaires.
 
 # Import timezone management functions
-from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE
+from ..utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE
 from .list_components import ListColumn, ListData
-from .data_importer import DataImporter
 
 class List(db.Model):
     __tablename__ = 'lists'
@@ -1147,7 +1146,7 @@ class List(db.Model):
         """
         # from flask import current_app # Already imported
         # Import here to avoid circular import
-        from models.csv_import_helper import import_csv_data
+        from .csv_import_helper import import_csv_data
 
         try:
             # Use the CSV import helper module
@@ -1596,7 +1595,7 @@ class List(db.Model):
     def _import_json_data(self, json_data_input): # Renamed json_data to json_data_input
         """Imports data from JSON content"""
         # from flask import current_app # Already imported
-        from utils.timezone_utils import get_paris_now # Already imported
+        from ..utils.timezone_utils import get_paris_now # Already imported
 
         # Make a mutable copy if json_data_input is a list, or extract data if it's a dict
         processed_json_data = []
@@ -2125,18 +2124,6 @@ class List(db.Model):
         except Exception as e:
             current_app.logger.error(f"Exception during import from URL for list {self.id}: {str(e)}")
             current_app.logger.exception(e)
-            return 0
-            
-    def update_from_url(self):
-        """Updates data using DataImporter to handle different sources."""
-        # flask.current_app is imported at the top of models/list.py
-        current_app.logger.info(f"List {self.id}: Attempting update via DataImporter.")
-        importer = DataImporter(self) # DataImporter will be imported
-        try:
-            # Force update to bypass the elapsed time check
-            # DataImporter handles its own logging for success/failure of specific steps
-            # and updates self.list_instance.last_update.
-            lines_imported = importer.import_data(force_update=True)
 
             if lines_imported is not None:
                 # This means the import process completed; 0 lines is a valid outcome if the source was empty.
@@ -2152,6 +2139,24 @@ class List(db.Model):
             current_app.logger.error(f"List {self.id}: Unexpected exception during call to DataImporter.import_data(): {str(e)}")
             current_app.logger.exception(e) # Log full traceback
             return False # Indicate failure
+
+    def update_from_url(self):
+        """Met à jour les données en utilisant DataImporter pour gérer les différentes sources (URL, API, etc.)."""
+        from .data_importer import DataImporter
+        current_app.logger.info(f"List {self.id}: Tentative de mise à jour via DataImporter.")
+        importer = DataImporter(self)
+        try:
+            lignes_importees = importer.import_data(force_update=True)
+            if lignes_importees is not None:
+                current_app.logger.info(f"List {self.id}: DataImporter.import_data a traité {lignes_importees} lignes.")
+                return True
+            else:
+                current_app.logger.warning(f"List {self.id}: DataImporter.import_data a retourné None. La mise à jour a pu être ignorée ou échouée.")
+                return False
+        except Exception as e:
+            current_app.logger.error(f"List {self.id}: Exception inattendue lors de l'appel à DataImporter.import_data(): {str(e)}")
+            current_app.logger.exception(e)
+            return False
 
     def import_data_from_api_curl(self):
         """Imports data from an API via a curl command"""

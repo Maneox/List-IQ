@@ -8,12 +8,12 @@ from functools import wraps
 # Flask imports
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
-from routes.decorators import admin_required
+from .decorators import admin_required
 
 # Application imports
-from models.list import List
-from database import db, csrf
-from services.scheduler_service import SchedulerService
+from ..models.list import List
+from ..database import db, csrf
+from ..services.scheduler_service import SchedulerService
 
 json_config_bp = Blueprint('json_config_bp', __name__)
 
@@ -36,7 +36,7 @@ def json_config(list_id):
     current_app.logger.info(f"Accessing JSON configuration page for list {list_id}")
     
     # Explicitly import List in this function to avoid scope issues
-    from models.list import List
+    from ..models.list import List
     
     # Get the list object
     list_obj = List.query.get_or_404(list_id)
@@ -163,13 +163,30 @@ def json_config(list_id):
                 current_app.logger.error("Curl command not defined")
                 raise Exception("Curl error: command not defined")
             
-            current_app.logger.info(f"Executing curl command: {curl_command}")
-            
-            # Execute the curl command and capture the output
+            # Détection d'un curl auto-bouclant sur l'API publique JSON du service
+            from ..utils.internal_access import get_internal_list_data_from_public_json_url
+            import re
             try:
-                result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
-                output = result.stdout
-                
+                # Regex robuste : capture la première URL http(s) se terminant par /public/json/<token>
+                match = re.search(r"https?://[^\s'\"]+/public/json/[\w-]+", curl_command)
+                if match:
+                    target_url = match.group(0)
+                    current_app.logger.info(f"[OPTIM] Detected curl command targeting public JSON endpoint: {target_url}")
+                    internal_data = get_internal_list_data_from_public_json_url(target_url)
+                    if internal_data is not None:
+                        output = json.dumps(internal_data)
+                        current_app.logger.info(f"[OPTIM] JSON data retrieved directly via ORM (no curl): {output[:200]}...")
+                    else:
+                        # Fallback : exécution shell si ce n'est pas interne
+                        current_app.logger.info("[OPTIM] Target URL is not internal or data not found, executing curl as usual.")
+                        result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
+                        output = result.stdout
+                else:
+                    # Cas général : exécution shell normale
+                    current_app.logger.info("[OPTIM] No public JSON endpoint detected in curl_command, executing curl as usual.")
+                    result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
+                    output = result.stdout
+
                 if not output:
                     current_app.logger.error("Error executing curl command: no output")
                     raise Exception("Curl error: no output")
@@ -190,50 +207,12 @@ def json_config(list_id):
             
             current_app.logger.info(f"Getting JSON data from URL: {url}")
             
-            # Detect if the URL points to our own application
-            import os
-            
-            # Get the application domain from the SERVER_NAME environment variable
-            # or from the Flask configuration
-            app_domain = os.environ.get('SERVER_NAME') or current_app.config.get('SERVER_NAME', 'localhost')
-            current_app.logger.info(f"Application domain detected: {app_domain}")
-            
-            # Add other possible internal domains
-            internal_domains = ["localhost:5000", "web:5000", "nginx", app_domain]
-            
-            is_internal_url = False
-            for domain in internal_domains:
-                if domain in url:
-                    is_internal_url = True
-                    break
-            
-            if is_internal_url and "/public/json/" in url:
-                current_app.logger.info(f"Detected an internal URL, using an alternative method")
-                
-                # Extract the public list identifier from the URL
-                # Expected format: .../public/json/IDENTIFIER
-                parts = url.split("/public/json/")
-                if len(parts) == 2:
-                    public_id = parts[1].split("?")[0].strip()
-                    
-                    # Use an alternative method to get the data
-                    from models.list import List
-                    
-                    # Search for the list corresponding to this public identifier
-                    source_list = List.query.filter_by(public_access_token=public_id).first()
-                    
-                    if source_list:
-                        current_app.logger.info(f"Internal list found with ID {source_list.id}")
-                        # Directly generate the JSON data
-                        json_data = source_list.generate_public_json()
-                        output = json.dumps(json_data)
-                        current_app.logger.info(f"JSON data retrieved directly: {output[:200]}...")
-                    else:
-                        current_app.logger.error(f"Internal list with public ID {public_id} not found")
-                        raise Exception(f"List with public ID {public_id} not found")
-                else:
-                    current_app.logger.error(f"Invalid internal URL format: {url}")
-                    raise Exception(f"Invalid internal URL format: {url}")
+            # Utilisation de la fonction utilitaire pour accès direct interne
+            from ..utils.internal_access import get_internal_list_data_from_public_json_url
+            internal_data = get_internal_list_data_from_public_json_url(url)
+            if internal_data is not None:
+                output = json.dumps(internal_data)
+                current_app.logger.info(f"JSON data retrieved directly (internal utility): {output[:200]}...")
             else:
                 # Standard method for external URLs
                 import requests
@@ -402,22 +381,47 @@ def test_json_path(list_id):
             if not curl_command:
                 result['message'] = "Curl command not defined"
                 return jsonify(result)
-            
-            current_app.logger.info(f"Executing curl command: {curl_command}")
-            
-            # Execute the curl command and capture the output
-            try:
-                stream = os.popen(curl_command)
-                output = stream.read()
-                current_app.logger.info(f"Curl command result: {output[:200]}...")
-                
-                if not output:
-                    result['message'] = "Error executing curl command: no output"
+
+            # Détection d'un curl auto-bouclant sur l'API publique JSON du service
+            from ..utils.internal_access import get_internal_list_data_from_public_json_url
+            import re
+            match = re.search(r"https?://[^\s'\"]+/public/json/[\w-]+", curl_command)
+            if match:
+                target_url = match.group(0)
+                current_app.logger.info(f"[OPTIM] Detected curl command targeting public JSON endpoint: {target_url}")
+                internal_data = get_internal_list_data_from_public_json_url(target_url)
+                if internal_data is not None:
+                    output = json.dumps(internal_data)
+                    current_app.logger.info(f"[OPTIM] JSON data retrieved directly via ORM (no curl): {output[:200]}...")
+                else:
+                    # Fallback : exécution shell si ce n'est pas interne
+                    current_app.logger.info("[OPTIM] Target URL is not internal or data not found, executing curl as usual.")
+                    try:
+                        stream = os.popen(curl_command)
+                        output = stream.read()
+                        current_app.logger.info(f"Curl command result: {output[:200]}...")
+                        if not output:
+                            result['message'] = "Error executing curl command: no output"
+                            return jsonify(result)
+                    except Exception as e:
+                        current_app.logger.error(f"Error executing curl command: {str(e)}")
+                        result['message'] = f"Error executing curl command: {str(e)}"
+                        return jsonify(result)
+            else:
+                # Cas général : exécution shell normale
+                current_app.logger.info("[OPTIM] No public JSON endpoint detected in curl_command, executing curl as usual.")
+                try:
+                    stream = os.popen(curl_command)
+                    output = stream.read()
+                    current_app.logger.info(f"Curl command result: {output[:200]}...")
+                    if not output:
+                        result['message'] = "Error executing curl command: no output"
+                        return jsonify(result)
+                except Exception as e:
+                    current_app.logger.error(f"Error executing curl command: {str(e)}")
+                    result['message'] = f"Error executing curl command: {str(e)}"
                     return jsonify(result)
-            except Exception as e:
-                current_app.logger.error(f"Error executing curl command: {str(e)}")
-                result['message'] = f"Error executing curl command: {str(e)}"
-                return jsonify(result)
+
         
         elif is_json_url:
             # Get the URL from the configuration

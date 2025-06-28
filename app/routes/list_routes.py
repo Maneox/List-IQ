@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort, current_app, send_file, session, g
 from flask_login import login_required, current_user
-from models.list import List, ListColumn, ListData
-from models.user import User
-from database import db, csrf
+from ..models.list import List, ListColumn, ListData
+from ..models.user import User
+from ..database import db, csrf
 from datetime import datetime
 import json
 import csv
@@ -12,18 +12,17 @@ import os
 import requests
 
 # Import timezone utilities
-from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
+from ..utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
 import uuid
 import subprocess
 import ipaddress
 from sqlalchemy import text, exc
 from sqlalchemy.orm import joinedload
 from functools import wraps
-from routes.api_auth_routes import token_auth_required
-from services.scheduler_service import SchedulerService
-from routes.decorators import admin_required
-from services.scheduler_service import SchedulerService
-from services.public_files_service import update_public_files
+from .api_auth_routes import token_auth_required
+from ..services.scheduler_service import SchedulerService
+from .decorators import admin_required
+from ..services.public_files_service import update_public_files
 
 list_bp = Blueprint('list_bp', __name__)
 
@@ -307,7 +306,7 @@ def save_csv_config(list_id):
             db.session.refresh(list_obj)
             
             # Import data with the new configuration using DataImporter
-            from models.data_importer import DataImporter
+            from ..models.data_importer import DataImporter
             importer = DataImporter(list_obj)
             row_count = importer.import_data(force_update=True)
             flash(f'{row_count if row_count is not None else 0} rows imported successfully', 'success')
@@ -1309,7 +1308,7 @@ def create_list():
             if list_obj.update_type == 'automatic' and list_obj.data_source_url:
                 try:
                     # Use the scheduler service to update the data completely
-                    from services.scheduler_service import SchedulerService
+                    from ..services.scheduler_service import SchedulerService
                     scheduler = SchedulerService(current_app)
                     success, logs = scheduler._update_list_data(list_obj.id)
                     
@@ -1547,7 +1546,7 @@ def update_list(list_id):
         if (list_obj.public_csv_enabled or list_obj.public_json_enabled or list_obj.public_txt_enabled) and \
            (not list_obj.public_access_token or data.get('regenerate_token', False)):
             # Import the token generation function
-            from routes.public_files_routes import generate_access_token
+            from .public_files_routes import generate_access_token
             list_obj.public_access_token = generate_access_token()
             current_app.logger.info(f"New access token generated for list {list_id}")
         

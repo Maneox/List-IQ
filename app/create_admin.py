@@ -1,5 +1,5 @@
 from app import create_app, db
-from models.user import User
+from .models.user import User
 import logging
 import time
 import os
