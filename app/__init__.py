@@ -110,12 +110,55 @@ def create_app():
         if not csrf_exempt_token_auth(request):
             csrf.protect()
 
-    log_level_str = os.getenv('LOG_LEVEL', 'INFO').upper()
-    log_level = getattr(logging, log_level_str, logging.INFO)
-    app.logger.setLevel(log_level)
+    # Configuration des logs
+    log_level_str = os.getenv('LOG_LEVEL', 'DEBUG').upper()
+    log_level = getattr(logging, log_level_str, logging.DEBUG)
     
-    # Loggers setup (console, file, cron, admin)
-    # ... (omitting for brevity, it's the same as in app.py)
+    # Créer le répertoire des logs s'il n'existe pas
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Configurer le format des logs
+    log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    formatter = logging.Formatter(log_format)
+    
+    # Configurer le gestionnaire de fichier
+    file_handler = logging.handlers.RotatingFileHandler(
+        os.path.join(log_dir, 'app.log'),
+        maxBytes=10485760,  # 10MB
+        backupCount=5
+    )
+    file_handler.setLevel(log_level)
+    file_handler.setFormatter(formatter)
+    
+    # Configurer le gestionnaire de console
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(log_level)
+    console_handler.setFormatter(formatter)
+    
+    # Configurer le logger racine
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+    
+    # Supprimer les gestionnaires existants
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+    
+    # Ajouter les nouveaux gestionnaires
+    root_logger.addHandler(file_handler)
+    root_logger.addHandler(console_handler)
+    
+    # Configurer le logger de l'application
+    app.logger.setLevel(log_level)
+    for handler in app.logger.handlers[:]:
+        app.logger.removeHandler(handler)
+    app.logger.addHandler(file_handler)
+    app.logger.addHandler(console_handler)
+    app.logger.propagate = False  # Éviter la double journalisation
+    
+    # Configurer les logs SQLAlchemy
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
+    logging.getLogger('sqlalchemy.pool').setLevel(logging.WARNING)
 
     login_manager.login_view = 'auth.login'
 

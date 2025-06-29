@@ -238,16 +238,12 @@ def get_public_json(token):
             return jsonify(data)
         
         # If the pre-generated file does not exist, generate the JSON on the fly
-        data = list_obj.get_data()
+        # Use the list's generate_public_json method to ensure consistent column filtering
+        # This will exclude only the primary key column and maintain column order
+        filtered_data = list_obj.generate_public_json()
         
-        if not data:
+        if not filtered_data:
             return jsonify({'error': 'No data available'}), 404
-            
-        # Filter the 'id' field from the data for JSON export
-        filtered_data = []
-        for row in data:
-            filtered_row = {k: v for k, v in row.items() if k != 'id'}
-            filtered_data.append(filtered_row)
         
         return jsonify(filtered_data)
     except Exception as e:

@@ -604,20 +604,64 @@ class List(db.Model):
         return False
 
     def generate_public_json(self):
-        """Generates the public JSON data for the list"""
+        """Génère les données JSON publiques pour la liste"""
+        from flask import current_app
+        current_app.logger.info(f"Génération du JSON public pour la liste {self.id} - Nom: {self.name}")
+        
         data = self.get_data()
         
         if not data:
+            current_app.logger.info("Aucune donnée à exporter")
             return []
             
-        # Filter the 'id' field from the data for JSON export
+        # Obtenir la liste des noms de colonnes métier
+        business_columns = {col.name for col in self.columns}
+        current_app.logger.info(f"Colonnes métier trouvées ({len(business_columns)}): {', '.join(business_columns) if business_columns else 'Aucune'}")
+        
+        # Pour chaque ligne, ne conserver que les colonnes qui sont dans business_columns
         filtered_data = []
-        for row in data:
-            filtered_row = {k: v for k, v in row.items() if k != 'id'}
+        for idx, row in enumerate(data, 1):
+            # Log des colonnes disponibles dans la ligne
+            current_app.logger.debug(f"Ligne {idx} - Colonnes disponibles: {', '.join(row.keys())}")
+            
+            # Créer une nouvelle ligne avec uniquement les colonnes qui existent dans business_columns
+            filtered_row = {k: v for k, v in row.items() if k in business_columns or k == 'id'}
+            
+            # Log des colonnes après filtrage
+            current_app.logger.debug(f"Ligne {idx} - Colonnes après filtrage: {', '.join(filtered_row.keys())}")
+            
+            # Supprimer l'ID interne s'il ne s'agit pas d'une colonne métier
+            if 'id' in filtered_row and 'id' not in business_columns:
+                del filtered_row['id']
+                
             filtered_data.append(filtered_row)
         
-        return filtered_data
+        # Log final
+        if filtered_data:
+            sample_row = filtered_data[0]
+            current_app.logger.info(f"Export JSON réussi. Exemple de première ligne avec colonnes: {', '.join(sample_row.keys())}")
+            return filtered_data
+        else:
+            current_app.logger.warning("Aucune donnée filtrée à exporter")
+            return []
 
+    def generate_public_json(self) -> TypeList[Dict[str, Any]]:
+        """
+        Generate public JSON data for the list.
+        This method is optimized for public exports.
+        
+        Returns:
+            List[Dict]: List of rows with all data, including the 'id' field
+        """
+        current_app.logger.info(f"Generating public JSON for list {self.id}")
+        
+        # Get the data using the existing get_data method
+        data = self.get_data()
+        
+        # Return the data as-is, including the 'id' field
+        current_app.logger.info(f"Generated public JSON with {len(data)} rows")
+        return data
+        
     def get_data(self) -> TypeList[Dict[str, Any]]:
         """Fetches the list's data"""
         # from flask import current_app # Already imported
@@ -636,6 +680,128 @@ class List(db.Model):
             # Create a dictionary of columns by position for faster access
             columns_by_position = {c.position: c for c in columns}
 
+            # Fetch the data
+            data_items = db.session.query(ListData).filter(
+                ListData.list_id == self.id
+            ).order_by(
+                ListData.row_id,
+                ListData.column_position
+            ).all()
+
+            current_app.logger.info(f"Number of data items fetched: {len(data_items)}")
+
+            # Organize data by row
+            rows = {}
+            for item in data_items:
+                # Create the row if it doesn't exist
+                if item.row_id not in rows:
+                    rows[item.row_id] = {'id': item.row_id}  # Use row_id as identifier
+
+                # Get the corresponding column
+                column = columns_by_position.get(item.column_position)
+
+                # Add the value if the column exists
+                if column:
+                    rows[item.row_id][column.name] = item.value
+                else:
+                    current_app.logger.warning(f"Column not found for position {item.column_position}")
+
+            # Convert to a list
+            data = list(rows.values())
+            current_app.logger.info(f"Number of rows fetched: {len(data)}")
+
+            # Apply filters if necessary
+            if self.filter_enabled:
+                try:
+                    filtered_data = self.apply_filters(data)
+                    current_app.logger.info(f"Filtered data: {len(filtered_data)} rows")
+                    return filtered_data
+                except Exception as e:
+                    current_app.logger.error(f"Error applying filters: {str(e)}")
+                    import traceback
+                    current_app.logger.error(traceback.format_exc())
+                    # In case of error in filters, return unfiltered data
+                    return data
+            else:
+                return data
+
+        except Exception as e:
+            current_app.logger.error(f"Error fetching data: {str(e)}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            # In case of error, return an empty list
+            return []
+
+    def apply_filters(self, data: TypeList[Dict[str, Any]]) -> TypeList[Dict[str, Any]]:
+        """Applies filters to the data"""
+        # from flask import current_app # Already imported
+
+        # If filtering is not enabled or if there are no filter rules, return the data as is
+        if not self.filter_enabled or not self.filter_rules:
+            current_app.logger.info(f"Filtering not enabled or no rules for list {self.id}")
+            return data
+
+        # If the data is empty, return an empty list
+        if not data:
+            current_app.logger.info(f"No data to filter for list {self.id}")
+            return []
+
+
+        try:
+            # Try to parse the filter rules as JSON
+            current_app.logger.info(f"Raw filter rules: {self.filter_rules}")
+
+            # Handle different rule formats
+            if isinstance(self.filter_rules, list):
+                filters = self.filter_rules
+            elif isinstance(self.filter_rules, str):
+                # Clean up the JSON string
+                clean_rules = self.filter_rules.strip()
+                if not clean_rules:
+                    return data
+
+                # Parse JSON rules
+                filters = json.loads(clean_rules)
+            else:
+                current_app.logger.warning(f"Unsupported filter rule format: {type(self.filter_rules)}")
+                return data
+
+            # Check if filters are valid
+            if not filters or not isinstance(filters, list):
+                current_app.logger.info(f"Invalid or empty filters: {filters}")
+                return data
+
+            current_app.logger.info(f"Parsed filters: {filters}")
+
+            # Apply filters to the data
+            filtered_data = []
+            for row in data:
+                # Check each value in the row
+                for key, value in row.items():
+                    # Ignore the ID
+                    if key == 'id':
+                        continue
+
+                    # Convert the value to a string for comparison
+                    str_value = str(value).lower() if value is not None else ""
+
+
+                    # Check if the value matches one of the filters
+                    if any(str(filter_value).lower() in str_value for filter_value in filters):
+                        filtered_data.append(row)
+                        break
+
+            current_app.logger.info(f"Filtering result: {len(filtered_data)} rows out of {len(data)}")
+            return filtered_data
+
+        except json.JSONDecodeError as e:
+            current_app.logger.error(f"JSON decoding error of filter rules: {str(e)}")
+            return data
+        except Exception as e:
+            current_app.logger.error(f"Error applying filters: {str(e)}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            return data
             # Fetch the data
             data_items = db.session.query(ListData).filter(
                 ListData.list_id == self.id
