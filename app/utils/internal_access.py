@@ -30,12 +30,17 @@ def get_internal_list_data_from_public_json_url(url):
             public_id = parts[1].split("?")[0].strip()
             source_list = List.query.filter_by(public_access_token=public_id).first()
             if source_list:
-                # Génération du JSON public (filtrage champ id)
+                # Génération du JSON public (on conserve 'id' si c'est une colonne métier)
                 data = source_list.get_data()
+                business_columns = {col.name for col in source_list.columns}  # Récupérer les colonnes métier
                 filtered_data = []
                 for row in data:
-                    filtered_row = {k: v for k, v in row.items() if k != 'id'}
+                    # Ne pas supprimer 'id' si c'est une colonne métier
+                    filtered_row = {k: v for k, v in row.items() if k != 'id' or k in business_columns}
                     filtered_data.append(filtered_row)
+                current_app.logger.info(f"Données internes récupérées pour la liste {source_list.id} avec {len(filtered_data)} lignes")
+                if filtered_data and len(filtered_data) > 0:
+                    current_app.logger.info(f"Première ligne (colonnes): {list(filtered_data[0].keys())}")
                 return filtered_data
             else:
                 current_app.logger.error(f"Aucune liste trouvée avec le token public {public_id}")
