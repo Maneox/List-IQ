@@ -651,16 +651,25 @@ class List(db.Model):
         This method is optimized for public exports.
         
         Returns:
-            List[Dict]: List of rows with all data, including the 'id' field
+            List[Dict]: List of rows with data, including 'id' only if it's a business column
         """
         current_app.logger.info(f"Generating public JSON for list {self.id}")
+        
+        # Get the list of business column names
+        business_columns = {col.name for col in self.columns}
+        current_app.logger.info(f"Business columns: {business_columns}")
         
         # Get the data using the existing get_data method
         data = self.get_data()
         
-        # Return the data as-is, including the 'id' field
-        current_app.logger.info(f"Generated public JSON with {len(data)} rows")
-        return data
+        # Filter columns to keep only business columns
+        filtered_data = []
+        for row in data:
+            filtered_row = {k: v for k, v in row.items() if k in business_columns or k == 'id' and 'id' in business_columns}
+            filtered_data.append(filtered_row)
+        
+        current_app.logger.info(f"Generated public JSON with {len(filtered_data)} rows")
+        return filtered_data
         
     def get_data(self) -> TypeList[Dict[str, Any]]:
         """Fetches the list's data"""
