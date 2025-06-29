@@ -2204,12 +2204,8 @@ def export_list_data(list_id):
         data = list_obj.get_data()
         
         if format_type == 'json':
-            # Filter the 'id' field from the data for JSON export
-            filtered_data = []
-            for row in data:
-                filtered_row = {k: v for k, v in row.items() if k != 'id'}
-                filtered_data.append(filtered_row)
-            return jsonify(filtered_data)
+            # Return the data as-is, including the 'id' field
+            return jsonify(data)
         else:  # CSV
             if not data:
                 return jsonify({'error': 'No data to export'}), 404
