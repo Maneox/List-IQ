@@ -2200,12 +2200,18 @@ def export_list_data(list_id):
         # Get the list object
         list_obj = List.query.get_or_404(list_id)
         
-        # Get the data
+        # Get the data and business columns
         data = list_obj.get_data()
+        business_columns = {col.name for col in list_obj.columns}
         
         if format_type == 'json':
-            # Return the data as-is, including the 'id' field
-            return jsonify(data)
+            # Filter data to include only business columns and 'id' if it's a business column
+            filtered_data = []
+            for row in data:
+                filtered_row = {k: v for k, v in row.items() 
+                             if k in business_columns or (k == 'id' and 'id' in business_columns)}
+                filtered_data.append(filtered_row)
+            return jsonify(filtered_data)
         else:  # CSV
             if not data:
                 return jsonify({'error': 'No data to export'}), 404
@@ -2214,13 +2220,22 @@ def export_list_data(list_id):
             output = io.StringIO()
             writer = csv.writer(output)
             
-            # Write the header
+            # Write the header - only include business columns
             headers = [col.name for col in list_obj.columns]
+            if 'id' in business_columns and 'id' not in headers:
+                headers.insert(0, 'id')  # Add 'id' at the beginning if it's a business column
+                
             writer.writerow(headers)
             
             # Write the data
             for row in data:
-                writer.writerow([row.get(header, '') for header in headers])
+                # Only include business columns and 'id' if it's a business column
+                row_data = []
+                for header in headers:
+                    if header == 'id' and 'id' not in business_columns:
+                        continue  # Skip 'id' if it's not a business column
+                    row_data.append(row.get(header, ''))
+                writer.writerow(row_data)
             
             # Prepare the response
             output.seek(0)
