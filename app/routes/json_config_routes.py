@@ -163,11 +163,11 @@ def json_config(list_id):
                 current_app.logger.error("Curl command not defined")
                 raise Exception("Curl error: command not defined")
             
-            # Détection d'un curl auto-bouclant sur l'API publique JSON du service
+            # Detect a self-looping curl on the service's public JSON API
             from ..utils.internal_access import get_internal_list_data_from_public_json_url
             import re
             try:
-                # Regex robuste : capture la première URL http(s) se terminant par /public/json/<token>
+                # Robust regex: captures the first http(s) URL ending with /public/json/<token>
                 match = re.search(r"https?://[^\s'\"]+/public/json/[\w-]+", curl_command)
                 if match:
                     target_url = match.group(0)
@@ -177,12 +177,12 @@ def json_config(list_id):
                         output = json.dumps(internal_data)
                         current_app.logger.info(f"[OPTIM] JSON data retrieved directly via ORM (no curl): {output[:200]}...")
                     else:
-                        # Fallback : exécution shell si ce n'est pas interne
+                        # Fallback: shell execution if not internal
                         current_app.logger.info("[OPTIM] Target URL is not internal or data not found, executing curl as usual.")
                         result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
                         output = result.stdout
                 else:
-                    # Cas général : exécution shell normale
+                    # General case: normal shell execution
                     current_app.logger.info("[OPTIM] No public JSON endpoint detected in curl_command, executing curl as usual.")
                     result = subprocess.run(curl_command, shell=True, capture_output=True, text=True, check=True)
                     output = result.stdout
@@ -207,7 +207,7 @@ def json_config(list_id):
             
             current_app.logger.info(f"Getting JSON data from URL: {url}")
             
-            # Utilisation de la fonction utilitaire pour accès direct interne
+            # Using the utility function for direct internal access
             from ..utils.internal_access import get_internal_list_data_from_public_json_url
             internal_data = get_internal_list_data_from_public_json_url(url)
             if internal_data is not None:
@@ -382,7 +382,7 @@ def test_json_path(list_id):
                 result['message'] = "Curl command not defined"
                 return jsonify(result)
 
-            # Détection d'un curl auto-bouclant sur l'API publique JSON du service
+            # Detect a self-looping curl on the service's public JSON API
             from ..utils.internal_access import get_internal_list_data_from_public_json_url
             import re
             match = re.search(r"https?://[^\s'\"]+/public/json/[\w-]+", curl_command)
@@ -394,7 +394,7 @@ def test_json_path(list_id):
                     output = json.dumps(internal_data)
                     current_app.logger.info(f"[OPTIM] JSON data retrieved directly via ORM (no curl): {output[:200]}...")
                 else:
-                    # Fallback : exécution shell si ce n'est pas interne
+                    # Fallback: shell execution if not internal
                     current_app.logger.info("[OPTIM] Target URL is not internal or data not found, executing curl as usual.")
                     try:
                         stream = os.popen(curl_command)
@@ -408,7 +408,7 @@ def test_json_path(list_id):
                         result['message'] = f"Error executing curl command: {str(e)}"
                         return jsonify(result)
             else:
-                # Cas général : exécution shell normale
+                # General case: normal shell execution
                 current_app.logger.info("[OPTIM] No public JSON endpoint detected in curl_command, executing curl as usual.")
                 try:
                     stream = os.popen(curl_command)

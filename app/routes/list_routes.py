@@ -115,7 +115,8 @@ def preview_csv(list_id):
             return jsonify({'error': "The 'has_header' field is required"}), 400
         
         # Log received data for debugging
-        current_app.logger.info(f"Data received for preview: {data}")        # Get configuration parameters
+        current_app.logger.info(f"Data received for preview: {data}")
+        # Get configuration parameters
         separator = data.get('separator', ',')
         
         # Handle special separators like tab
@@ -244,7 +245,8 @@ def save_csv_config(list_id):
     """Saves the CSV configuration and imports the data"""
     try:
         list_obj = List.query.get_or_404(list_id)
-        data = request.get_json()        # Get configuration parameters
+        data = request.get_json()
+        # Get configuration parameters
         separator = data.get('separator', ',')
         
         # Handle special separators like tab
@@ -1414,7 +1416,7 @@ def update_list(list_id):
             data = request.form.to_dict()
             current_app.logger.info(f"Received form data for list {list_id}: {data}")
             
-            # Convertir toutes les cases à cocher en booléen (True si présente, False sinon)
+            # Convert all checkboxes to boolean (True if present, False otherwise)
             checkbox_keys = [
                 'is_active', 'is_published', 'ip_restriction_enabled',
                 'public_csv_enabled', 'public_json_enabled', 'regenerate_token',
@@ -1476,7 +1478,7 @@ def update_list(list_id):
             # Get the existing list
             list_obj = List.query.get(list_id)
         
-        # data est déjà défini plus haut (JSON ou formulaire)
+        # data is already defined above (JSON or form)
         if not data:
             return jsonify({'error': 'No data received'}), 400
             
@@ -1536,7 +1538,7 @@ def update_list(list_id):
         list_obj.public_csv_enabled = data.get('public_csv_enabled', list_obj.public_csv_enabled)
         list_obj.public_json_enabled = data.get('public_json_enabled', list_obj.public_json_enabled)
         list_obj.public_csv_include_headers = data.get('public_csv_include_headers', True)
-        # Gestion des options TXT public
+        # Handle public TXT options
         list_obj.public_txt_enabled = data.get('public_txt_enabled', list_obj.public_txt_enabled)
         list_obj.public_txt_column = data.get('public_txt_column', list_obj.public_txt_column)
         list_obj.public_txt_include_headers = data.get('public_txt_include_headers', True)
@@ -1550,10 +1552,10 @@ def update_list(list_id):
             list_obj.public_access_token = generate_access_token()
             current_app.logger.info(f"New access token generated for list {list_id}")
         
-        # Supprimer le token uniquement si AUCUN export public n'est activé (CSV, JSON, TXT)
+        # Delete the token only if NO public export is enabled (CSV, JSON, TXT)
         if not list_obj.public_csv_enabled and not list_obj.public_json_enabled and not list_obj.public_txt_enabled:
             list_obj.public_access_token = None
-            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled (aucun format public)")
+            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled (no public format)")
         
         # Update the configuration if necessary
         old_schedule = list_obj.update_schedule
@@ -1696,7 +1698,7 @@ def update_list(list_id):
         db.session.commit()
         current_app.logger.info(f"List {list_id} updated successfully")
         
-        # Redirection adaptée selon le type de requête
+        # Redirection adapted to the request type
         wants_json = request.is_json or request.accept_mimetypes.best == 'application/json' or \
             request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if wants_json:
