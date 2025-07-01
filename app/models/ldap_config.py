@@ -1,4 +1,4 @@
-from database import db
+from .. import db
 from datetime import datetime
 
 class LDAPConfig(db.Model):

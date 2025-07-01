@@ -36,8 +36,8 @@ services:
       - SSL_CERT_URL=https://listiq.domaine.local
       - VERIFY_SSL_CERTIFICATES=true
     volumes:
-      - ./app:/app
-      - listiq_public_files:/app/public_files
+      - ./app:/code/app
+      - listiq_public_files:/code/app/public_files
       #- /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -66,8 +66,8 @@ services:
       - ./app/ssl/cert.crt:/etc/nginx/ssl/cert.crt:ro
       - ./app/ssl/cert.key:/etc/nginx/ssl/cert.key:ro
       - ./app/ssl/CA.crt:/etc/nginx/ssl/CA.crt:ro
-      - ./app/static:/app/static:ro
-      - listiq_public_files:/app/public_files:ro
+      - ./app/static:/code/app/static:ro
+      - listiq_public_files:/code/app/public_files:ro
       #- /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:

@@ -2,7 +2,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import croniter
 from datetime import datetime
-from models.list import List, db
+from ..models.list import List
+from .. import db
 import logging
 from flask import current_app
 import json
@@ -11,9 +12,9 @@ import tempfile
 import os
 
 # Import timezone utilities
-from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
+from ..utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
 from typing import Dict, Any, Optional, List as TypeList, Tuple
-from services.list_service import ListService
+from .list_service import ListService
 
 logger = logging.getLogger(__name__)
 
@@ -163,6 +164,61 @@ class SchedulerService:
             # Replace the standard print function with our custom one
             script_globals['print'] = custom_print
             
+            # Utility function for direct access to internal data
+            def get_internal_list_data_from_url(url):
+                """
+                If the target URL is internal (localhost, web:5000, nginx, app domain, etc. + /public/json/<token>),
+                returns the data directly via ORM (List.generate_public_json), otherwise performs a real HTTP call.
+                Returns a 'requests.Response' object (MockResponse) or the actual requests response.
+                Adds logs to the console for each step.
+                """
+                import os
+                from flask import current_app
+                print(f"[get_internal_list_data_from_url] Call with url={url}")
+                # Detect internal domains
+                app_domain = os.environ.get('SERVER_NAME') or current_app.config.get('SERVER_NAME', 'localhost')
+                internal_domains = ["localhost:5000", "web:5000", "nginx", app_domain]
+                is_internal_url = any(domain in url for domain in internal_domains)
+                print(f"[get_internal_list_data_from_url] is_internal_url={is_internal_url} (domains tested: {internal_domains})")
+
+                if is_internal_url and "/public/json/" in url:
+                    try:
+                        parts = url.split("/public/json/")
+                        if len(parts) == 2:
+                            public_id = parts[1].split("?")[0].strip()
+                            print(f"[get_internal_list_data_from_url] Public token detected: {public_id}")
+                            from ..models.list import List
+                            list_obj = List.query.filter_by(public_access_token=public_id).first()
+                            if list_obj:
+                                print(f"[get_internal_list_data_from_url] Internal list found, id={list_obj.id}, fetching via ORM")
+                                json_data = list_obj.generate_public_json()
+                                class MockResponse:
+                                    def __init__(self, json_data):
+                                        self.json_data = json_data
+                                        self.headers = {"Content-Type": "application/json"}
+                                        self.status_code = 200
+                                    def json(self):
+                                        return self.json_data
+                                    def raise_for_status(self):
+                                        pass
+                                print(f"[get_internal_list_data_from_url] Returning MockResponse (ORM source)")
+                                return MockResponse(json_data)
+                            else:
+                                print(f"[get_internal_list_data_from_url] ERROR: No internal list found for public token: {public_id}")
+                                raise ValueError(f"No internal list found for public token: {public_id}")
+                        else:
+                            print(f"[get_internal_list_data_from_url] ERROR: Invalid internal URL format: {url}")
+                            raise ValueError(f"Invalid internal URL format: {url}")
+                    except Exception as e:
+                        print(f"[get_internal_list_data_from_url] ERROR during internal retrieval: {e}")
+                        raise ValueError(f"Error during internal retrieval: {e}")
+                # Otherwise, standard HTTP call (patched requests.get)
+                print(f"[get_internal_list_data_from_url] External HTTP call via requests.get")
+                import requests
+                return requests.get(url)
+
+            script_globals['get_internal_list_data_from_url'] = get_internal_list_data_from_url
+
             # Configure proxy and SSL, and patch requests.get for the script environment
             try:
                 from flask import current_app
@@ -235,7 +291,7 @@ class SchedulerService:
                     if headers: request_params['headers'] = headers
                     if params: request_params['params'] = params
                     # requests.get is already patched here
-                    response = requests.get(url, **kwargs)
+                    response = requests.get(url, **request_params) # Changed kwargs to request_params
                     response.raise_for_status()
                     return response
                 
@@ -254,8 +310,6 @@ class SchedulerService:
                     script_globals['requests'] = unpatched_requests
                     execution_logs.append("WARNING: The original (unpatched) requests module is used due to a proxy/SSL configuration error.")
                 
-
-            
             # Add useful modules for scripts
             script_globals['requests'] = requests
             
@@ -392,6 +446,7 @@ class SchedulerService:
             
             # Replace the URL in the curl command
             # Case 1: URL between single quotes
+            import re
             if "'http" in curl_command:
                 pattern = r"'(https?://[^']*)'" 
                 modified_command = re.sub(pattern, f"'{next_page_url}'" if "'" not in next_page_url else f'"{next_page_url}"', curl_command, count=1)
@@ -601,7 +656,7 @@ class SchedulerService:
                                 execution_logs.append(log_msg)
                             
                             # Use DataImporter to import data from the URL
-                            from models.data_importer import DataImporter
+                            from ..models.data_importer import DataImporter
                             importer = DataImporter(list_obj)
                             row_count = importer.import_data(force_update=False)
                             
@@ -638,10 +693,10 @@ class SchedulerService:
                                 data = self._execute_curl_command(config['curl_command'], list_obj)
                             else:
                                 logger.error(f"No curl command found in configuration for list {list_id}")
-                                return
+                                return False, execution_logs # Changed from return to return False
                         except Exception as e:
                             logger.error(f"Error in curl command execution: {str(e)}")
-                            return
+                            return False, execution_logs # Changed from return to return False
                     elif api_type == 'script':
                         try:
                             # Execute the Python script
@@ -717,13 +772,15 @@ class SchedulerService:
                             return None, [error_message, f"TRACEBACK: {tb}"]
                     else:
                         logger.error(f"Unknown API type '{api_type}' for list {list_id}")
-                        return
+                        return False, execution_logs # Changed from return to return False
                 
                 # Check that the data has been retrieved correctly
                 if data is None:
-                    source_info = f"URL {config['url']}" if config.get('source') == 'url' else "curl command"
-                    logger.error(f"No data retrieved from {source_info} for list {list_id}")
-                    return
+                    source_info = f"URL {config.get('url', 'N/A')}" if config.get('source') == 'url' else "script/curl command"
+                    error_msg = f"No data retrieved from {source_info} for list {list_id}"
+                    logger.error(error_msg)
+                    execution_logs.append(f"ERROR: {error_msg}")
+                    return False, execution_logs
                 
                 logger.info(f"Data retrieved successfully for list {list_id} ({list_obj.name})")
                 

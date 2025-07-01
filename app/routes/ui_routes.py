@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
-from models.list import List
-from services.list_service import ListService
+from ..models.list import List
+from ..services.list_service import ListService
 
 ui_bp = Blueprint('ui', __name__)
 

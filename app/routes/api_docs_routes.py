@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, send_file, current_app, jsonify
 import os
 from flask_login import login_required
-from routes.decorators import admin_required
-from routes.public_routes import public_route
+from .decorators import admin_required
+from .public_routes import public_route
 import json
 
 api_docs_bp = Blueprint('api_docs', __name__)

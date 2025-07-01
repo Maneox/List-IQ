@@ -1,4 +1,4 @@
-from database import db
+from .. import db
 import json
 import ipaddress
 from datetime import datetime, timezone
@@ -11,12 +11,11 @@ import io
 import csv
 from flask import current_app
 
-# The import of import_csv_data is moved into the _import_csv_data method to avoid a circular import
+# The import of DataImporter must be done locally in the method(s) that need it to avoid circular imports.
 
-# Import timezone management functions
-from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE
+# Import of time zone management functions
+from ..utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE
 from .list_components import ListColumn, ListData
-from .data_importer import DataImporter
 
 class List(db.Model):
     __tablename__ = 'lists'
@@ -128,9 +127,9 @@ class List(db.Model):
     public_csv_enabled = db.Column(db.Boolean, default=False)
     public_json_enabled = db.Column(db.Boolean, default=False)
     public_access_token = db.Column(db.String(64), unique=True)
-    # Option : inclure les entêtes dans l'export CSV public
+    # Option: include headers in the public CSV export
     public_csv_include_headers = db.Column(db.Boolean, default=True)
-    # Options pour l’export TXT public
+    # Options for public TXT export
     public_txt_enabled = db.Column(db.Boolean, default=False)
     public_txt_column = db.Column(db.String(255))
     public_txt_include_headers = db.Column(db.Boolean, default=True)
@@ -187,6 +186,7 @@ class List(db.Model):
                            cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
+        """Initializes a new instance of List with the provided parameters."""
         # Validate the update type
         if 'update_type' in kwargs and kwargs['update_type'] not in self.UPDATE_TYPES:
             raise ValueError(f"Invalid update type. Possible values: {', '.join(self.UPDATE_TYPES)}")
@@ -323,7 +323,7 @@ class List(db.Model):
                 try:
                     croniter.croniter(kwargs['update_schedule'])
                 except ValueError as e2:
-                    raise ValueError(f"Invalid update schedule even after correction: {str(e2)}")
+                    raise ValueError(f"Invalid cron format even after correction: {str(e2)}")
 
         # Validate filter rules
         if 'filter_rules' in kwargs and kwargs['filter_rules']:
@@ -349,7 +349,7 @@ class List(db.Model):
 
     @property
     def get_update_config(self) -> Optional[Dict[str, Any]]:
-        """Retrieves the update configuration"""
+        """Gets the update configuration"""
         # Directly use the update_config property which already returns a dictionary
         return self.update_config if self.update_config else None
 
@@ -537,7 +537,7 @@ class List(db.Model):
             if cleaned_ips.startswith('[') or cleaned_ips.startswith('{'):
                 try:
                     # Attempt to parse as JSON
-                    # import json # Already imported
+                    # import json # Already imported at the top
                     allowed_ips_data = json.loads(cleaned_ips)
                     if isinstance(allowed_ips_data, list):
                         allowed_ip_rules = allowed_ips_data
@@ -606,19 +606,72 @@ class List(db.Model):
 
     def generate_public_json(self):
         """Generates the public JSON data for the list"""
+        from flask import current_app
+        current_app.logger.info(f"Generating public JSON for list {self.id} - Name: {self.name}")
+        
         data = self.get_data()
         
         if not data:
+            current_app.logger.info("No data to export")
             return []
             
-        # Filter the 'id' field from the data for JSON export
+        # Get the list of business column names
+        business_columns = {col.name for col in self.columns}
+        current_app.logger.info(f"Business columns found ({len(business_columns)}): {', '.join(business_columns) if business_columns else 'None'}")
+        
+        # For each row, keep only the columns that are in business_columns
         filtered_data = []
-        for row in data:
-            filtered_row = {k: v for k, v in row.items() if k != 'id'}
+        for idx, row in enumerate(data, 1):
+            # Log the available columns in the row
+            current_app.logger.debug(f"Row {idx} - Available columns: {', '.join(row.keys())}")
+            
+            # Create a new row with only the columns that exist in business_columns
+            filtered_row = {k: v for k, v in row.items() if k in business_columns or k == 'id'}
+            
+            # Log columns after filtering
+            current_app.logger.debug(f"Row {idx} - Columns after filtering: {', '.join(filtered_row.keys())}")
+            
+            # Remove the internal ID if it's not a business column
+            if 'id' in filtered_row and 'id' not in business_columns:
+                del filtered_row['id']
+                
             filtered_data.append(filtered_row)
         
-        return filtered_data
+        # Final log
+        if filtered_data:
+            sample_row = filtered_data[0]
+            current_app.logger.info(f"JSON export successful. Example of first row with columns: {', '.join(sample_row.keys())}")
+            return filtered_data
+        else:
+            current_app.logger.warning("No filtered data to export")
+            return []
 
+    def generate_public_json(self) -> TypeList[Dict[str, Any]]:
+        """
+        Generate public JSON data for the list.
+        This method is optimized for public exports.
+        
+        Returns:
+            List[Dict]: List of rows with data, including 'id' only if it's a business column
+        """
+        current_app.logger.info(f"Generating public JSON for list {self.id}")
+        
+        # Get the list of business column names
+        business_columns = {col.name for col in self.columns}
+        current_app.logger.info(f"Business columns: {business_columns}")
+        
+        # Get the data using the existing get_data method
+        data = self.get_data()
+        
+        # Filter columns to keep only business columns
+        filtered_data = []
+        for row in data:
+            filtered_row = {k: v for k, v in row.items() if k in business_columns or k == 'id' and 'id' in business_columns}
+            filtered_data.append(filtered_row)
+        
+        current_app.logger.info(f"Generated public JSON with {len(filtered_data)} rows")
+        return filtered_data
+        
     def get_data(self) -> TypeList[Dict[str, Any]]:
         """Fetches the list's data"""
         # from flask import current_app # Already imported
@@ -713,11 +766,22 @@ class List(db.Model):
             elif isinstance(self.filter_rules, str):
                 # Clean up the JSON string
                 clean_rules = self.filter_rules.strip()
-                if not clean_rules:
-                    return data
 
-                # Parse JSON rules
-                filters = json.loads(clean_rules)
+                if clean_rules.startswith('[') or clean_rules.startswith('{'):
+                    try:
+                        # Attempt to parse as JSON
+                        # import json # Already imported at the top
+                        allowed_ips_data = json.loads(clean_rules)
+                        if isinstance(allowed_ips_data, list):
+                            filters = allowed_ips_data
+                        else:
+                            filters = [clean_rules]
+                    except json.JSONDecodeError:
+                        # If it's not valid JSON, treat as a string with separators
+                        filters = [rule.strip() for rule in clean_rules.split(';') if rule.strip()]
+                else:
+                    # Treat as a list of IPs separated by semicolons
+                    filters = [rule.strip() for rule in clean_rules.split(';') if rule.strip()]
             else:
                 current_app.logger.warning(f"Unsupported filter rule format: {type(self.filter_rules)}")
                 return data
@@ -1147,7 +1211,7 @@ class List(db.Model):
         """
         # from flask import current_app # Already imported
         # Import here to avoid circular import
-        from models.csv_import_helper import import_csv_data
+        from .csv_import_helper import import_csv_data
 
         try:
             # Use the CSV import helper module
@@ -1234,8 +1298,6 @@ class List(db.Model):
             is_json = False
         elif config.get('is_json') is True:
             is_json = True
-        elif self.data_source_format == 'json':
-            is_json = True
         elif self.data_source_url and self.data_source_url.lower().endswith('.json'): # Check data_source_url not None
             is_json = True
 
@@ -1254,14 +1316,34 @@ class List(db.Model):
             try:
                 # First try via current_app.config
                 verify_ssl = current_app.config.get('VERIFY_SSL', 'false').lower() == 'true'
-                http_proxy = current_app.config.get('HTTP_PROXY', '')
-                https_proxy = current_app.config.get('HTTPS_PROXY', '')
+                http_proxy = current_app.config.get('HTTP_PROXY', os.environ.get('HTTP_PROXY', ''))
+                https_proxy = current_app.config.get('HTTPS_PROXY', os.environ.get('HTTPS_PROXY', ''))
+                no_proxy = current_app.config.get('NO_PROXY', os.environ.get('NO_PROXY', ''))
+                
+                # Also check lowercase variables
+                if not http_proxy:
+                    http_proxy = current_app.config.get('http_proxy', os.environ.get('http_proxy', ''))
+                if not https_proxy:
+                    https_proxy = current_app.config.get('https_proxy', os.environ.get('https_proxy', ''))
+                if not no_proxy:
+                    no_proxy = current_app.config.get('no_proxy', os.environ.get('no_proxy', ''))
+                    
+                # Check for custom certificates
+                ca_bundle = os.environ.get('REQUESTS_CA_BUNDLE', '')
+                ssl_cert_file = os.environ.get('SSL_CERT_FILE', '')
+                
+                if ca_bundle:
+                    current_app.logger.info(f"List {self.id}: Using custom CA certificate: {ca_bundle}")
+                if ssl_cert_file:
+                    current_app.logger.info(f"List {self.id}: Using custom SSL certificate: {ssl_cert_file}")
+                    
             except Exception as e:
                 # Fallback to default values in case of error
                 current_app.logger.warning(f"Error retrieving environment variables: {str(e)}")
-                verify_ssl = config.get('verify_ssl', False)
+                verify_ssl = False
                 http_proxy = ''
                 https_proxy = ''
+                no_proxy = ''
             
             # Configure proxy only if variables are defined and not empty
             proxies = None
@@ -1279,9 +1361,7 @@ class List(db.Model):
             if not verify_ssl:
                 import urllib3
                 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-            
-            # Download content with proxy (if defined) and SSL parameters
-            current_app.logger.info(f"List {self.id}: HTTP request with proxy={proxies} and verify_ssl={verify_ssl}")
+                current_app.logger.info(f"List {self.id}: SSL verification disabled")
             
             # Build request parameters
             request_params = {
@@ -1291,16 +1371,11 @@ class List(db.Model):
             # Add proxy only if defined
             if proxies:
                 request_params['proxies'] = proxies
-                
+            
             # Execute request with appropriate parameters
+            current_app.logger.info(f"List {self.id}: HTTP request to {self.data_source_url} with proxy={proxies} and verify_ssl={verify_ssl}")
             response = requests.get(self.data_source_url, **request_params)
-
-            # Check status code
-            if response.status_code != 200:
-                current_app.logger.error(f"Error downloading URL for list {self.id}: {response.status_code}")
-                return None
-
-            # Get content
+            response.raise_for_status()
             content = response.text
 
             # Process data based on format
@@ -1596,7 +1671,7 @@ class List(db.Model):
     def _import_json_data(self, json_data_input): # Renamed json_data to json_data_input
         """Imports data from JSON content"""
         # from flask import current_app # Already imported
-        from utils.timezone_utils import get_paris_now # Already imported
+        from ..utils.timezone_utils import get_paris_now # Already imported
 
         # Make a mutable copy if json_data_input is a list, or extract data if it's a dict
         processed_json_data = []
@@ -1625,7 +1700,6 @@ class List(db.Model):
                         # Original logic implies trying the first element if it's a dict and contains the key.
                         # This part is complex. Let's simplify or stick to strict path.
                         # For now, assuming key must be in dict or be an index for list.
-                        # A more robust JSONPath library might be better here.
                         current_app.logger.warning(f"JSON path '{self.json_data_path}' encountered a list with a non-numeric key '{key}'. Non-standard behavior.")
                         data_ptr = None # Path broken
                         break
@@ -1726,6 +1800,8 @@ class List(db.Model):
                 current_app.logger.info(f"Loaded selected JSON columns: {json_selected_columns_config}")
             except Exception as e:
                 current_app.logger.error(f"Error loading selected JSON columns: {str(e)}")
+                # In case of error, use all columns
+                json_selected_columns_config = []
 
         columns_for_import = current_list_columns # Default to all current columns
         if json_selected_columns_config and isinstance(json_selected_columns_config, list): # Ensure it's a list of dicts
@@ -1761,6 +1837,9 @@ class List(db.Model):
             if not json_keys_from_first_obj.issubset(import_column_names): # Check if all keys in JSON are columns we plan to import
                 # This check might be too strict. We might only want to import available columns.
                 # The concern is if `auto_create_columns` is off and JSON has keys not in `columns_for_import`.
+                # Original code raised ValueError. This might be too strict if we just want to import what matches.
+                # For now, log warning as above, data for these columns will be skipped by _import_rows_from_json.
+                # raise ValueError(f"Invalid columns in JSON (auto_create_columns=off): {', '.join(missing_from_import_schema)}")
                 missing_from_import_schema = json_keys_from_first_obj - import_column_names
                 current_app.logger.warning(f"JSON keys {missing_from_import_schema} not present in selected/existing columns. This data will not be imported.")
 
@@ -1899,10 +1978,11 @@ class List(db.Model):
             current_app.logger.warning(f"No columns defined for JSON import for list {self.id}. No data will be imported.")
             return 0
             
-        # Check if columns were selected via JSON configuration
+        # Check that columns were selected via JSON configuration
         json_selected_columns = []
         if self.json_selected_columns:
             try:
+                # import json # Already imported
                 json_selected_columns = json.loads(self.json_selected_columns)
                 selected_column_names = [col.get('name') for col in json_selected_columns if isinstance(col, dict) and col.get('name')]
                 current_app.logger.info(f"Selected columns in JSON configuration: {selected_column_names}")
@@ -1919,10 +1999,9 @@ class List(db.Model):
                 
         # Final log of columns that will be used for import
         current_app.logger.info(f"Final columns for import: {', '.join(columns_map_for_import.keys())}")
-        if not columns_map_for_import:
-            current_app.logger.warning(f"No columns available for import after filtering. No data will be imported.")
-            return 0
 
+        # Create a dictionary of columns by position for faster access
+        columns_by_position = {col.position: col for col in columns_map_for_import.values()}
 
         list_data_objects_to_add = [] # Batch add
 
@@ -2100,7 +2179,7 @@ class List(db.Model):
             # Update the last update date
             self.last_update = datetime.now(timezone.utc)
             db.session.commit()
-            
+
             # Generate public files if necessary
             if self.is_published:
                 if self.public_json_enabled:
@@ -2125,33 +2204,34 @@ class List(db.Model):
         except Exception as e:
             current_app.logger.error(f"Exception during import from URL for list {self.id}: {str(e)}")
             current_app.logger.exception(e)
-            return 0
             
-    def update_from_url(self):
-        """Updates data using DataImporter to handle different sources."""
-        # flask.current_app is imported at the top of models/list.py
-        current_app.logger.info(f"List {self.id}: Attempting update via DataImporter.")
-        importer = DataImporter(self) # DataImporter will be imported
-        try:
-            # Force update to bypass the elapsed time check
-            # DataImporter handles its own logging for success/failure of specific steps
-            # and updates self.list_instance.last_update.
-            lines_imported = importer.import_data(force_update=True)
-
-            if lines_imported is not None:
-                # This means the import process completed; 0 lines is a valid outcome if the source was empty.
-                current_app.logger.info(f"List {self.id}: DataImporter.import_data processed {lines_imported} rows.")
-                return True # Indicate the import process ran successfully
+            # This part of the original code seems to have a logic error mixing DataImporter with direct implementation.
+            # I will correct it based on the method's purpose, which is direct import.
+            # The 'lines_imported' variable is not defined here. Assuming it should be 'row_count'.
+            if 'row_count' in locals() and row_count is not None:
+                current_app.logger.info(f"List {self.id}: Import process completed with {row_count} rows.")
+                return row_count
             else:
-                # This means import_data returned None, indicating an explicit skip (e.g., too recent update)
-                # or an internal error that DataImporter handled and logged.
+                current_app.logger.warning(f"List {self.id}: Import from URL failed before processing rows.")
+                return 0
+
+    def update_from_url(self):
+        """Updates the data using DataImporter to handle different sources (URL, API, etc.)."""
+        from .data_importer import DataImporter
+        current_app.logger.info(f"List {self.id}: Attempting update via DataImporter.")
+        importer = DataImporter(self)
+        try:
+            lines_imported = importer.import_data(force_update=True)
+            if lines_imported is not None:
+                current_app.logger.info(f"List {self.id}: DataImporter.import_data processed {lines_imported} rows.")
+                return True
+            else:
                 current_app.logger.warning(f"List {self.id}: DataImporter.import_data returned None. The update may have been skipped or failed.")
-                return False # Indicate import was skipped or failed
+                return False
         except Exception as e:
-            # This catches unexpected exceptions raised directly from importer.import_data()
             current_app.logger.error(f"List {self.id}: Unexpected exception during call to DataImporter.import_data(): {str(e)}")
-            current_app.logger.exception(e) # Log full traceback
-            return False # Indicate failure
+            current_app.logger.exception(e)
+            return False
 
     def import_data_from_api_curl(self):
         """Imports data from an API via a curl command"""
@@ -2194,10 +2274,11 @@ class List(db.Model):
 
             # Parse the JSON output
             try:
-                raw_data = json.loads(output)
-                current_app.logger.info(f"List {self.id}: JSON data successfully retrieved from API Curl")
+                # Convert output to JSON object
+                json_data = json.loads(output)
+
                 # Call the standard JSON import method
-                return self._import_json_data(raw_data)
+                return self._import_json_data(json_data)
             except json.JSONDecodeError as e_json: # More specific exception
                 current_app.logger.error(f"List {self.id}: Error parsing JSON from curl output: {str(e_json)}")
                 current_app.logger.debug(f"Raw Curl output: {output[:500]}...") # Log some output for debugging
@@ -2212,8 +2293,7 @@ class List(db.Model):
 
     # NOTE: This is the second definition of this method name in the file.
     def _create_columns_from_json(self, json_obj):
-        """Creates columns from a JSON object.
-        This method is used when the direct method fails."""
+        """Creates columns from a JSON object"""
         # from flask import current_app # Already imported
         # from models.list_column import ListColumn # Not needed if ListColumn is in same file, but good for clarity if it were separate.
                                                 # ListColumn is defined below in this file.

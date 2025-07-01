@@ -3,7 +3,8 @@ import json
 import csv
 import logging
 from flask import current_app
-from models.list import List
+from ..models.list import List
+from ..database import db
 
 logger = logging.getLogger(__name__)
 
@@ -12,12 +13,21 @@ def update_public_files(list_obj):
     Updates the public CSV and JSON files for a given list
     
     Args:
-        list_obj: The list object to update
+        list_obj: The list object to update (can be an ID or a List instance)
     
     Returns:
         bool: True if the update was successful, False otherwise
     """
     try:
+        # If list_obj is an ID, load the list from the database
+        if isinstance(list_obj, int):
+            list_obj = db.session.get(List, list_obj)
+        
+        # If list_obj is still not a List instance, log an error and return
+        if not isinstance(list_obj, List):
+            logger.error(f"Invalid list object provided to update_public_files: {type(list_obj)}")
+            return False
+            
         # Check if public files are enabled
         if not list_obj.public_csv_enabled and not list_obj.public_json_enabled:
             return True
@@ -25,6 +35,9 @@ def update_public_files(list_obj):
         # Create the public files directory if it does not exist
         public_files_dir = os.path.join(current_app.root_path, 'public_files')
         os.makedirs(public_files_dir, exist_ok=True)
+        
+        # Refresh the object to ensure we have the latest data
+        db.session.refresh(list_obj)
         
         # Get the list's data
         data = list_obj.get_data()
@@ -50,12 +63,9 @@ def update_public_files(list_obj):
         if list_obj.public_json_enabled:
             json_path = os.path.join(public_files_dir, f'list_{list_obj.id}.json')
             with open(json_path, 'w', encoding='utf-8') as json_file:
-                # Filter the 'id' field from the data for JSON export
-                filtered_data = []
-                for row in data:
-                    filtered_row = {k: v for k, v in row.items() if k != 'id'}
-                    filtered_data.append(filtered_row)
-                
+                # Use the list's generate_public_json method to ensure consistent column filtering
+                # This will exclude only the primary key column and maintain column order
+                filtered_data = list_obj.generate_public_json()
                 json.dump(filtered_data, json_file, ensure_ascii=False, indent=2)
                 
             logger.info(f"Public JSON file updated for list {list_obj.id}")

@@ -1,11 +1,14 @@
 #!/bin/sh
 
+# Définir le PYTHONPATH pour que les imports depuis la racine du projet (/code) fonctionnent
+export PYTHONPATH=/code
+
 # Load environment variables from the .env file
-if [ -f "/app/.env" ]; then
+if [ -f "/code/app/.env" ]; then
     echo "Loading environment variables from .env..."
     # Use set -a to automatically export all variables
     set -a
-    . /app/.env
+    . /code/app/.env
     set +a
     echo "Environment variables loaded successfully."
 else
@@ -23,7 +26,7 @@ fi
 # Function to generate self-signed SSL certificates
 generate_ssl_certificates() {
     echo "Checking SSL certificates..."
-    SSL_DIR="/app/ssl"
+    SSL_DIR="/code/app/ssl"
     
     # Create the SSL directory if it doesn't exist
     if [ ! -d "$SSL_DIR" ]; then
@@ -221,18 +224,18 @@ fi
 # Create the directory for public files if it doesn't exist
 if [ "$NEW_INSTALL" = "true" ]; then
     echo "Creating public files directory..."
-    mkdir -p /app/public
-    chmod 777 /app/public
+    mkdir -p /code/app/public
+    chmod 777 /code/app/public
 fi
 
 # Get the SSL certificate if necessary
 echo "Checking SSL certificate..."
-SSL_CERT_PATH="/app/certs/custom_ca.pem"
+SSL_CERT_PATH="/code/app/certs/custom_ca.pem"
 SSL_CERT_URL=${SSL_CERT_URL:-""}
 
 if [ ! -f "$SSL_CERT_PATH" ] && [ ! -z "$SSL_CERT_URL" ]; then
     echo "Downloading SSL certificate from $SSL_CERT_URL..."
-    python /app/scripts/install_certificate.py --url "$SSL_CERT_URL" --output "$SSL_CERT_PATH"
+    # python /code/app/scripts/install_certificate.py --url "$SSL_CERT_URL" --output "$SSL_CERT_PATH"
     if [ $? -eq 0 ]; then
         echo "SSL certificate installed successfully."
         # Enable SSL verification in the application
@@ -261,8 +264,8 @@ echo "FLASK_ENV=$FLASK_ENV"
 # Add the --reload option in development mode to automatically reload templates
 if [ "$FLASK_ENV" = "development" ]; then
     echo "Development mode detected, enabling auto-reload..."
-    gunicorn --bind 0.0.0.0:5000 --reload wsgi:app
+    gunicorn --bind 0.0.0.0:5000 --reload app.wsgi:app
 else
     echo "Production mode, no auto-reload."
-    gunicorn --bind 0.0.0.0:5000 wsgi:app
+    gunicorn --bind 0.0.0.0:5000 app.wsgi:app
 fi

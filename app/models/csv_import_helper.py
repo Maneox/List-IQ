@@ -8,8 +8,8 @@ import io
 import json
 from typing import Dict, Any, List
 from flask import current_app
-from models.list import ListColumn, ListData
-from database import db
+from .list import ListColumn, ListData
+from .. import db
 from sqlalchemy import text
 
 def read_csv_with_config(file_obj, csv_config=None, list_obj=None):

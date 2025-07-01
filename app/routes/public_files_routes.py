@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, send_file, current_app, request, abort, session
-from models.list import List
-from database import db
+from ..models.list import List
+from ..database import db
 import io
 import csv
 import json
@@ -11,9 +11,9 @@ import ipaddress
 from datetime import datetime
 
 # Import timezone utilities
-from utils.timezone_utils import get_paris_now, format_datetime
+from ..utils.timezone_utils import get_paris_now, format_datetime
 from functools import wraps
-from routes.decorators import public_route
+from .decorators import public_route
 
 public_files_bp = Blueprint('public_files_bp', __name__)
 
@@ -162,14 +162,14 @@ def get_public_csv(token):
 @public_route
 def get_public_txt(token):
     """
-    Accès public à un fichier TXT d'une colonne de la liste (avec options)
+    Public access to a TXT file of a column from the list (with options)
     """
     list_obj = List.query.filter_by(public_access_token=token).first()
     if not list_obj or not getattr(list_obj, 'public_txt_enabled', False):
         abort(404)
-    # Vérification IP
+    # IP check
     if list_obj.ip_restriction_enabled and not check_ip_access(list_obj):
-        current_app.logger.warning(f"Tentative d'accès non autorisée à l'export TXT public de la liste {list_obj.id} depuis {request.remote_addr}")
+        current_app.logger.warning(f"Unauthorized access attempt to the public TXT export of list {list_obj.id} from {request.remote_addr}")
         session['ip_error_info'] = {
             'detected_ip': request.remote_addr,
             'original_header': request.headers.get('X-Forwarded-For', request.remote_addr),
@@ -179,15 +179,15 @@ def get_public_txt(token):
     try:
         data = list_obj.get_data()
         if not data:
-            return jsonify({'error': 'Aucune donnée disponible'}), 404
+            return jsonify({'error': 'No data available'}), 404
         col_name = getattr(list_obj, 'public_txt_column', None)
         if not col_name:
-            return jsonify({'error': 'Aucune colonne sélectionnée pour l’export TXT'}), 400
-        # Vérifie si la colonne existe
+            return jsonify({'error': 'No column selected for TXT export'}), 400
+        # Check if the column exists
         if not any(col.name == col_name for col in list_obj.columns):
-            return jsonify({'error': f'Colonne {col_name} introuvable'}), 400
+            return jsonify({'error': f'Column {col_name} not found'}), 400
         output = io.StringIO()
-        # Option entête
+        # Header option
         if getattr(list_obj, 'public_txt_include_headers', True):
             output.write(f"{col_name}\n")
         for row in data:
@@ -202,7 +202,7 @@ def get_public_txt(token):
         )
         return response
     except Exception as e:
-        current_app.logger.error(f"Erreur accès TXT public : {str(e)}")
+        current_app.logger.error(f"Error accessing public TXT file: {str(e)}")
         abort(500)
 
 @public_files_bp.route('/public/json/<token>')
@@ -238,16 +238,12 @@ def get_public_json(token):
             return jsonify(data)
         
         # If the pre-generated file does not exist, generate the JSON on the fly
-        data = list_obj.get_data()
+        # Use the list's generate_public_json method to ensure consistent column filtering
+        # This will exclude only the primary key column and maintain column order
+        filtered_data = list_obj.generate_public_json()
         
-        if not data:
+        if not filtered_data:
             return jsonify({'error': 'No data available'}), 404
-            
-        # Filter the 'id' field from the data for JSON export
-        filtered_data = []
-        for row in data:
-            filtered_row = {k: v for k, v in row.items() if k != 'id'}
-            filtered_data.append(filtered_row)
         
         return jsonify(filtered_data)
     except Exception as e:

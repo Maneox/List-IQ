@@ -1,7 +1,7 @@
-from models.user import User
-from models.ldap_config import LDAPConfig
-from services.ldap_service import LDAPService
-from database import db
+from ..models.user import User
+from ..models.ldap_config import LDAPConfig
+from .ldap_service import LDAPService
+from .. import db
 import os
 import logging
 import ldap
@@ -41,7 +41,7 @@ class AuthService:
             logger.info(f"Attempting LDAP authentication for user: {username}")
             
             # Import the new LDAPAuth class
-            from services.ldap_auth import LDAPAuth
+            from .ldap_auth import LDAPAuth
             
             # Authenticate the user with LDAPAuth
             # The method now returns a tuple (user_dn, is_admin)

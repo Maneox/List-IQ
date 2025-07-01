@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort, current_app, send_file, session, g
 from flask_login import login_required, current_user
-from models.list import List, ListColumn, ListData
-from models.user import User
-from database import db, csrf
+from ..models.list import List, ListColumn, ListData
+from ..models.user import User
+from ..database import db, csrf
 from datetime import datetime
 import json
 import csv
@@ -12,18 +12,17 @@ import os
 import requests
 
 # Import timezone utilities
-from utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
+from ..utils.timezone_utils import get_paris_now, utc_to_paris, PARIS_TIMEZONE, format_datetime
 import uuid
 import subprocess
 import ipaddress
 from sqlalchemy import text, exc
 from sqlalchemy.orm import joinedload
 from functools import wraps
-from routes.api_auth_routes import token_auth_required
-from services.scheduler_service import SchedulerService
-from routes.decorators import admin_required
-from services.scheduler_service import SchedulerService
-from services.public_files_service import update_public_files
+from .api_auth_routes import token_auth_required
+from ..services.scheduler_service import SchedulerService
+from .decorators import admin_required
+from ..services.public_files_service import update_public_files
 
 list_bp = Blueprint('list_bp', __name__)
 
@@ -116,7 +115,8 @@ def preview_csv(list_id):
             return jsonify({'error': "The 'has_header' field is required"}), 400
         
         # Log received data for debugging
-        current_app.logger.info(f"Data received for preview: {data}")        # Get configuration parameters
+        current_app.logger.info(f"Data received for preview: {data}")
+        # Get configuration parameters
         separator = data.get('separator', ',')
         
         # Handle special separators like tab
@@ -245,7 +245,8 @@ def save_csv_config(list_id):
     """Saves the CSV configuration and imports the data"""
     try:
         list_obj = List.query.get_or_404(list_id)
-        data = request.get_json()        # Get configuration parameters
+        data = request.get_json()
+        # Get configuration parameters
         separator = data.get('separator', ',')
         
         # Handle special separators like tab
@@ -307,7 +308,7 @@ def save_csv_config(list_id):
             db.session.refresh(list_obj)
             
             # Import data with the new configuration using DataImporter
-            from models.data_importer import DataImporter
+            from ..models.data_importer import DataImporter
             importer = DataImporter(list_obj)
             row_count = importer.import_data(force_update=True)
             flash(f'{row_count if row_count is not None else 0} rows imported successfully', 'success')
@@ -1309,7 +1310,7 @@ def create_list():
             if list_obj.update_type == 'automatic' and list_obj.data_source_url:
                 try:
                     # Use the scheduler service to update the data completely
-                    from services.scheduler_service import SchedulerService
+                    from ..services.scheduler_service import SchedulerService
                     scheduler = SchedulerService(current_app)
                     success, logs = scheduler._update_list_data(list_obj.id)
                     
@@ -1415,7 +1416,7 @@ def update_list(list_id):
             data = request.form.to_dict()
             current_app.logger.info(f"Received form data for list {list_id}: {data}")
             
-            # Convertir toutes les cases à cocher en booléen (True si présente, False sinon)
+            # Convert all checkboxes to boolean (True if present, False otherwise)
             checkbox_keys = [
                 'is_active', 'is_published', 'ip_restriction_enabled',
                 'public_csv_enabled', 'public_json_enabled', 'regenerate_token',
@@ -1477,7 +1478,7 @@ def update_list(list_id):
             # Get the existing list
             list_obj = List.query.get(list_id)
         
-        # data est déjà défini plus haut (JSON ou formulaire)
+        # data is already defined above (JSON or form)
         if not data:
             return jsonify({'error': 'No data received'}), 400
             
@@ -1537,7 +1538,7 @@ def update_list(list_id):
         list_obj.public_csv_enabled = data.get('public_csv_enabled', list_obj.public_csv_enabled)
         list_obj.public_json_enabled = data.get('public_json_enabled', list_obj.public_json_enabled)
         list_obj.public_csv_include_headers = data.get('public_csv_include_headers', True)
-        # Gestion des options TXT public
+        # Handle public TXT options
         list_obj.public_txt_enabled = data.get('public_txt_enabled', list_obj.public_txt_enabled)
         list_obj.public_txt_column = data.get('public_txt_column', list_obj.public_txt_column)
         list_obj.public_txt_include_headers = data.get('public_txt_include_headers', True)
@@ -1547,14 +1548,14 @@ def update_list(list_id):
         if (list_obj.public_csv_enabled or list_obj.public_json_enabled or list_obj.public_txt_enabled) and \
            (not list_obj.public_access_token or data.get('regenerate_token', False)):
             # Import the token generation function
-            from routes.public_files_routes import generate_access_token
+            from .public_files_routes import generate_access_token
             list_obj.public_access_token = generate_access_token()
             current_app.logger.info(f"New access token generated for list {list_id}")
         
-        # Supprimer le token uniquement si AUCUN export public n'est activé (CSV, JSON, TXT)
+        # Delete the token only if NO public export is enabled (CSV, JSON, TXT)
         if not list_obj.public_csv_enabled and not list_obj.public_json_enabled and not list_obj.public_txt_enabled:
             list_obj.public_access_token = None
-            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled (aucun format public)")
+            current_app.logger.info(f"Access token deleted for list {list_id} as public access is disabled (no public format)")
         
         # Update the configuration if necessary
         old_schedule = list_obj.update_schedule
@@ -1697,7 +1698,7 @@ def update_list(list_id):
         db.session.commit()
         current_app.logger.info(f"List {list_id} updated successfully")
         
-        # Redirection adaptée selon le type de requête
+        # Redirection adapted to the request type
         wants_json = request.is_json or request.accept_mimetypes.best == 'application/json' or \
             request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if wants_json:
@@ -2201,14 +2202,16 @@ def export_list_data(list_id):
         # Get the list object
         list_obj = List.query.get_or_404(list_id)
         
-        # Get the data
+        # Get the data and business columns
         data = list_obj.get_data()
+        business_columns = {col.name for col in list_obj.columns}
         
         if format_type == 'json':
-            # Filter the 'id' field from the data for JSON export
+            # Filter data to include only business columns and 'id' if it's a business column
             filtered_data = []
             for row in data:
-                filtered_row = {k: v for k, v in row.items() if k != 'id'}
+                filtered_row = {k: v for k, v in row.items() 
+                             if k in business_columns or (k == 'id' and 'id' in business_columns)}
                 filtered_data.append(filtered_row)
             return jsonify(filtered_data)
         else:  # CSV
@@ -2219,13 +2222,22 @@ def export_list_data(list_id):
             output = io.StringIO()
             writer = csv.writer(output)
             
-            # Write the header
+            # Write the header - only include business columns
             headers = [col.name for col in list_obj.columns]
+            if 'id' in business_columns and 'id' not in headers:
+                headers.insert(0, 'id')  # Add 'id' at the beginning if it's a business column
+                
             writer.writerow(headers)
             
             # Write the data
             for row in data:
-                writer.writerow([row.get(header, '') for header in headers])
+                # Only include business columns and 'id' if it's a business column
+                row_data = []
+                for header in headers:
+                    if header == 'id' and 'id' not in business_columns:
+                        continue  # Skip 'id' if it's not a business column
+                    row_data.append(row.get(header, ''))
+                writer.writerow(row_data)
             
             # Prepare the response
             output.seek(0)

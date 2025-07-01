@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
-from models.user import User
-from models.ldap_config import LDAPConfig
-from services.ldap_service import LDAPService
-from database import db
+from ..models.user import User
+from ..models.ldap_config import LDAPConfig
+from ..services.ldap_service import LDAPService
+from .. import db
 from functools import wraps
 import json
-from app import csrf  # Import CSRF extension
+from .. import csrf  # Import CSRF extension
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -163,13 +163,13 @@ def delete_user(user_id):
         current_app.logger.info(f"Attempting to delete user {user_id} (type: {user.auth_type})")
         
         # API tokens will be automatically deleted thanks to the cascade delete
-        from models.api_token import ApiToken
+        from ..models.api_token import ApiToken
         api_tokens_count = ApiToken.query.filter_by(user_id=user_id).count()
         if api_tokens_count > 0:
             current_app.logger.info(f"User {user_id} has {api_tokens_count} API tokens that will be automatically deleted")
         
         # Check if the user has associated lists
-        from models.list import List
+        from ..models.list import List
         user_lists = List.query.filter_by(user_id=user_id).all()
         
         if user_lists:
