@@ -14,6 +14,17 @@ List-IQ is a list management web application that allows you to create, manage, 
 - Integrated API documentation  
 - Support for automatic updates via URL or API  
 
+## ⚠️ Security Warning
+
+**This web application must not be exposed to the Internet.**
+
+It is intended to be deployed **strictly within a trusted local network (LAN)**. Due to its intrinsic capabilities—such as executing code or performing system-level operations—**unauthorized access could result in severe security breaches** if appropriate filtering, monitoring, and access control measures are not implemented.
+
+> 🚫 **No code audit or penetration testing has been performed on this application.**
+
+By using or deploying this software, you acknowledge and accept full responsibility for any outcomes.  
+**The author cannot be held liable for any security incidents or damages resulting from improper usage or exposure to untrusted environments.**
+
 ## Prerequisites
 
 - Docker and Docker Compose  
