@@ -1,3 +1,4 @@
+
 # List-IQ
 
 ## Overview
@@ -6,86 +7,158 @@ List-IQ is a list management web application that allows you to create, manage, 
 
 ## Main Features
 
--   Creation and management of data lists
--   Multilingual interface (French/English)
--   REST API for programmatic data access
--   User authentication and management
--   Integrated documentation for the API
--   Support for automatic updates via URL or API
+- Creation and management of data lists  
+- Multilingual interface (French/English)  
+- REST API for programmatic data access  
+- User authentication and management  
+- Integrated API documentation  
+- Support for automatic updates via URL or API  
+
+## ⚠️ Security Warning
+
+**This web application must not be exposed to the Internet.**
+
+It is intended to be deployed **strictly within a trusted local network (LAN)**. Due to its intrinsic capabilities—such as executing code or performing system-level operations—**unauthorized access could result in severe security breaches** if appropriate filtering, monitoring, and access control measures are not implemented.
+
+> 🚫 **No code audit or penetration testing has been performed on this application.**
+
+By using or deploying this software, you acknowledge and accept full responsibility for any outcomes.  
+**The author cannot be held liable for any security incidents or damages resulting from improper usage or exposure to untrusted environments.**
 
 ## Prerequisites
 
--   Docker and Docker Compose
--   Network access for containers
+- Docker and Docker Compose  
+
+Create List-IQ local user & directory
+We recommend configuring your Linux server with a dedicated List-IQ service account, from which to install and run List-IQ. Doing so will isolate your List-IQ instance from other applications running on your server.
+
+These steps are List-IQ-recommended best practices, but are not required. For more information, see Docker's Post-installation steps for Linux documentation.
+
+Create a List-IQ user:
+
+```Bash
+
+sudo adduser listiq
+```
+Set password for listiq user (strong password):
+
+```Bash
+
+sudo passwd listiq
+```
+Create a docker group (if it doesn’t already exist):
+
+```Bash
+
+sudo groupadd docker
+```
+Add the listiq user to the docker group:
+
+```Bash
+
+sudo usermod -aG docker listiq
+```
+Create a List-IQ directory:
+
+```Bash
+
+sudo mkdir /opt/List-IQ
+```
+Set permissions for the /opt/List-IQ directory:
+
+```Bash
+
+sudo chmod -R 700 /opt/List-IQ
+```
+Set the List-IQ user as owner of the /opt/List-IQ directory:
+
+```Bash
+
+sudo chown -R listiq:listiq /opt/List-IQ
+
+sudo mkdir /opt/List-IQ
+```
+Set permissions for the /opt/List-IQ directory:
+
+```Bash
+
+sudo chmod -R 700 /opt/List-IQ
+```
+Set the List-IQ user as owner of the /opt/List-IQ directory:
+
+```Bash
+
+sudo chown -R listiq:listiq /opt/List-IQ
+```
 
 ## Installation
 
-### Méthode 1 : Installation automatisée avec le script install.sh
+### Method 1: Automated Installation with `install.sh` Script
 
-Le projet inclut un script d'installation automatisée `install.sh` qui facilite la configuration et le déploiement de l'application sur un environnement Linux.
+The project includes an automated installation script `install.sh` that simplifies the setup and deployment of the application on a Linux environment.
 
 ```bash
-# Rendre le script exécutable
+# Make the script executable
 chmod +x install.sh
 
-# Lancer le script en mode interactif
+# Run the script in interactive mode
 ./install.sh
 ```
 
-#### Options disponibles
+#### Available Options
 
-Le script peut être utilisé de deux façons :
+The script can be used in two ways:
 
-1. **Mode interactif** (sans paramètres) : Affiche un menu avec les options suivantes :
-   - Configurer l'installation
-   - Démarrer les conteneurs
-   - Arrêter les conteneurs
-   - Réinitialiser les variables d'installation
-   - Quitter
+1. **Interactive Mode** (without parameters): Displays a menu with the following options:
+   - Configure installation  
+   - Start containers  
+   - Stop containers  
+   - Reset installation variables  
+   - Exit  
 
-2. **Mode ligne de commande** avec les paramètres suivants :
+2. **Command-line Mode** with the following parameters:
    ```bash
    ./install.sh [OPTION]
    ```
-   Options disponibles :
-   - `start` : Démarrer les conteneurs
-   - `stop` : Arrêter les conteneurs
-   - `help`, `-h`, `--help` : Afficher l'aide
+   Available options:
+   - `start`: Start the containers  
+   - `stop`: Stop the containers  
+   - `help`, `-h`, `--help`: Display help  
 
-#### Fonctionnalités du script
+#### Script Features
 
-Le script `install.sh` permet de :
+The `install.sh` script allows you to:
 
-- Configurer les variables d'environnement dans le fichier `.env`
-- Gérer la configuration de la base de données
-- Configurer les paramètres de l'administrateur
-- Gérer les paramètres du serveur
-- Configurer un proxy si nécessaire
-- Mettre à jour les fichiers de configuration (Dockerfile, docker-compose.yml, nginx.conf)
-- Générer automatiquement le fichier d'initialisation de la base de données
-- Démarrer et arrêter les conteneurs Docker
+- Configure environment variables in the `.env` file  
+- Manage database configuration  
+- Configure administrator settings  
+- Manage server parameters  
+- Configure a proxy if necessary  
+- Update configuration files (Dockerfile, docker-compose.yml, nginx.conf)  
+- Automatically generate the database initialization file  
+- Start and stop Docker containers  
 
-### Méthode 2 : Installation manuelle
+### Method 2: Manual Installation
 
-1.  Décompressez l'archive List-IQ dans le répertoire de votre choix
-2.  Configurez les variables d'environnement dans le fichier `.env` (voir le fichier `.env.example`)
-3.  Démarrez l'application avec la commande :
+1. Extract the List-IQ archive into the directory of your choice  
+2. Configure the environment variables in the `.env` file (refer to `.env.example`)  
+3. Start the application with the command:
 
     ```bash
     docker-compose -f config/docker-compose.yml up -d
     ```
 
-4.  Accédez à l'application via votre navigateur à l'adresse : http://localhost:80
+4. Access the application in your browser at: http://localhost:80  
 
 ## Package Structure
 
--   `app/`: Application source code
--   `docs/`: Documentation
--   `services/`: Services de déploiement
+- `app/`: Application source code  
+- `docs/`: Documentation  
+- `services/`: Deployment services  
 
 ## Configuration
 
-Create a `.env` file at the root app/ of the project with the following variables:
+Create a `.env` file at the root `app/` directory of the project with the following variables:
 
 ```
 # Database Configuration
@@ -102,14 +175,15 @@ DEFAULT_LANGUAGE=en # fr or en
 NGINX_PORT=80
 NGINX_SSL_PORT=443
 ```
+
 ## Usage
 
-Once the application is started, you can:
+Once the application is running, you can:
 
-1.  Log in with the default user (admin/admin)
-2.  Create new users
-3.  Create and manage lists
-4.  Access the API via the integrated documentation
+1. Log in with the default user (admin/admin)  
+2. Create new users  
+3. Create and manage lists  
+4. Access the API through the integrated documentation  
 
 ## Maintenance
 
@@ -120,51 +194,51 @@ docker-compose -f config/docker-compose.yml down
 docker-compose -f config/docker-compose.yml up -d --build
 ```
 
-Pour sauvegarder la base de données :
+To back up the database:
 
 ```bash
 docker exec listiq-db-1 mysqldump -u root -proot listiq > backup.sql
 ```
 
-## Déploiement comme service système
+## Deployment as a System Service
 
-Le répertoire `services` contient deux fichiers de configuration pour déployer l'application List-IQ en tant que service système sur un environnement Linux :
+The `services` directory contains two configuration files for deploying List-IQ as a system service on a Linux environment:
 
 ### 1. `listiq.service` (systemd)
 
-Ce fichier est une unité systemd qui permet de gérer l'application List-IQ comme un service système Linux.
+This file is a systemd unit that allows you to manage List-IQ as a Linux system service.
 
-**Installation et utilisation :**
-- Copiez ce fichier dans `/etc/systemd/system/` sur votre serveur Linux
-- Activez et démarrez le service :
+**Installation and Usage:**  
+- Copy this file to `/etc/systemd/system/` on your Linux server  
+- Enable and start the service:  
   ```bash
   sudo systemctl daemon-reload
   sudo systemctl enable listiq.service
   sudo systemctl start listiq.service
   ```
-- Vérifiez le statut :
+- Check the status:  
   ```bash
   sudo systemctl status listiq.service
   ```
 
-Ce service démarre automatiquement l'application via Docker Compose après le démarrage du système.
+This service automatically starts the application via Docker Compose after system boot.
 
 ### 2. `listiq.conf` (Supervisor)
 
-Ce fichier est une configuration pour Supervisor, un système de contrôle de processus pour Linux.
+This file is a configuration for Supervisor, a process control system for Linux.
 
-**Installation et utilisation :**
-- Installez Supervisor puis copiez ce fichier dans `/etc/supervisor/conf.d/`
-- Activez la configuration :
+**Installation and Usage:**  
+- Install Supervisor and copy this file to `/etc/supervisor/conf.d/`  
+- Enable the configuration:  
   ```bash
   sudo supervisorctl reread
   sudo supervisorctl update
   ```
-- Gérez les services :
+- Manage services:  
   ```bash
   sudo supervisorctl status listiq
   sudo supervisorctl start listiq
   sudo supervisorctl stop listiq
   ```
 
-**Remarque :** Les deux configurations supposent que l'application est installée dans `/opt/list-iq` sur le serveur Linux.
+**Note:** Both configurations assume the application is installed in `/opt/list-iq` on the Linux server.
