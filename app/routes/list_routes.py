@@ -2331,6 +2331,65 @@ def bulk_delete_rows(list_id):
             'success': False
         }), 400
 
+@list_bp.route('/api/lists/<int:list_id>/data/delete-all', methods=['POST'])
+@login_required
+@admin_required
+@check_list_ownership
+def delete_all_list_data(list_id):
+    """Deletes all data rows from a list"""
+    try:
+        # Debug logging
+        current_app.logger.info(f"Starting deletion of all data for list {list_id}")
+        
+        # Check that the list exists
+        list_obj = List.query.get(list_id)
+        if not list_obj:
+            current_app.logger.error(f"List {list_id} not found")
+            return jsonify({'error': 'List not found'}), 404
+
+        # Count distinct row_ids before deletion to get actual number of logical rows
+        try:
+            # Get count of distinct row_ids
+            distinct_rows = db.session.query(db.func.count(db.distinct(ListData.row_id))).filter(ListData.list_id == list_id).scalar() or 0
+            current_app.logger.info(f"Found {distinct_rows} distinct rows to delete from list {list_id}")
+            
+            # Delete all rows from the list
+            deleted_cells = ListData.query.filter_by(list_id=list_id).delete()
+            current_app.logger.info(f"Deleted {deleted_cells} cells from list {list_id} (representing {distinct_rows} logical rows)")
+            
+            # Commit the changes
+            db.session.commit()
+            
+            # Update public files if enabled
+            if list_obj.public_csv_enabled or list_obj.public_json_enabled:
+                try:
+                    update_public_files(list_obj)
+                    current_app.logger.info(f"Public files updated for list {list_id} after deleting all data")
+                except Exception as e:
+                    current_app.logger.error(f"Error updating public files: {str(e)}")
+                    # Do not block the response if updating public files fails
+            
+            return jsonify({
+                'message': f'{distinct_rows} row(s) deleted successfully',
+                'deleted_count': distinct_rows,
+                'success': True
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting all rows from list {list_id}: {str(e)}")
+            return jsonify({
+                'error': f'Error during deletion: {str(e)}',
+                'success': False
+            }), 500
+
+    except Exception as e:
+        current_app.logger.error(f"Error in delete_all_list_data: {str(e)}")
+        return jsonify({
+            'error': f'Error: {str(e)}',
+            'success': False
+        }), 400
+
 @list_bp.route('/lists/<int:list_id>/edit')
 @login_required
 @admin_required
