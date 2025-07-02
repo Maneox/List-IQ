@@ -2335,7 +2335,6 @@ def bulk_delete_rows(list_id):
 @login_required
 @admin_required
 @check_list_ownership
-@csrf.exempt
 def delete_all_list_data(list_id):
     """Deletes all data rows from a list"""
     try:
