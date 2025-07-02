@@ -3,18 +3,22 @@ docs/exemples de listes
 # Configuration de l'IDE
 .vscode/*
 .sonarlint/*
+.windsurf/*
 # Docker configuration
 docker-compose.yml
 Dockerfile
 # Logs de l'application
 app/logs/*
 # Fichiers de configuration
-.env
+app/.env
 app/nginx/*
 init.sql
 #certificats
 app/ssl/*
 app/certs/*
 
+#Git
+.git
+.git/*
 #gitignore
 .gitignore
