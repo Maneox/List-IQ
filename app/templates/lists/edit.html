@@ -307,7 +307,7 @@
                 <div>
                     <!-- Delete All Data Button -->
                     <button type="button" id="delete-all-data-btn" class="btn btn-danger" 
-                            data-confirm-delete="{{ _('Are you sure you want to delete all data from this list? This action is irreversible.') }}"
+                            data-confirm-delete="{{ _("Are you sure you want to delete all data from this list ? \nThis action is irreversible.") }}"
                             data-success-message="{{ _('All data has been successfully deleted.') }}"
                             data-error-message="{{ _('An error occurred while deleting data.') }}">
                         <i class="fas fa-eraser"></i> {{ _('Delete All Data') }}
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                                 const response = await fetch(`{{ url_for('list_bp.delete_all_list_data', list_id=list.id) }}`, {
-                    method: 'DELETE',
+                    method: 'POST',
                     headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
                 });
                 const data = await response.json();
