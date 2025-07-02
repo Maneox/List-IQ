@@ -533,6 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const ipConfig = document.getElementById('ip_restriction_config');
         ipConfig.style.display = document.getElementById('ip_restriction_enabled').checked ? 'block' : 'none';
     }
+    document.getElementById('ip_restriction_enabled').addEventListener('change', toggleIpRestriction);
     
     function togglePublicAccess() {
         const csvEnabled = document.getElementById('public_csv_enabled').checked;
