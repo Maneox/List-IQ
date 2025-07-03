@@ -576,6 +576,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('public_csv_enabled').addEventListener('change', togglePublicCsvHeadersOption);
     togglePublicCsvHeadersOption();
 
+    // Correction affichage TXT public : togglePublicAccess sur le changement de la case TXT
+    document.getElementById('public_txt_enabled').addEventListener('change', togglePublicAccess);
+    togglePublicAccess();
+
     // --- CLIPBOARDJS LOGIC ---
         const DEBUG = JSON.parse('{{ debug_mode | tojson }}');
     function debugLog(...args) {
