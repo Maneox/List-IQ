@@ -237,7 +237,7 @@
                 <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}">
                 <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% else %}
-                <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
+                <input type="text" class="form-control" readonly disabled value="{{ _('URL generated after registration') }}">
                 <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
@@ -249,7 +249,7 @@
                 <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}">
                 <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% else %}
-                <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
+                <input type="text" class="form-control" readonly disabled value="{{ _('URL generated after registration') }}">
                 <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
@@ -261,7 +261,7 @@
                 <input type="text" class="form-control" readonly value="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}">
                 <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% else %}
-                <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
+                <input type="text" class="form-control" readonly disabled value="{{ _('URL generated after registration') }}">
                 <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
@@ -573,8 +573,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    document.getElementById('public_csv_enabled').addEventListener('change', togglePublicCsvHeadersOption);
+    // Harmonisation : chaque case Public Access a son listener pour afficher/masquer ses options
+    document.getElementById('public_csv_enabled').addEventListener('change', () => {
+        togglePublicCsvHeadersOption();
+        togglePublicAccess();
+    });
+    document.getElementById('public_txt_enabled').addEventListener('change', togglePublicAccess);
+    document.getElementById('public_json_enabled').addEventListener('change', togglePublicAccess);
+    // Appels initiaux pour synchroniser l'état au chargement
     togglePublicCsvHeadersOption();
+    togglePublicAccess();
 
     // --- CLIPBOARDJS LOGIC ---
         const DEBUG = JSON.parse('{{ debug_mode | tojson }}');
