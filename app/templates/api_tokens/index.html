@@ -38,17 +38,17 @@
                     {% for token in tokens %}
                     <tr>
                         <td>{{ token.name }}</td>
-                        <td>{{ token.created_at|datetime }}</td>
+                        <td>{{ token.created_at.strftime('%Y-%m-%d %H:%M:%S') if token.created_at else '' }}</td>
                         <td>
                             {% if token.expires_at %}
-                                {{ token.expires_at|datetime }}
+                                {{ token.expires_at.strftime('%Y-%m-%d %H:%M:%S') if token.expires_at else '' }}
                             {% else %}
                                 <span class="badge bg-info">{{ _('No expiration') }}</span>
                             {% endif %}
                         </td>
                         <td>
                             {% if token.last_used_at %}
-                                {{ token.last_used_at|datetime }}
+                                {{ token.last_used_at.strftime('%Y-%m-%d %H:%M:%S') if token.last_used_at else '' }}
                             {% else %}
                                 <span class="text-muted">{{ _('Never used') }}</span>
                             {% endif %}
