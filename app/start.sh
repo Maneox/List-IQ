@@ -264,8 +264,8 @@ echo "FLASK_ENV=$FLASK_ENV"
 # Add the --reload option in development mode to automatically reload templates
 if [ "$FLASK_ENV" = "development" ]; then
     echo "Development mode detected, enabling auto-reload..."
-    gunicorn --bind 0.0.0.0:5000 --reload app.wsgi:app
+    gunicorn --workers 3 --bind 0.0.0.0:5000 --reload app.wsgi:app
 else
     echo "Production mode, no auto-reload."
-    gunicorn --bind 0.0.0.0:5000 app.wsgi:app
+    gunicorn --workers 3 --bind 0.0.0.0:5000 app.wsgi:app
 fi
