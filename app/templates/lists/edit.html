@@ -238,7 +238,7 @@
                 <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_csv', token=list.public_access_token, _external=True) }}" title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% else %}
                 <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
-                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
     </div>
@@ -250,7 +250,7 @@
                 <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_txt', token=list.public_access_token, _external=True) }}" title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% else %}
                 <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
-                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
     </div>
@@ -262,7 +262,7 @@
                 <button type="button" class="btn btn-outline-secondary copy-btn" data-clipboard-text="{{ url_for('public_files_bp.get_public_json', token=list.public_access_token, _external=True) }}" title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% else %}
                 <input type="text" class="form-control" readonly disabled value="{{ _('URL générée après enregistrement') }}">
-                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="Copier"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-outline-secondary copy-btn" disabled title="{{ _('Copy') }}"><i class="fas fa-copy"></i></button>
             {% endif %}
         </div>
     </div>
@@ -332,6 +332,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{{ url_for('static', filename='js/clipboard.min.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // --- FORM SUBMISSION LOGIC ---
