@@ -1388,9 +1388,13 @@ function createIPv6Mask(input) {
 function initializeDataTables() {
     const dataTable = $('#dataTable');
     if (dataTable.length) {
+        // Déterminer la langue AVANT l'initialisation
+        const langMap = { fr: 'fr-FR', en: 'en-US' };
+        const langCode = window.currentLanguage && langMap[window.currentLanguage] ? langMap[window.currentLanguage] : 'en-US';
         dataTable.DataTable({
+            dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>rtip',
             language: {
-                url: '/static/js/datatables/i18n/fr-FR.json'
+                url: `/static/js/datatables/i18n/${langCode}.json`
             },
             drawCallback: function() {
                 console.log('DataTable redessiné');

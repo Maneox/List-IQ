@@ -315,6 +315,10 @@
         }
     });
 </script>
+<script>
+    // Pass the current language from Flask to JS
+    window.currentLanguage = "{{ session.get('language', 'en') }}";
+</script>
 <script src="{{ url_for('static', filename='js/list.js') }}"></script>
 <script>
     // Initialize the add modal
