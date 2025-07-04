@@ -1,63 +1,63 @@
 /**
- * Fonctions JavaScript pour la gestion des utilisateurs
+ * JavaScript functions for user management
  */
 
-// Fonction pour supprimer un utilisateur
+// Function to delete a user
 function deleteUser(userId, username) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur "${username}" ?`)) {
-        console.log(`Tentative de suppression de l'utilisateur ${username} (ID: ${userId})`);
+    if (confirm(t('users.delete_confirm', { username: username }))) {
+        console.log(t('users.attempting_delete', { username: username, userId: userId }));
         
-        // Utiliser le formulaire caché avec le token CSRF déjà inclus
+        // Use the hidden form with the CSRF token already included
         const form = document.getElementById(`delete-form-${userId}`);
         
         if (form) {
-            console.log('Formulaire de suppression trouvé, soumission...');
+            console.log(t('users.delete_form_found'));
             form.submit();
         } else {
-            console.error(`Formulaire de suppression non trouvé pour l'utilisateur ${userId}`);
-            alert(`Erreur: Impossible de trouver le formulaire de suppression pour l'utilisateur ${username}`);
+            console.error(t('users.delete_error_form', { username: username }));
+            alert(t('users.delete_error'));
         }
     }
 }
 
-// Fonction pour initialiser les gestionnaires d'événements
+// Function to initialize event handlers
 function initDeleteButtons() {
-    console.log('Initialisation des boutons de suppression');
+    console.log('Initializing delete buttons');
     
-    // D'abord, supprimer tous les gestionnaires d'événements existants
-    // pour éviter les doublons
+    // First, remove all existing event handlers
+    // to avoid duplicates
     const deleteButtons = document.querySelectorAll('.delete-user-btn');
     deleteButtons.forEach(button => {
-        // Utiliser une copie du bouton pour supprimer tous les gestionnaires
+        // Use a copy of the button to remove all handlers
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
     });
     
-    // Récupérer les nouveaux boutons après le remplacement
+    // Get the new buttons after replacement
     const newDeleteButtons = document.querySelectorAll('.delete-user-btn');
-    console.log(`Nombre de boutons de suppression trouvés: ${newDeleteButtons.length}`);
+    console.log(`Number of delete buttons found: ${newDeleteButtons.length}`);
     
-    // Ajouter des gestionnaires d'événements pour les boutons de suppression
+    // Add event handlers for the delete buttons
     newDeleteButtons.forEach(button => {
-        console.log('Ajout d\'un gestionnaire d\'événement pour le bouton');
+        console.log('Adding an event handler for the button');
         
         button.addEventListener('click', function(event) {
-            // Empêcher les clics multiples
+            // Prevent multiple clicks
             event.preventDefault();
             if (this.disabled) return;
             this.disabled = true;
             
-            console.log('Bouton de suppression cliqué');
+            console.log('Delete button clicked');
             const userId = this.getAttribute('data-user-id');
             const username = this.getAttribute('data-username');
-            console.log(`Suppression de l'utilisateur: ${username} (ID: ${userId})`);
+            console.log(`Deleting user: ${username} (ID: ${userId})`);
             deleteUser(userId, username);
         });
     });
 }
 
-// Initialisation des événements lorsque le DOM est chargé
+// Initialize events when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Module de gestion des utilisateurs chargé');
+    console.log('User management module loaded');
     initDeleteButtons();
 });

@@ -1,219 +1,94 @@
 {
-    "emptyTable": "Aucune donnée disponible dans le tableau",
-    "loadingRecords": "Chargement...",
-    "processing": "Traitement...",
-    "aria": {
-        "sortAscending": ": activer pour trier la colonne par ordre croissant",
-        "sortDescending": ": activer pour trier la colonne par ordre décroissant"
-    },
-    "select": {
-        "rows": {
-            "_": "%d lignes sélectionnées",
-            "1": "1 ligne sélectionnée"
-        },
-        "cells": {
-            "1": "1 cellule sélectionnée",
-            "_": "%d cellules sélectionnées"
-        },
-        "columns": {
-            "1": "1 colonne sélectionnée",
-            "_": "%d colonnes sélectionnées"
-        }
-    },
-    "autoFill": {
-        "cancel": "Annuler",
-        "fill": "Remplir toutes les cellules avec <i>%d<\/i>",
-        "fillHorizontal": "Remplir les cellules horizontalement",
-        "fillVertical": "Remplir les cellules verticalement"
-    },
-    "searchBuilder": {
-        "conditions": {
-            "date": {
-                "after": "Après le",
-                "before": "Avant le",
-                "between": "Entre",
-                "empty": "Vide",
-                "not": "Différent de",
-                "notBetween": "Pas entre",
-                "notEmpty": "Non vide",
-                "equals": "Égal à"
-            },
-            "number": {
-                "between": "Entre",
-                "empty": "Vide",
-                "gt": "Supérieur à",
-                "gte": "Supérieur ou égal à",
-                "lt": "Inférieur à",
-                "lte": "Inférieur ou égal à",
-                "not": "Différent de",
-                "notBetween": "Pas entre",
-                "notEmpty": "Non vide",
-                "equals": "Égal à"
-            },
-            "string": {
-                "contains": "Contient",
-                "empty": "Vide",
-                "endsWith": "Se termine par",
-                "not": "Différent de",
-                "notEmpty": "Non vide",
-                "startsWith": "Commence par",
-                "equals": "Égal à",
-                "notContains": "Ne contient pas",
-                "notEnds": "Ne termine pas par",
-                "notStarts": "Ne commence pas par"
-            },
-            "array": {
-                "empty": "Vide",
-                "contains": "Contient",
-                "not": "Différent de",
-                "notEmpty": "Non vide",
-                "without": "Sans",
-                "equals": "Égal à"
-            }
-        },
-        "add": "Ajouter une condition",
-        "button": {
-            "0": "Recherche avancée",
-            "_": "Recherche avancée (%d)"
-        },
-        "clearAll": "Effacer tout",
-        "condition": "Condition",
-        "data": "Donnée",
-        "deleteTitle": "Supprimer la règle de filtrage",
-        "logicAnd": "Et",
-        "logicOr": "Ou",
-        "title": {
-            "0": "Recherche avancée",
-            "_": "Recherche avancée (%d)"
-        },
-        "value": "Valeur"
-    },
-    "searchPanes": {
-        "clearMessage": "Effacer tout",
-        "count": "{total}",
-        "title": "Filtres actifs - %d",
-        "collapse": {
-            "0": "Volet de recherche",
-            "_": "Volet de recherche (%d)"
-        },
-        "countFiltered": "{shown} ({total})",
-        "emptyPanes": "Pas de volet de recherche",
-        "loadMessage": "Chargement du volet de recherche...",
-        "collapseMessage": "Réduire tout",
-        "showMessage": "Montrer tout"
-    },
-    "buttons": {
-        "collection": "Collection",
-        "colvis": "Visibilité colonnes",
-        "colvisRestore": "Rétablir visibilité",
-        "copy": "Copier",
-        "copySuccess": {
-            "1": "1 ligne copiée dans le presse-papier",
-            "_": "%ds lignes copiées dans le presse-papier"
-        },
-        "copyTitle": "Copier dans le presse-papier",
-        "csv": "CSV",
-        "excel": "Excel",
-        "pageLength": {
-            "-1": "Afficher toutes les lignes",
-            "_": "Afficher %d lignes"
-        },
-        "pdf": "PDF",
-        "print": "Imprimer",
-        "copyKeys": "Appuyez sur ctrl ou u2318 + C pour copier les données du tableau dans votre presse-papier."
-    },
-    "decimal": ",",
-    "search": "Rechercher:",
-    "thousands": ".",
-    "datetime": {
-        "previous": "Précédent",
-        "next": "Suivant",
-        "hours": "Heures",
-        "minutes": "Minutes",
-        "seconds": "Secondes",
-        "unknown": "-",
-        "amPm": [
-            "am",
-            "pm"
-        ],
-        "months": {
-            "0": "Janvier",
-            "2": "Mars",
-            "3": "Avril",
-            "4": "Mai",
-            "5": "Juin",
-            "6": "Juillet",
-            "8": "Septembre",
-            "9": "Octobre",
-            "10": "Novembre",
-            "1": "Février",
-            "11": "Décembre",
-            "7": "Août"
-        },
-        "weekdays": [
-            "Dim",
-            "Lun",
-            "Mar",
-            "Mer",
-            "Jeu",
-            "Ven",
-            "Sam"
-        ]
-    },
-    "editor": {
-        "close": "Fermer",
-        "create": {
-            "title": "Créer une nouvelle entrée",
-            "button": "Nouveau",
-            "submit": "Créer"
-        },
-        "edit": {
-            "button": "Editer",
-            "title": "Editer Entrée",
-            "submit": "Mettre à jour"
-        },
-        "remove": {
-            "button": "Supprimer",
-            "title": "Supprimer",
-            "submit": "Supprimer",
-            "confirm": {
-                "_": "Êtes-vous sûr de vouloir supprimer %d lignes ?",
-                "1": "Êtes-vous sûr de vouloir supprimer 1 ligne ?"
-            }
-        },
-        "error": {
-            "system": "Une erreur système s'est produite"
-        },
-        "multi": {
-            "noMulti": "Ce champ peut être édité individuellement, mais ne fait pas partie d'un groupe. ",
-            "title": "Valeurs multiples",
-            "restore": "Rétablir modification",
-            "info": "Les éléments sélectionnés contiennent différentes valeurs pour cette entrée. Pour modifier et définir tous les éléments de cette entrée à la même valeur, cliquez ou tapez ici, sinon ils conserveront leurs valeurs individuelles."
-        }
-    },
-    "stateRestore": {
-        "removeSubmit": "Supprimer",
-        "creationModal": {
-            "button": "Créer",
-            "name": "Nom :",
-            "order": "Tri",
-            "paging": "Pagination",
-            "scroller": "Position du défilement",
-            "search": "Recherche",
-            "select": "Sélection",
-            "toggleLabel": "Inclus :"
-        },
-        "renameButton": "Renommer"
-    },
-    "info": "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
-    "infoEmpty": "Affichage de 0 à 0 sur 0 entrées",
-    "infoFiltered": "(filtrées depuis un total de _MAX_ entrées)",
-    "lengthMenu": "Afficher _MENU_ entrées",
-    "paginate": {
-        "first": "Première",
-        "last": "Dernière",
-        "next": "Suivante",
-        "previous": "Précédente"
-    },
-    "zeroRecords": "Aucune entrée correspondante trouvée"
+  "users": {
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer l'utilisateur \"{username}\" ?",
+    "delete_success": "Utilisateur supprimé avec succès.",
+    "delete_error": "Erreur lors de la suppression de l'utilisateur.",
+    "delete_error_form": "Erreur : Impossible de trouver le formulaire de suppression pour l'utilisateur {username}",
+    "attempting_delete": "Tentative de suppression de l'utilisateur {username} (ID: {userId})",
+    "delete_form_found": "Formulaire de suppression trouvé, envoi en cours...",
+    "save_success": "Utilisateur enregistré avec succès.",
+    "save_error": "Erreur lors de l'enregistrement de l'utilisateur."
+  },
+  "list": {
+    "delete_selected_confirm": "Êtes-vous sûr de vouloir supprimer les lignes sélectionnées ?",
+    "delete_selected_success": "{count} lignes supprimées avec succès.",
+    "delete_selected_error": "Erreur lors de la suppression des lignes : ",
+    "delete_row_confirm": "Êtes-vous sûr de vouloir supprimer cette ligne ?",
+    "delete_row_success": "Ligne supprimée avec succès.",
+    "delete_row_error": "Erreur lors de la suppression de la ligne : ",
+    "no_rows_selected_alert": "Aucune ligne sélectionnée. Veuillez sélectionner au moins une ligne à supprimer.",
+    "edit_button": "Modifier",
+    "delete_button": "Supprimer",
+    "no_rows_selected": "Aucune ligne sélectionnée",
+    "delete_rows_confirm": "Êtes-vous sûr de vouloir supprimer {count} ligne(s) ?",
+    "no_valid_row_ids": "Aucun ID de ligne valide trouvé",
+    "csrf_token_missing": "Erreur : Jeton CSRF manquant",
+    "list_id_missing": "Erreur : ID de liste manquant",
+    "deleting": "Suppression en cours...",
+    "delete_selection": "Supprimer la sélection",
+    "delete_success_count": "{count} ligne(s) supprimée(s) avec succès",
+    "delete_error_generic": "Erreur lors de la suppression : ",
+    "no_rows_deleted": "Aucune ligne n'a pu être supprimée",
+    "delete_error_message": "Erreur lors de la suppression : ",
+    "delete_button_count": "Supprimer ({count})",
+    "importing": "Importation en cours...",
+    "import": "Importer",
+    "import_error": "Erreur lors de l'importation",
+    "adding": "Ajout en cours...",
+    "add_error": "Erreur lors de l'ajout",
+    "add": "Ajouter",
+    "edit_init_error": "Une erreur est survenue lors de l'initialisation de la modification. Voir la console pour plus de détails.",
+    "list_id_not_found": "Erreur : ID de liste non trouvé",
+    "retrieve_data_error": "Erreur lors de la récupération des données de la ligne",
+    "retrieve_data_error_details": "Une erreur est survenue lors de la récupération des données. Voir la console pour plus de détails.",
+    "updating": "Mise à jour en cours...",
+    "update_error": "Erreur lors de la mise à jour",
+    "update": "Mettre à jour",
+    "row_updated_success": "Ligne mise à jour avec succès",
+    "row_update_error_refresh": "Erreur lors de la mise à jour de la ligne. Veuillez rafraîchir la page.",
+    "invalid_server_response": "Réponse du serveur invalide",
+    "invalid_row_data": "Données de ligne invalides",
+    "row_not_found": "Ligne non trouvée",
+    "delete_error": "Erreur lors de la suppression",
+    "delete_error_alert": "Erreur lors de la suppression : ",
+    "datatable_error": "Erreur lors du chargement des données de la table."
+  },
+  "lists": {
+    "delete_row_confirm": "Êtes-vous sûr de vouloir supprimer cette ligne ?",
+    "delete_rows_confirm": "Êtes-vous sûr de vouloir supprimer {count} ligne(s) ?",
+    "delete_all_data_confirm": "Êtes-vous sûr de vouloir supprimer toutes les données de cette liste ?",
+    "delete_list_confirm": "Êtes-vous sûr de vouloir supprimer cette liste ?",
+    "no_row_selected": "Aucune ligne sélectionnée.",
+    "delete_row_success": "Ligne supprimée avec succès.",
+    "delete_row_error": "Erreur lors de la suppression de la ligne :",
+    "delete_rows_success": "Lignes supprimées avec succès.",
+    "delete_rows_error": "Erreur lors de la suppression des lignes :",
+    "delete_all_data_success": "Données supprimées avec succès.",
+    "delete_all_data_error": "Erreur lors de la suppression des données.",
+    "delete_list_success": "Liste supprimée avec succès.",
+    "delete_list_error": "Erreur lors de la suppression de la liste.",
+    "import_success": "Importation réussie. Lignes ajoutées : {added}, Lignes mises à jour : {updated}",
+    "import_error": "Erreur lors de l'importation :",
+    "import_select_file": "Veuillez sélectionner un fichier.",
+    "import_processing": "Le fichier est en cours de traitement...",
+    "export_success": "Exportation réussie.",
+    "export_error": "Erreur lors de l'exportation :",
+    "export_processing": "L'exportation est en cours..."
+  },
+  "notifications": {
+    "delete_all_confirm": "Êtes-vous sûr de vouloir supprimer toutes les notifications ?",
+    "delete_all_success": "Toutes les notifications ont été supprimées.",
+    "delete_all_error": "Erreur lors de la suppression des notifications.",
+    "delete_one_confirm": "Êtes-vous sûr de vouloir supprimer cette notification ?",
+    "delete_one_success": "Notification supprimée.",
+    "delete_one_error": "Erreur lors de la suppression de la notification."
+  },
+  "clipboard": {
+    "success": "Copié !",
+    "error": "Erreur lors de la copie."
+  },
+  "generic": {
+    "error": "Une erreur est survenue.",
+    "success": "Opération réussie."
+  }
 }

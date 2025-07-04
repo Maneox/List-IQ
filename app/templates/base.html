@@ -17,6 +17,11 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}?v={{ range(1, 10000) | random }}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
     {% block extra_js_head %}{% endblock %}
+    <script>
+        // Pass language from Flask to JavaScript
+        window.currentLanguage = '{{ g.lang_code }}';
+    </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -63,11 +68,11 @@
                             <!-- Language selector -->
                             <li>
                                 <div class="dropdown-item">
-                                    <i class="fas fa-language"></i> {{ _('Language') }}
-                                    <div class="dropdown-item-content mt-2">
-                                        <div class="d-flex justify-content-between">
-                                            <a href="{{ url_for('i18n.set_language', language='fr', next=request.path) }}" class="btn btn-sm {{ 'btn-primary' if session.get('language', 'fr') == 'fr' else 'btn-outline-primary' }} me-1">{{ _('French') }}</a>
-                                            <a href="{{ url_for('i18n.set_language', language='en', next=request.path) }}" class="btn btn-sm {{ 'btn-primary' if session.get('language', 'fr') == 'en' else 'btn-outline-primary' }}">{{ _('English') }}</a>
+                                <i class="fas fa-language"></i> {{ _('Language') }}
+                                <div class="dropdown-item-content mt-2">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ url_for('i18n.set_language', language='fr', next=request.path) }}" class="btn btn-sm {{ 'btn-primary' if session.get('language', 'fr') == 'fr' else 'btn-outline-primary' }} me-1">{{ _('French') }}</a>
+                                        <a href="{{ url_for('i18n.set_language', language='en', next=request.path) }}" class="btn btn-sm {{ 'btn-primary' if session.get('language', 'fr') == 'en' else 'btn-outline-primary' }}">{{ _('English') }}</a>
                                         </div>
                                     </div>
                                 </div>
