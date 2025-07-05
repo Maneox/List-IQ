@@ -1392,7 +1392,7 @@ function initializeDataTables() {
         const langMap = { fr: 'fr-FR', en: 'en-US' };
         const langCode = window.currentLanguage && langMap[window.currentLanguage] ? langMap[window.currentLanguage] : 'en-US';
         dataTable.DataTable({
-            dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>rtip',
+            dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row justify-content-center"<"col-auto"p>>i',
             language: {
                 url: `/static/js/datatables/i18n/${langCode}.json`
             },
