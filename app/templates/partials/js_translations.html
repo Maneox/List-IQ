@@ -1,0 +1,20 @@
+{% macro js_translations() %}
+<script>
+// Define translations object for JavaScript
+window.translations = {
+    // Common UI messages
+    "Are you sure you want to delete this row?": "{{ _('Are you sure you want to delete this row?') }}",
+    "Error: Missing CSRF token": "{{ _('Error: Missing CSRF token') }}",
+    "Error during deletion": "{{ _('Error during deletion') }}",
+    "Row updated successfully": "{{ _('Row updated successfully') }}",
+    "Error while updating row. Please refresh the page.": "{{ _('Error while updating row. Please refresh the page.') }}",
+    "Update": "{{ _('Update') }}",
+    
+    // Add more translations as needed
+    // You can extract these from your JavaScript files using pybabel
+};
+
+// Set current language for JavaScript
+window.currentLanguage = "{{ request.accept_languages.best_match(['en', 'fr']) or 'en' }}";
+</script>
+{% endmacro %}

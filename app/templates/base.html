@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}List-IQ{% endblock %}</title>
+    {% from "partials/js_translations.html" import js_translations %}
     <!-- jQuery (local) -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
     <!-- Font Awesome (local) -->
@@ -160,6 +161,10 @@
         </div>
     </footer>
 
+    <!-- JavaScript Translations -->
+    {{ js_translations() }}
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+    
     <!-- Bootstrap Bundle with Popper (local) -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <!-- DataTables (local) -->
