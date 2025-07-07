@@ -3,12 +3,12 @@
 // Define translations object for JavaScript
 window.translations = {
     // Common UI messages
-    "Are you sure you want to delete this row?": "{{ _('Are you sure you want to delete this row?') }}",
-    "Error: Missing CSRF token": "{{ _('Error: Missing CSRF token') }}",
-    "Error during deletion": "{{ _('Error during deletion') }}",
-    "Row updated successfully": "{{ _('Row updated successfully') }}",
-    "Error while updating row. Please refresh the page.": "{{ _('Error while updating row. Please refresh the page.') }}",
-    "Update": "{{ _('Update') }}",
+    "Are you sure you want to delete this row?": "{{ _('Are you sure you want to delete this row?')|safe }}",
+    "Error: Missing CSRF token": "{{ _('Error: Missing CSRF token')|safe }}",
+    "Error during deletion": "{{ _('Error during deletion')|safe }}",
+    "Row updated successfully": "{{ _('Row updated successfully')|safe }}",
+    "Error while updating row. Please refresh the page.": "{{ _('Error while updating row. Please refresh the page.')|safe }}",
+    "Update": "{{ _('Update')|safe }}",
     
     // Add more translations as needed
     // You can extract these from your JavaScript files using pybabel
@@ -16,5 +16,10 @@ window.translations = {
 
 // Set current language for JavaScript
 window.currentLanguage = "{{ request.accept_languages.best_match(['en', 'fr']) or 'en' }}";
+
+// Debug information
+// console.log('Current language:', window.currentLanguage);
+// console.log('Translations object:', window.translations);
+// console.log('Translation test for delete row:', window.translations["Are you sure you want to delete this row?"]);
 </script>
 {% endmacro %}

@@ -8,5 +8,5 @@ window._ = function(text) {
     return text;
 };
 
-// Translations will be injected here by the template
-window.translations = {};
+// Translations are injected by the template js_translations.html
+// No need to initialize here
