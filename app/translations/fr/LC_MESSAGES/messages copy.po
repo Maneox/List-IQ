@@ -1,2218 +1,2751 @@
-# French translations for List-IQ.
+# French translations for PROJECT.
 # Copyright (C) 2025 ORGANIZATION
-# This file is distributed under the same license as the List-IQ project.
+# This file is distributed under the same license as the PROJECT project.
+# AI Assistant <contact@example.com>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: List-IQ 1.0\n"
-"Report-Msgid-Bugs-To: support@list-iq.example.com\n"
-"POT-Creation-Date: 2025-06-21 18:04+0200\n"
-"PO-Revision-Date: 2025-06-21 18:04+0200\n"
-"Last-Translator: AI Assistant\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-07-08 01:25+0200\n"
+"PO-Revision-Date: 2025-07-08 09:30+0200\n"
+"Last-Translator: AI Assistant <contact@example.com>\n"
 "Language-Team: French <fr@li.org>\n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: templates/api_docs.html:3 templates/api_docs.html:26 templates/base.html:48
-msgid "API Documentation"
-msgstr "Documentation API"
+#: app/static/js/list.js:24
+msgid "No rows selected"
+msgstr "Aucune ligne sélectionnée"
 
-#: templates/admin/edit_user.html:3 templates/admin/new_user.html:3
-#: templates/admin/users.html:3 templates/api_docs.html:3
-#: templates/api_docs_postman.html:3 templates/api_tokens/index.html:3
-#: templates/api_tokens/show_token.html:3
-#: templates/api_tokens/token_display.html:3 templates/auth/login.html:3
-#: templates/lists/edit.html:3 templates/lists/index.html:3
+#: app/static/js/list.js:34
+#, python-format
+msgid "Are you sure you want to delete %s row(s)?"
+msgstr "Êtes-vous sûr de vouloir supprimer %s ligne(s) ?"
+
+#: app/static/js/list.js:67
+msgid "No valid row IDs found"
+msgstr "Aucun ID de ligne valide trouvé"
+
+#: app/static/js/list.js:76 app/static/js/list.js:375 app/static/js/list.js:509
+#: app/static/js/list.js:1050 app/static/js/list.js:1407
+#: app/templates/partials/js_translations.html:7
+msgid "Error: Missing CSRF token"
+msgstr "Erreur : Jeton CSRF manquant"
+
+#: app/static/js/list.js:114 app/static/js/list.js:523
+msgid "Error: Missing list ID"
+msgstr "Erreur : ID de liste manquant"
+
+#: app/static/js/list.js:128
+msgid "Deleting..."
+msgstr "Suppression en cours..."
+
+#: app/static/js/list.js:174 app/static/js/list.js:220
+#: app/templates/lists/view.html:34
+msgid "Delete selection"
+msgstr "Supprimer la sélection"
+
+#: app/static/js/list.js:203
+#, python-format
+msgid "%s row(s) deleted successfully"
+msgstr "%s ligne(s) supprimée(s) avec succès"
+
+#: app/static/js/list.js:208
+msgid "No rows could be deleted"
+msgstr "Aucune ligne n'a pu être supprimée"
+
+#: app/static/js/list.js:210 app/static/js/list.js:223
+msgid "Error during deletion: "
+msgstr "Erreur lors de la suppression : "
+
+#: app/static/js/list.js:265 app/static/js/list.js:1704
+#, python-format
+msgid "Delete (%s)"
+msgstr "Supprimer (%s)"
+
+#: app/static/js/list.js:365
+msgid "Importing..."
+msgstr "Import en cours..."
+
+#: app/static/js/list.js:377 app/static/js/list.js:428
+#: app/templates/lists/view.html:41 app/templates/lists/view.html:292
+msgid "Import"
+msgstr "Importer"
+
+#: app/static/js/list.js:401 app/static/js/list.js:417
+#: app/static/js/list.js:422
+msgid "Error during import"
+msgstr "Erreur lors de l'import"
+
+#: app/static/js/list.js:533
+msgid "Adding..."
+msgstr "Ajout en cours..."
+
+#: app/static/js/list.js:571
+#, python-format
+msgid "Error during add (%s)"
+msgstr "Erreur lors de l'ajout (%s)"
+
+#: app/static/js/list.js:580 app/static/js/list.js:1089
+msgid "Invalid server response"
+msgstr "Réponse invalide du serveur"
+
+#: app/static/js/list.js:603
+msgid "Error fetching row data"
+msgstr "Erreur lors de la récupération des données de la ligne"
+
+#: app/static/js/list.js:611 app/static/js/list.js:1127
+msgid "Row data is invalid"
+msgstr "Les données de la ligne sont invalides"
+
+#: app/static/js/list.js:678
+msgid "Row added successfully"
+msgstr "Ligne ajoutée avec succès"
+
+#: app/static/js/list.js:685
+msgid "Error during add"
+msgstr "Erreur lors de l'ajout"
+
+#: app/static/js/list.js:691 app/templates/lists/view.html:38
+#: app/templates/lists/view.html:198
+msgid "Add"
+msgstr "Ajouter"
+
+#: app/static/js/list.js:840
+msgid "Error: List ID not found"
+msgstr "Erreur : ID de liste non trouvé"
+
+#: app/static/js/list.js:845
+msgid "An error occurred while initializing the edit. See console for details."
+msgstr "Une erreur est survenue lors de l'initialisation de la modification. Voir la console pour plus de détails."
+
+#: app/static/js/list.js:882
+msgid "Error while fetching row data"
+msgstr "Erreur lors de la récupération des données de la ligne"
+
+#: app/static/js/list.js:886
+msgid "An error occurred while fetching the data. See console for details."
+msgstr "Une erreur est survenue lors de la récupération des données. Voir la console pour plus de détails."
+
+#: app/static/js/list.js:1060
+msgid "Updating..."
+msgstr "Mise à jour en cours..."
+
+#: app/static/js/list.js:1082 app/static/js/list.js:1159
+msgid "Error during update"
+msgstr "Erreur lors de la mise à jour"
+
+#: app/static/js/list.js:1121
+msgid "Error fetching updated data"
+msgstr "Erreur lors de la récupération des données mises à jour"
+
+#: app/static/js/list.js:1146 app/static/js/list.js:1150
+msgid "Row not found"
+msgstr "Ligne non trouvée"
+
+#: app/static/js/list.js:1165 app/templates/lists/view.html:256
+#: app/templates/partials/js_translations.html:11
+msgid "Update"
+msgstr "Mettre à jour"
+
+#: app/static/js/list.js:1279 app/templates/partials/js_translations.html:9
+msgid "Row updated successfully"
+msgstr "Ligne mise à jour avec succès"
+
+#: app/static/js/list.js:1286 app/templates/partials/js_translations.html:10
+msgid "Error while updating row. Please refresh the page."
+msgstr "Erreur lors de la mise à jour de la ligne. Veuillez rafraîchir la page."
+
+#: app/static/js/list.js:1398 app/templates/partials/js_translations.html:6
+msgid "Are you sure you want to delete this row?"
+msgstr "Êtes-vous sûr de vouloir supprimer cette ligne ?"
+
+#: app/static/js/list.js:1432 app/static/js/list.js:1468
+#: app/static/js/list.js:1473 app/templates/partials/js_translations.html:8
+msgid "Error during deletion"
+msgstr "Erreur lors de la suppression"
+
+#: app/static/js/users.js:10 app/templates/partials/js_translations.html:14
+msgid "Are you sure you want to delete the user"
+msgstr "Êtes-vous sûr de vouloir supprimer l\'utilisateur"
+
+#: app/static/js/users.js:26 app/templates/partials/js_translations.html:15
+msgid "Error: Could not find the delete form for user %s"
+msgstr "Erreur : Impossible de trouver le formulaire de suppression pour l'utilisateur %s"
+
+#: app/templates/api_docs.html:3 app/templates/api_docs.html:26
+#: app/templates/base.html:50
+msgid "API Documentation"
+msgstr "Documentation de l'API"
+
+#: app/templates/admin/edit_user.html:3 app/templates/admin/new_user.html:3
+#: app/templates/admin/users.html:3 app/templates/api_docs.html:3
+#: app/templates/api_docs_postman.html:3 app/templates/api_tokens/index.html:3
+#: app/templates/api_tokens/token_display.html:3
+#: app/templates/auth/login.html:3 app/templates/lists/edit.html:3
+#: app/templates/lists/index.html:3
 msgid "List-IQ"
 msgstr "List-IQ"
 
-#: templates/api_docs.html:28
+#: app/templates/api_docs.html:28
 msgid ""
 "This page presents the interactive documentation for the List-IQ API. You"
 " can explore the available endpoints, their parameters, and test the "
 "requests directly from this interface."
-msgstr "Cette page présente la documentation interactive de l'API List-IQ. Vous pouvez explorer les endpoints disponibles, leurs paramètres et tester les requêtes directement depuis cette interface."
+msgstr "Cette page présente la documentation interactive de l'API de List-IQ. Vous pouvez explorer les points d'accès disponibles, leurs paramètres, et tester les requêtes directement depuis cette interface."
 
-#: templates/api_docs.html:30 templates/api_docs_postman.html:51
-#: templates/help/automatic_lists_guide.html:197
+#: app/templates/api_docs.html:30 app/templates/api_docs_postman.html:51
+#: app/templates/help/automatic_lists_guide.html:197
 msgid "Note:"
 msgstr "Note :"
 
-#: templates/api_docs.html:30
+#: app/templates/api_docs.html:30
 msgid ""
 "Some operations require administrator rights. See the \"Access "
 "Restrictions\" section for more information."
 msgstr "Certaines opérations nécessitent des droits d'administrateur. Consultez la section \"Restrictions d'accès\" pour plus d'informations."
 
-#: templates/api_docs.html:34
+#: app/templates/api_docs.html:34
 msgid "Postman Integration Guide"
-msgstr "Guide d'intégration avec Postman"
+msgstr "Guide d'intégration Postman"
 
-#: templates/api_docs.html:37 templates/api_docs_postman.html:16
+#: app/templates/api_docs.html:37 app/templates/api_docs_postman.html:16
 msgid "Download OpenAPI File"
 msgstr "Télécharger le fichier OpenAPI"
 
-#: templates/api_docs_postman.html:3 templates/api_docs_postman.html:9
+#: app/templates/api_docs_postman.html:3 app/templates/api_docs_postman.html:9
 msgid "API Integration with Postman"
-msgstr "Intégration API avec Postman"
+msgstr "Intégration de l'API avec Postman"
 
-#: templates/api_docs_postman.html:13
+#: app/templates/api_docs_postman.html:13
 msgid "Back to API Documentation"
-msgstr "Retour à la documentation API"
+msgstr "Retour à la documentation de l'API"
 
-#: templates/api_docs_postman.html:19
+#: app/templates/api_docs_postman.html:19
 msgid "Download Postman Collection"
-msgstr "Télécharger la Collection Postman"
+msgstr "Télécharger la collection Postman"
 
-#: templates/api_docs_postman.html:25
+#: app/templates/api_docs_postman.html:25
 msgid "Postman Configuration"
 msgstr "Configuration de Postman"
 
-#: templates/api_docs_postman.html:28
+#: app/templates/api_docs_postman.html:28
 msgid "Recommended Method: Direct Import of the Postman Collection"
 msgstr "Méthode recommandée : Importation directe de la collection Postman"
 
-#: templates/api_docs_postman.html:29
+#: app/templates/api_docs_postman.html:29
 msgid "We have prepared a ready-to-use Postman collection that works immediately:"
 msgstr "Nous avons préparé une collection Postman prête à l'emploi qui fonctionne immédiatement :"
 
-#: templates/api_docs_postman.html:31 templates/api_docs_postman.html:45
+#: app/templates/api_docs_postman.html:31
+#: app/templates/api_docs_postman.html:45
 msgid "Open Postman"
 msgstr "Ouvrez Postman"
 
-#: templates/api_docs_postman.html:32 templates/api_docs_postman.html:46
+#: app/templates/api_docs_postman.html:32
+#: app/templates/api_docs_postman.html:46
 msgid "Click \"Import\" in the upper left corner"
-msgstr "Cliquez sur \"Import\" dans le coin supérieur gauche"
+msgstr "Cliquez sur \"Import\" en haut à gauche"
 
-#: templates/api_docs_postman.html:33
+#: app/templates/api_docs_postman.html:33
 msgid "Select the \"Link\" tab"
 msgstr "Sélectionnez l'onglet \"Link\""
 
-#: templates/api_docs_postman.html:34
+#: app/templates/api_docs_postman.html:34
 msgid "Paste the following URL:"
 msgstr "Collez l'URL suivante :"
 
-#: templates/api_docs_postman.html:35
+#: app/templates/api_docs_postman.html:35
 msgid "Click \"Import\""
 msgstr "Cliquez sur \"Import\""
 
-#: templates/api_docs_postman.html:36
+#: app/templates/api_docs_postman.html:36
 msgid "Postman will import the complete collection with all configured endpoints"
-msgstr "Postman va importer la collection complète avec tous les endpoints configurés"
+msgstr "Postman importera la collection complète avec tous les points d'accès configurés"
 
-#: templates/api_docs_postman.html:39
+#: app/templates/api_docs_postman.html:39
 msgid "Recommended:"
 msgstr "Recommandé :"
 
-#: templates/api_docs_postman.html:39
+#: app/templates/api_docs_postman.html:39
 msgid ""
 "This method is more reliable than OpenAPI import and includes request and"
 " response examples."
-msgstr "Cette méthode est plus fiable que l'importation OpenAPI et inclut des exemples de requêtes et réponses."
+msgstr "Cette méthode est plus fiable que l'importation OpenAPI et inclut des exemples de requêtes et de réponses."
 
-#: templates/api_docs_postman.html:42
+#: app/templates/api_docs_postman.html:42
 msgid "Alternative: OpenAPI Documentation Import"
 msgstr "Alternative : Importation de la documentation OpenAPI"
 
-#: templates/api_docs_postman.html:43
+#: app/templates/api_docs_postman.html:43
 msgid "Postman can also directly import the OpenAPI documentation:"
 msgstr "Postman peut également importer directement la documentation OpenAPI :"
 
-#: templates/api_docs_postman.html:47
+#: app/templates/api_docs_postman.html:47
 msgid "Select the \"Link\" tab and paste"
 msgstr "Sélectionnez l'onglet \"Link\" et collez"
 
-#: templates/api_docs_postman.html:47
+#: app/templates/api_docs_postman.html:47
 msgid "or use the \"File\" tab and import the file"
 msgstr "ou utilisez l'onglet \"File\" et importez le fichier"
 
-#: templates/api_docs_postman.html:47
+#: app/templates/api_docs_postman.html:47
 msgid "that you downloaded"
 msgstr "que vous avez téléchargé"
 
-#: templates/api_docs_postman.html:48
+#: app/templates/api_docs_postman.html:48
 msgid "Postman will generate a collection based on the OpenAPI specification"
-msgstr "Postman va générer une collection basée sur la spécification OpenAPI"
+msgstr "Postman générera une collection basée sur la spécification OpenAPI"
 
-#: templates/api_docs_postman.html:51
+#: app/templates/api_docs_postman.html:51
 msgid ""
 "Importing via OpenAPI may sometimes fail to capture all the collection "
 "details."
 msgstr "L'importation via OpenAPI peut parfois ne pas capturer tous les détails de la collection."
 
-#: templates/api_docs_postman.html:54
+#: app/templates/api_docs_postman.html:54
 msgid "Environment Variables Configuration"
 msgstr "Configuration des variables d'environnement"
 
-#: templates/api_docs_postman.html:55
+#: app/templates/api_docs_postman.html:55
 msgid ""
 "To facilitate the use of the API, create an environment with the "
 "following variables:"
 msgstr "Pour faciliter l'utilisation de l'API, créez un environnement avec les variables suivantes :"
 
-#: templates/api_docs_postman.html:57
+#: app/templates/api_docs_postman.html:57
 msgid "Click the gear icon (⚙️) in the top right"
 msgstr "Cliquez sur l'icône d'engrenage (⚙️) en haut à droite"
 
-#: templates/api_docs_postman.html:58
+#: app/templates/api_docs_postman.html:58
 msgid "Select \"Environments\" then \"Add\""
 msgstr "Sélectionnez \"Environments\" puis \"Add\""
 
-#: templates/api_docs_postman.html:59
+#: app/templates/api_docs_postman.html:59
 msgid "Name your environment (e.g., \"List-IQ - Local\")"
 msgstr "Nommez votre environnement (ex: \"List-IQ - Local\")"
 
-#: templates/api_docs_postman.html:60
+#: app/templates/api_docs_postman.html:60
 msgid "Add the following variables:"
 msgstr "Ajoutez les variables suivantes :"
 
-#: templates/api_docs_postman.html:62
+#: app/templates/api_docs_postman.html:62
 msgid "API base URL (e.g.:"
-msgstr "URL de base de l'API (ex:"
+msgstr "URL de base de l'API (ex: "
 
-#: templates/api_docs_postman.html:63
+#: app/templates/api_docs_postman.html:63
 msgid "Your API token (without the \"Bearer\" prefix)"
-msgstr "Votre token API (sans le préfixe \"Bearer\")"
+msgstr "Votre jeton d'API (sans le préfixe \"Bearer\")"
 
-#: templates/api_docs_postman.html:64
+#: app/templates/api_docs_postman.html:64
 msgid "ID of a list for testing (optional)"
-msgstr "ID d'une liste pour les tests (facultatif)"
+msgstr "ID d'une liste pour les tests (optionnel)"
 
-#: templates/api_docs_postman.html:65
+#: app/templates/api_docs_postman.html:65
 msgid "ID of a row for testing (optional)"
-msgstr "ID d'une ligne pour les tests (facultatif)"
+msgstr "ID d'une ligne pour les tests (optionnel)"
 
-#: templates/api_docs_postman.html:68
-#: templates/help/automatic_lists_guide.html:62
-#: templates/help/automatic_lists_guide.html:110
-#: templates/help/automatic_lists_guide.html:143
+#: app/templates/api_docs_postman.html:68
+#: app/templates/help/automatic_lists_guide.html:62
+#: app/templates/help/automatic_lists_guide.html:110
+#: app/templates/help/automatic_lists_guide.html:143
 msgid "Click \"Save\""
 msgstr "Cliquez sur \"Enregistrer\""
 
-#: templates/api_docs_postman.html:69
+#: app/templates/api_docs_postman.html:69
 msgid "Select your environment from the dropdown menu in the top right"
 msgstr "Sélectionnez votre environnement dans le menu déroulant en haut à droite"
 
-#: templates/api_docs_postman.html:72
+#: app/templates/api_docs_postman.html:72
 msgid "Authentication Configuration"
 msgstr "Configuration de l'authentification"
 
-#: templates/api_docs_postman.html:73
+#: app/templates/api_docs_postman.html:73
 msgid "Configure token authentication for the entire collection:"
-msgstr "Configurez l'authentification par token pour toute la collection :"
+msgstr "Configurez l'authentification par jeton pour toute la collection :"
 
-#: templates/api_docs_postman.html:75
+#: app/templates/api_docs_postman.html:75
 msgid ""
 "In the imported collection, click the three dots (⋮) next to the "
 "collection name"
 msgstr "Dans la collection importée, cliquez sur les trois points (⋮) à côté du nom de la collection"
 
-#: templates/api_docs_postman.html:76
+#: app/templates/api_docs_postman.html:76
 msgid "Select \"Edit\""
 msgstr "Sélectionnez \"Edit\""
 
-#: templates/api_docs_postman.html:77
+#: app/templates/api_docs_postman.html:77
 msgid "Go to the \"Authorization\" tab"
 msgstr "Allez dans l'onglet \"Authorization\""
 
-#: templates/api_docs_postman.html:78
+#: app/templates/api_docs_postman.html:78
 msgid "Select the type \"Bearer Token\""
 msgstr "Sélectionnez le type \"Bearer Token\""
 
-#: templates/api_docs_postman.html:79
+#: app/templates/api_docs_postman.html:79
 msgid ""
 "In the \"Token\" field, enter <code>{{token}}</code> to use the "
 "environment variable"
 msgstr "Dans le champ \"Token\", entrez <code>{{token}}</code> pour utiliser la variable d'environnement"
 
-#: templates/api_docs_postman.html:80
+#: app/templates/api_docs_postman.html:80
 msgid "Click \"Update\""
-msgstr "Cliquez sur \"Update\""
+msgstr "Cliquez sur \"Mettre à jour\""
 
-#: templates/api_docs_postman.html:87
+#: app/templates/api_docs_postman.html:87
 msgid "API Usage"
 msgstr "Utilisation de l'API"
 
-#: templates/api_docs_postman.html:90
+#: app/templates/api_docs_postman.html:90
 msgid "Main Endpoints"
-msgstr "Endpoints principaux"
+msgstr "Points d'accès principaux"
 
-#: templates/api_docs_postman.html:92
+#: app/templates/api_docs_postman.html:92
 msgid "List Management"
 msgstr "Gestion des listes"
 
-#: templates/api_docs_postman.html:94
+#: app/templates/api_docs_postman.html:94
 msgid "Retrieve all accessible lists"
 msgstr "Récupérer toutes les listes accessibles"
 
-#: templates/api_docs_postman.html:95
+#: app/templates/api_docs_postman.html:95
 msgid "Retrieve details of a specific list"
 msgstr "Récupérer les détails d'une liste spécifique"
 
-#: templates/api_docs_postman.html:96
+#: app/templates/api_docs_postman.html:96
 msgid "Create a new list (admin only)"
-msgstr "Créer une nouvelle liste (admin uniquement)"
+msgstr "Créer une nouvelle liste (admin seulement)"
 
-#: templates/api_docs_postman.html:97
+#: app/templates/api_docs_postman.html:97
 msgid "Update a list (admin only)"
-msgstr "Mettre à jour une liste (admin uniquement)"
+msgstr "Mettre à jour une liste (admin seulement)"
 
-#: templates/api_docs_postman.html:98
+#: app/templates/api_docs_postman.html:98
 msgid "Delete a list (admin only)"
-msgstr "Supprimer une liste (admin uniquement)"
+msgstr "Supprimer une liste (admin seulement)"
 
-#: templates/api_docs_postman.html:101
+#: app/templates/api_docs_postman.html:101
 msgid "Data Management"
 msgstr "Gestion des données"
 
-#: templates/api_docs_postman.html:103
+#: app/templates/api_docs_postman.html:103
 msgid "Retrieve all data from a list"
 msgstr "Récupérer toutes les données d'une liste"
 
-#: templates/api_docs_postman.html:104
+#: app/templates/api_docs_postman.html:104
 msgid "Retrieve a specific row"
 msgstr "Récupérer une ligne spécifique"
 
-#: templates/api_docs_postman.html:105 templates/api_docs_postman.html:164
+#: app/templates/api_docs_postman.html:105
+#: app/templates/api_docs_postman.html:164
 msgid "Add a data row (admin only)"
-msgstr "Ajouter une ligne de données (admin uniquement)"
+msgstr "Ajouter une ligne de données (admin seulement)"
 
-#: templates/api_docs_postman.html:106
+#: app/templates/api_docs_postman.html:106
 msgid "Update a row (admin only)"
-msgstr "Mettre à jour une ligne (admin uniquement)"
+msgstr "Mettre à jour une ligne (admin seulement)"
 
-#: templates/api_docs_postman.html:107
+#: app/templates/api_docs_postman.html:107
 msgid "Delete a row (admin only)"
-msgstr "Supprimer une ligne (admin uniquement)"
+msgstr "Supprimer une ligne (admin seulement)"
 
-#: templates/api_docs_postman.html:111 templates/help/curl_api_help.html:42
-#: templates/help/json_config_help.html:101
-#: templates/help/python_api_help.html:62
+#: app/templates/api_docs_postman.html:111
+#: app/templates/help/curl_api_help.html:42
+#: app/templates/help/json_config_help.html:101
+#: app/templates/help/python_api_help.html:62
 msgid "Important:"
 msgstr "Important :"
 
-#: templates/api_docs_postman.html:111
+#: app/templates/api_docs_postman.html:111
 msgid ""
 "In accordance with the project rules, list administration actions "
 "(creation, structure modification, column management) are only available "
 "via the web interface and not via the API."
-msgstr "Conformément aux règles du projet, les actions d'administration des listes (création, modification de structure, gestion des colonnes) ne sont disponibles que via l'interface web et non via l'API."
+msgstr "Conformément aux règles du projet, les actions d'administration des listes (création, modification de la structure, gestion des colonnes) ne sont disponibles que via l'interface web et non via l'API."
 
-#: templates/api_docs_postman.html:118
+#: app/templates/api_docs_postman.html:118
 msgid "Request Examples"
 msgstr "Exemples de requêtes"
 
-#: templates/api_docs_postman.html:121
+#: app/templates/api_docs_postman.html:121
 msgid "Retrieve all lists"
 msgstr "Récupérer toutes les listes"
 
-#: templates/api_docs_postman.html:125
+#: app/templates/api_docs_postman.html:125
 msgid "Create a new URL CSV list (admin only)"
-msgstr "Créer une nouvelle liste URL CSV (admin uniquement)"
+msgstr "Créer une nouvelle liste CSV depuis une URL (admin seulement)"
 
-#: templates/api_docs_postman.html:131
+#: app/templates/api_docs_postman.html:131
 msgid "My URLCSVAPI List"
-msgstr "Ma liste URLCSVAPI"
+msgstr "Ma Liste URLCSVAPI"
 
-#: templates/api_docs_postman.html:132
+#: app/templates/api_docs_postman.html:132
 msgid "Description of my CSV list imported from a URL"
 msgstr "Description de ma liste CSV importée depuis une URL"
 
-#: templates/api_docs_postman.html:137 templates/api_tokens/index.html:29
-#: templates/lists/edit.html:32
+#: app/templates/api_docs_postman.html:137
+#: app/templates/api_tokens/index.html:29 app/templates/lists/edit.html:33
 msgid "Name"
 msgstr "Nom"
 
-#: templates/api_docs_postman.html:141
+#: app/templates/api_docs_postman.html:141
 msgid "Age"
 msgstr "Âge"
 
-#: templates/admin/edit_user.html:35 templates/admin/new_user.html:33
-#: templates/admin/users.html:23 templates/api_docs_postman.html:145
+#: app/templates/admin/edit_user.html:35 app/templates/admin/new_user.html:33
+#: app/templates/admin/users.html:23 app/templates/api_docs_postman.html:145
 msgid "Email"
 msgstr "Email"
 
-#: templates/api_docs_postman.html:172
+#: app/templates/api_docs_postman.html:172
 msgid "France"
 msgstr "France"
 
-#: templates/api_docs_postman.html:181
+#: app/templates/api_docs_postman.html:181
 msgid "Troubleshooting"
 msgstr "Dépannage"
 
-#: templates/api_docs_postman.html:184
+#: app/templates/api_docs_postman.html:184
 msgid "Error 401 (Unauthenticated)"
 msgstr "Erreur 401 (Non authentifié)"
 
-#: templates/api_docs_postman.html:186
+#: app/templates/api_docs_postman.html:186
 msgid "Check that your API token is valid and has not expired"
-msgstr "Vérifiez que votre token API est valide et n'a pas expiré"
+msgstr "Vérifiez que votre jeton d'API est valide et n'a pas expiré"
 
-#: templates/api_docs_postman.html:187
+#: app/templates/api_docs_postman.html:187
 msgid "Make sure the <code>token</code> environment variable is set correctly"
 msgstr "Assurez-vous que la variable d'environnement <code>token</code> est correctement définie"
 
-#: templates/api_docs_postman.html:188
+#: app/templates/api_docs_postman.html:188
 msgid ""
 "Check that Bearer Token authentication is configured at the collection "
 "level"
 msgstr "Vérifiez que l'authentification Bearer Token est configurée au niveau de la collection"
 
-#: templates/api_docs_postman.html:191
+#: app/templates/api_docs_postman.html:191
 msgid "Error 403 (Forbidden)"
 msgstr "Erreur 403 (Interdit)"
 
-#: templates/api_docs_postman.html:193
+#: app/templates/api_docs_postman.html:193
 msgid "Check that you have the necessary rights to perform the operation"
-msgstr "Vérifiez que vous avez les droits nécessaires pour effectuer l'opération"
+msgstr "Vérifiez que vous disposez des droits nécessaires pour effectuer l'opération"
 
-#: templates/api_docs_postman.html:194
+#: app/templates/api_docs_postman.html:194
 msgid ""
 "For adding, modifying, and deleting data, you must have an administrator "
 "token"
-msgstr "Pour les opérations d'ajout, de modification et de suppression de données, vous devez avoir un token administrateur"
+msgstr "Pour ajouter, modifier et supprimer des données, vous devez disposer d'un jeton administrateur"
 
-#: templates/api_docs_postman.html:197
+#: app/templates/api_docs_postman.html:197
 msgid "Error 404 (Not Found)"
 msgstr "Erreur 404 (Non trouvé)"
 
-#: templates/api_docs_postman.html:199
+#: app/templates/api_docs_postman.html:199
 msgid "Check that the list or row ID exists"
-msgstr "Vérifiez que l'ID de liste ou de ligne existe"
+msgstr "Vérifiez que l'ID de la liste ou de la ligne existe"
 
-#: templates/api_docs_postman.html:200
+#: app/templates/api_docs_postman.html:200
 msgid "Make sure the URL is formatted correctly"
 msgstr "Assurez-vous que l'URL est correctement formatée"
 
-#: templates/base.html:32 templates/help/automatic_lists_guide.html:9
-#: templates/help/curl_api_help.html:9 templates/help/json_config_help.html:9
-#: templates/help/python_api_help.html:9 templates/lists/edit.html:10
-#: templates/lists/index.html:3 templates/lists/index.html:8
-#: templates/lists/view.html:25
+#: app/templates/base.html:34 app/templates/help/automatic_lists_guide.html:9
+#: app/templates/help/curl_api_help.html:9
+#: app/templates/help/json_config_help.html:9
+#: app/templates/help/python_api_help.html:9 app/templates/lists/edit.html:10
+#: app/templates/lists/index.html:3 app/templates/lists/index.html:8
+#: app/templates/lists/view.html:25
 msgid "Lists"
 msgstr "Listes"
 
-#: templates/base.html:36 templates/lists/edit.html:3
-#: templates/lists/edit.html:15 templates/lists/edit.html:24
-#: templates/lists/index.html:13
+#: app/templates/base.html:38 app/templates/lists/edit.html:3
+#: app/templates/lists/edit.html:15 app/templates/lists/edit.html:24
+#: app/templates/lists/index.html:13
 msgid "New List"
 msgstr "Nouvelle Liste"
 
-#: templates/base.html:40
+#: app/templates/base.html:42
 msgid "Help"
 msgstr "Aide"
 
-#: templates/base.html:43
+#: app/templates/base.html:45
 msgid "Automatic Lists Guide"
 msgstr "Guide des listes automatiques"
 
-#: templates/base.html:44
+#: app/templates/base.html:46
 msgid "Python Scripts"
 msgstr "Scripts Python"
 
-#: templates/base.html:45
+#: app/templates/base.html:47
 msgid "Curl Commands"
 msgstr "Commandes Curl"
 
-#: templates/base.html:46 templates/lists/edit.html:277
-#: templates/lists/view.html:79
+#: app/templates/base.html:48 app/templates/lists/view.html:79
 msgid "JSON Configuration"
 msgstr "Configuration JSON"
 
-#: templates/base.html:65 templates/lists/edit.html:116
+#: app/templates/base.html:67 app/templates/lists/edit.html:117
 msgid "Language"
 msgstr "Langue"
 
-#: templates/base.html:68
+#: app/templates/base.html:70
 msgid "French"
 msgstr "Français"
 
-#: templates/base.html:69
+#: app/templates/base.html:71
 msgid "English"
 msgstr "Anglais"
 
-#: templates/base.html:78
+#: app/templates/base.html:80
 msgid "Theme"
 msgstr "Thème"
 
-#: templates/api_tokens/index.html:3 templates/api_tokens/index.html:8
-#: templates/base.html:114
+#: app/templates/api_tokens/index.html:3 app/templates/api_tokens/index.html:8
+#: app/templates/base.html:116
 msgid "API Tokens"
-msgstr "Tokens API"
+msgstr "Jetons d'API"
 
-#: templates/base.html:119
+#: app/templates/base.html:121
 msgid "User Management"
 msgstr "Gestion des utilisateurs"
 
-#: templates/admin/ldap_config.html:3 templates/base.html:123
+#: app/templates/admin/ldap_config.html:3 app/templates/base.html:125
 msgid "LDAP Configuration"
 msgstr "Configuration LDAP"
 
-#: templates/base.html:126
+#: app/templates/base.html:128
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: templates/auth/login.html:3 templates/auth/login.html:11
-#: templates/auth/login.html:39 templates/base.html:131
+#: app/templates/auth/login.html:3 app/templates/auth/login.html:11
+#: app/templates/auth/login.html:39 app/templates/base.html:133
 msgid "Login"
 msgstr "Connexion"
 
-#: templates/base.html:158
+#: app/templates/base.html:160
 msgid "All rights reserved"
 msgstr "Tous droits réservés"
 
-#: templates/admin/edit_user.html:3 templates/admin/edit_user.html:11
+#: app/templates/admin/edit_user.html:3 app/templates/admin/edit_user.html:11
 msgid "Edit User"
 msgstr "Modifier l'utilisateur"
 
-#: templates/admin/edit_user.html:19 templates/admin/ldap_config.html:233
-#: templates/admin/ldap_config.html:255 templates/admin/new_user.html:19
-#: templates/api_tokens/index.html:152 templates/api_tokens/index.html:185
-#: templates/api_tokens/index.html:261
+#: app/templates/admin/edit_user.html:19
+#: app/templates/admin/ldap_config.html:233
+#: app/templates/admin/ldap_config.html:255
+#: app/templates/admin/new_user.html:19 app/templates/api_tokens/index.html:152
+#: app/templates/api_tokens/index.html:185
+#: app/templates/api_tokens/index.html:261
 msgid "Close"
 msgstr "Fermer"
 
-#: templates/admin/edit_user.html:29 templates/admin/new_user.html:28
-#: templates/admin/users.html:22 templates/auth/login.html:28
+#: app/templates/admin/edit_user.html:29 app/templates/admin/new_user.html:28
+#: app/templates/admin/users.html:22 app/templates/auth/login.html:28
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: templates/admin/edit_user.html:42
+#: app/templates/admin/edit_user.html:42
 msgid "New Password"
 msgstr "Nouveau mot de passe"
 
-#: templates/admin/edit_user.html:43
+#: app/templates/admin/edit_user.html:43
 msgid "(leave blank to not change)"
 msgstr "(laisser vide pour ne pas changer)"
 
-#: templates/admin/edit_user.html:51 templates/admin/new_user.html:44
-#: templates/admin/users.html:42
+#: app/templates/admin/edit_user.html:51 app/templates/admin/new_user.html:44
+#: app/templates/admin/users.html:42
 msgid "Administrator"
 msgstr "Administrateur"
 
-#: templates/admin/edit_user.html:57 templates/admin/new_user.html:49
-#: templates/admin/users.html:37 templates/api_tokens/index.html:58
-#: templates/lists/index.html:40
+#: app/templates/admin/edit_user.html:57 app/templates/admin/new_user.html:49
+#: app/templates/admin/users.html:37 app/templates/api_tokens/index.html:58
+#: app/templates/lists/index.html:40
 msgid "Active"
 msgstr "Actif"
 
-#: templates/admin/edit_user.html:61 templates/admin/new_user.html:53
-#: templates/api_tokens/index.html:171 templates/lists/edit.html:280
-#: templates/lists/edit.html:283 templates/lists/view.html:197
-#: templates/lists/view.html:255 templates/lists/view.html:291
+#: app/templates/admin/edit_user.html:61 app/templates/admin/new_user.html:53
+#: app/templates/api_tokens/index.html:171 app/templates/lists/edit.html:325
+#: app/templates/lists/view.html:197 app/templates/lists/view.html:255
+#: app/templates/lists/view.html:291
 msgid "Cancel"
 msgstr "Annuler"
 
-#: templates/admin/edit_user.html:62
+#: app/templates/admin/edit_user.html:62
 msgid "Save Changes"
 msgstr "Enregistrer les modifications"
 
-#: templates/admin/ldap_config.html:12
+#: app/templates/admin/ldap_config.html:12
 msgid "LDAP/LDAPS Configuration"
 msgstr "Configuration LDAP/LDAPS"
 
-#: templates/admin/ldap_config.html:15
+#: app/templates/admin/ldap_config.html:15
 msgid ""
 "Configure the connection settings to your LDAP/Active Directory service "
 "to enable user authentication and authorization."
-msgstr "Configurez les paramètres de connexion à votre service d'annuaire LDAP/Active Directory pour permettre l'authentification et l'habilitation des utilisateurs."
+msgstr "Configurez les paramètres de connexion à votre service LDAP/Active Directory pour activer l'authentification et l'autorisation des utilisateurs."
 
-#: templates/admin/ldap_config.html:23
+#: app/templates/admin/ldap_config.html:23
 msgid "Connection Settings"
 msgstr "Paramètres de connexion"
 
-#: templates/admin/ldap_config.html:29
+#: app/templates/admin/ldap_config.html:29
 msgid "Enable LDAP Authentication"
 msgstr "Activer l'authentification LDAP"
 
-#: templates/admin/ldap_config.html:35
+#: app/templates/admin/ldap_config.html:35
 msgid "LDAP Server"
 msgstr "Serveur LDAP"
 
-#: templates/admin/ldap_config.html:37
+#: app/templates/admin/ldap_config.html:37
 msgid "Hostname or IP address of the LDAP server"
 msgstr "Nom d'hôte ou adresse IP du serveur LDAP"
 
-#: templates/admin/ldap_config.html:40
+#: app/templates/admin/ldap_config.html:40
 msgid "Port"
 msgstr "Port"
 
-#: templates/admin/ldap_config.html:42
+#: app/templates/admin/ldap_config.html:42
 msgid "Default port: 389 (LDAP) or 636 (LDAPS)"
 msgstr "Port par défaut : 389 (LDAP) ou 636 (LDAPS)"
 
-#: templates/admin/ldap_config.html:51
+#: app/templates/admin/ldap_config.html:51
 msgid "Use SSL (LDAPS)"
 msgstr "Utiliser SSL (LDAPS)"
 
-#: templates/admin/ldap_config.html:59
+#: app/templates/admin/ldap_config.html:59
 msgid "Use TLS (StartTLS)"
 msgstr "Utiliser TLS (StartTLS)"
 
-#: templates/admin/ldap_config.html:67
+#: app/templates/admin/ldap_config.html:67
 msgid "Verify SSL/TLS Certificate"
 msgstr "Vérifier le certificat SSL/TLS"
 
-#: templates/admin/ldap_config.html:69
+#: app/templates/admin/ldap_config.html:69
 msgid "Enable to verify the LDAP server certificate"
 msgstr "Activer pour vérifier le certificat du serveur LDAP"
 
-#: templates/admin/ldap_config.html:78
+#: app/templates/admin/ldap_config.html:78
 msgid "CA Certificate for SSL/TLS"
 msgstr "Certificat CA pour SSL/TLS"
 
-#: templates/admin/ldap_config.html:82
+#: app/templates/admin/ldap_config.html:82
 msgid ""
 "If you are using LDAPS or StartTLS with a certificate issued by a private"
 " PKI, you must provide the CA certificate in PEM format."
-msgstr "Si vous utilisez LDAPS ou StartTLS avec un certificat émis par une PKI privée, vous devez fournir le certificat CA au format PEM."
+msgstr "Si vous utilisez LDAPS ou StartTLS avec un certificat émis par une PKI privée, vous devez fournir le certificat de l'autorité de certification (CA) au format PEM."
 
-#: templates/admin/ldap_config.html:87
+#: app/templates/admin/ldap_config.html:87
 msgid "A CA certificate is currently configured."
 msgstr "Un certificat CA est actuellement configuré."
 
-#: templates/admin/ldap_config.html:92
+#: app/templates/admin/ldap_config.html:92
 msgid "Remove current CA certificate"
 msgstr "Supprimer le certificat CA actuel"
 
-#: templates/admin/ldap_config.html:98
+#: app/templates/admin/ldap_config.html:98
 msgid "CA Certificate (PEM format)"
 msgstr "Certificat CA (format PEM)"
 
-#: templates/admin/ldap_config.html:100
+#: app/templates/admin/ldap_config.html:100
 msgid ""
 "File containing the certificate in PEM format (starts with -----BEGIN "
 "CERTIFICATE-----)"
 msgstr "Fichier contenant le certificat au format PEM (commence par -----BEGIN CERTIFICATE-----)"
 
-#: templates/admin/ldap_config.html:111
+#: app/templates/admin/ldap_config.html:111
 msgid "Authentication Settings"
 msgstr "Paramètres d'authentification"
 
-#: templates/admin/ldap_config.html:115
+#: app/templates/admin/ldap_config.html:115
 msgid "Bind DN"
-msgstr "DN de liaison (Bind DN)"
+msgstr "Bind DN"
 
-#: templates/admin/ldap_config.html:117
+#: app/templates/admin/ldap_config.html:117
 msgid ""
 "DN of the service account used to connect to the LDAP server. For Active "
 "Directory, use the format: username@domain.com"
-msgstr "DN du compte de service utilisé pour se connecter au serveur LDAP. Pour Active Directory, utilisez le format : username@domain.com"
+msgstr "DN du compte de service utilisé pour se connecter au serveur LDAP. Pour Active Directory, utilisez le format : nomutilisateur@domaine.com"
 
-#: templates/admin/ldap_config.html:121
+#: app/templates/admin/ldap_config.html:121
 msgid "Bind Password"
-msgstr "Mot de passe de liaison"
+msgstr "Mot de passe du Bind"
 
-#: templates/admin/ldap_config.html:122 templates/admin/new_user.html:38
-#: templates/auth/login.html:32
+#: app/templates/admin/ldap_config.html:122
+#: app/templates/admin/new_user.html:38 app/templates/auth/login.html:32
 msgid "Password"
 msgstr "Mot de passe"
 
-#: templates/admin/ldap_config.html:123
+#: app/templates/admin/ldap_config.html:123
 msgid "Leave blank to keep the current password"
-msgstr "Laissez vide pour conserver le mot de passe actuel"
+msgstr "Laisser vide pour conserver le mot de passe actuel"
 
-#: templates/admin/ldap_config.html:130
+#: app/templates/admin/ldap_config.html:130
 msgid "Search Settings"
 msgstr "Paramètres de recherche"
 
-#: templates/admin/ldap_config.html:134
+#: app/templates/admin/ldap_config.html:134
 msgid "Base DN"
-msgstr "DN de base"
+msgstr "Base DN"
 
-#: templates/admin/ldap_config.html:136
+#: app/templates/admin/ldap_config.html:136
 msgid "Base DN for all LDAP searches"
 msgstr "DN de base pour toutes les recherches LDAP"
 
-#: templates/admin/ldap_config.html:140
+#: app/templates/admin/ldap_config.html:140
 msgid "User DN"
-msgstr "DN des utilisateurs"
+msgstr "User DN"
 
-#: templates/admin/ldap_config.html:142
+#: app/templates/admin/ldap_config.html:142
 msgid "DN where users are searched (leave blank to use the base DN)"
-msgstr "DN où rechercher les utilisateurs (laissez vide pour utiliser le DN de base)"
+msgstr "DN où les utilisateurs sont recherchés (laisser vide pour utiliser le DN de base)"
 
-#: templates/admin/ldap_config.html:146
+#: app/templates/admin/ldap_config.html:146
 msgid "Group DN"
-msgstr "DN des groupes"
+msgstr "Group DN"
 
-#: templates/admin/ldap_config.html:148
+#: app/templates/admin/ldap_config.html:148
 msgid "DN where groups are searched (leave blank to use the base DN)"
-msgstr "DN où rechercher les groupes (laissez vide pour utiliser le DN de base)"
+msgstr "DN où les groupes sont recherchés (laisser vide pour utiliser le DN de base)"
 
-#: templates/admin/ldap_config.html:153
+#: app/templates/admin/ldap_config.html:153
 msgid "User RDN Attribute"
-msgstr "Attribut RDN utilisateur"
+msgstr "Attribut RDN Utilisateur"
 
-#: templates/admin/ldap_config.html:155 templates/admin/ldap_config.html:160
+#: app/templates/admin/ldap_config.html:155
+#: app/templates/admin/ldap_config.html:160
 msgid "For AD: sAMAccountName"
 msgstr "Pour AD : sAMAccountName"
 
-#: templates/admin/ldap_config.html:158
+#: app/templates/admin/ldap_config.html:158
 msgid "Login Attribute"
 msgstr "Attribut de connexion"
 
-#: templates/admin/ldap_config.html:163
+#: app/templates/admin/ldap_config.html:163
 msgid "User Object Class"
-msgstr "Classe d'objet utilisateur"
+msgstr "Classe d'objet Utilisateur"
 
-#: templates/admin/ldap_config.html:165
+#: app/templates/admin/ldap_config.html:165
 msgid "For AD: person or user"
 msgstr "Pour AD : person ou user"
 
-#: templates/admin/ldap_config.html:173
+#: app/templates/admin/ldap_config.html:173
 msgid "Authorization Settings"
-msgstr "Paramètres d'habilitation"
+msgstr "Paramètres d'autorisation"
 
-#: templates/admin/ldap_config.html:177
+#: app/templates/admin/ldap_config.html:177
 msgid ""
 "Users must belong to at least the user group to be able to log in. "
 "Administrators must belong to the administrator group."
-msgstr "Les utilisateurs doivent appartenir au moins au groupe utilisateur pour pouvoir se connecter. Les administrateurs doivent appartenir au groupe administrateur."
+msgstr "Les utilisateurs doivent appartenir au minimum au groupe utilisateur pour pouvoir se connecter. Les administrateurs doivent appartenir au groupe administrateur."
 
-#: templates/admin/ldap_config.html:181
+#: app/templates/admin/ldap_config.html:181
 msgid "Administrator Group"
-msgstr "Groupe administrateur"
+msgstr "Groupe Administrateur"
 
-#: templates/admin/ldap_config.html:188
+#: app/templates/admin/ldap_config.html:188
 msgid "DN of the group whose members will have administrator rights"
-msgstr "DN du groupe dont les membres auront des droits d'administration"
+msgstr "DN du groupe dont les membres auront les droits d'administrateur"
 
-#: templates/admin/ldap_config.html:192
+#: app/templates/admin/ldap_config.html:192
 msgid "User Group"
-msgstr "Groupe utilisateur"
+msgstr "Groupe Utilisateur"
 
-#: templates/admin/ldap_config.html:199
+#: app/templates/admin/ldap_config.html:199
 msgid "DN of the group whose members will have standard user rights"
-msgstr "DN du groupe dont les membres auront des droits d'utilisateur standard"
+msgstr "DN du groupe dont les membres auront les droits d'utilisateur standard"
 
-#: templates/admin/ldap_config.html:204
+#: app/templates/admin/ldap_config.html:204
 msgid "Member Attribute"
 msgstr "Attribut de membre"
 
-#: templates/admin/ldap_config.html:206
+#: app/templates/admin/ldap_config.html:206
 msgid "For AD: member"
 msgstr "Pour AD : member"
 
-#: templates/admin/ldap_config.html:209
+#: app/templates/admin/ldap_config.html:209
 msgid "Group Object Class"
-msgstr "Classe d'objet groupe"
+msgstr "Classe d'objet Groupe"
 
-#: templates/admin/ldap_config.html:211
+#: app/templates/admin/ldap_config.html:211
 msgid "For AD: group"
 msgstr "Pour AD : group"
 
-#: templates/admin/ldap_config.html:219
+#: app/templates/admin/ldap_config.html:219
 msgid "Test Connection"
 msgstr "Tester la connexion"
 
-#: templates/admin/ldap_config.html:222
+#: app/templates/admin/ldap_config.html:222
 msgid "Save Configuration"
 msgstr "Enregistrer la configuration"
 
-#: templates/admin/ldap_config.html:232
+#: app/templates/admin/ldap_config.html:232
 msgid "Select a Group"
 msgstr "Sélectionner un groupe"
 
-#: templates/admin/ldap_config.html:238
+#: app/templates/admin/ldap_config.html:238
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: templates/admin/ldap_config.html:240
+#: app/templates/admin/ldap_config.html:240
 msgid "Loading groups..."
 msgstr "Chargement des groupes..."
 
-#: templates/admin/ldap_config.html:247
+#: app/templates/admin/ldap_config.html:247
 msgid "Search for a group..."
 msgstr "Rechercher un groupe..."
 
-#: templates/admin/ldap_config.html:275
+#: app/templates/admin/ldap_config.html:275
 msgid "Testing..."
 msgstr "Test en cours..."
 
-#: templates/admin/ldap_config.html:289
+#: app/templates/admin/ldap_config.html:289
 msgid "Connection Successful"
 msgstr "Connexion réussie"
 
-#: templates/admin/ldap_config.html:291 templates/admin/ldap_config.html:298
-#: templates/admin/ldap_config.html:307
+#: app/templates/admin/ldap_config.html:291
+#: app/templates/admin/ldap_config.html:298
+#: app/templates/admin/ldap_config.html:307
 msgid "OK"
 msgstr "OK"
 
-#: templates/admin/ldap_config.html:296
+#: app/templates/admin/ldap_config.html:296
 msgid "Connection Failed"
 msgstr "Échec de la connexion"
 
-#: templates/admin/ldap_config.html:302
+#: app/templates/admin/ldap_config.html:302
 msgid "Error during connection test:"
 msgstr "Erreur lors du test de connexion :"
 
-#: templates/admin/ldap_config.html:305
+#: app/templates/admin/ldap_config.html:305
 msgid "Error"
 msgstr "Erreur"
 
-#: templates/admin/ldap_config.html:306
+#: app/templates/admin/ldap_config.html:306
 msgid "An error occurred during the connection test"
 msgstr "Une erreur est survenue lors du test de connexion"
 
-#: templates/admin/ldap_config.html:393
+#: app/templates/admin/ldap_config.html:393
 msgid "No groups found"
 msgstr "Aucun groupe trouvé"
 
-#: templates/admin/ldap_config.html:398
+#: app/templates/admin/ldap_config.html:398
 msgid "Error loading groups:"
 msgstr "Erreur lors du chargement des groupes :"
 
-#: templates/admin/ldap_config.html:399
+#: app/templates/admin/ldap_config.html:399
 msgid "An error occurred while loading groups"
 msgstr "Une erreur est survenue lors du chargement des groupes"
 
-#: templates/admin/new_user.html:3 templates/admin/new_user.html:11
-#: templates/admin/users.html:10
+#: app/templates/admin/new_user.html:3 app/templates/admin/new_user.html:11
+#: app/templates/admin/users.html:10
 msgid "New User"
 msgstr "Nouvel utilisateur"
 
-#: templates/admin/new_user.html:54
+#: app/templates/admin/new_user.html:54
 msgid "Create User"
 msgstr "Créer l'utilisateur"
 
-#: templates/admin/users.html:3 templates/admin/users.html:8
+#: app/templates/admin/users.html:3 app/templates/admin/users.html:8
 msgid "User Administration"
 msgstr "Administration des utilisateurs"
 
-#: templates/admin/users.html:24 templates/api_tokens/index.html:33
+#: app/templates/admin/users.html:24 app/templates/api_tokens/index.html:33
 msgid "Status"
 msgstr "Statut"
 
-#: templates/admin/users.html:25
+#: app/templates/admin/users.html:25
 msgid "Role"
 msgstr "Rôle"
 
-#: templates/admin/users.html:26
+#: app/templates/admin/users.html:26
 msgid "Last Login"
 msgstr "Dernière connexion"
 
-#: templates/admin/users.html:27 templates/api_tokens/index.html:34
+#: app/templates/admin/users.html:27 app/templates/api_tokens/index.html:34
 msgid "Actions"
 msgstr "Actions"
 
-#: templates/admin/users.html:37 templates/api_tokens/index.html:60
-#: templates/lists/index.html:40
+#: app/templates/admin/users.html:37 app/templates/api_tokens/index.html:60
+#: app/templates/lists/index.html:40
 msgid "Inactive"
 msgstr "Inactif"
 
-#: templates/admin/users.html:42
+#: app/templates/admin/users.html:42
 msgid "User"
 msgstr "Utilisateur"
 
-#: templates/admin/users.html:49 templates/lists/index.html:33
+#: app/templates/admin/users.html:49 app/templates/lists/index.html:33
 msgid "Never"
 msgstr "Jamais"
 
-#: templates/api_tokens/index.html:9
+#: app/templates/api_tokens/index.html:9
 msgid "Manage your access tokens for the List-IQ API"
-msgstr "Gérez vos tokens d'accès à l'API List-IQ"
+msgstr "Gérez vos jetons d'accès pour l'API de List-IQ"
 
-#: templates/api_tokens/index.html:13
+#: app/templates/api_tokens/index.html:13
 msgid "New Token"
-msgstr "Nouveau Token"
+msgstr "Nouveau Jeton"
 
-#: templates/api_tokens/index.html:21
+#: app/templates/api_tokens/index.html:21
 msgid "Your API Tokens"
-msgstr "Vos tokens API"
+msgstr "Vos Jetons d'API"
 
-#: templates/api_tokens/index.html:30
+#: app/templates/api_tokens/index.html:30
 msgid "Created On"
 msgstr "Créé le"
 
-#: templates/api_tokens/index.html:31
+#: app/templates/api_tokens/index.html:31
 msgid "Expires On"
 msgstr "Expire le"
 
-#: templates/api_tokens/index.html:32
+#: app/templates/api_tokens/index.html:32
 msgid "Last Used"
 msgstr "Dernière utilisation"
 
-#: templates/api_tokens/index.html:46
+#: app/templates/api_tokens/index.html:46
 msgid "No expiration"
 msgstr "Pas d'expiration"
 
-#: templates/api_tokens/index.html:53
+#: app/templates/api_tokens/index.html:53
 msgid "Never used"
 msgstr "Jamais utilisé"
 
-#: templates/api_tokens/index.html:64
+#: app/templates/api_tokens/index.html:64
 msgid "Are you sure you want to revoke this token? This action is irreversible."
-msgstr "Êtes-vous sûr de vouloir révoquer ce token ? Cette action est irréversible."
+msgstr "Êtes-vous sûr de vouloir révoquer ce jeton ? Cette action est irréversible."
 
-#: templates/api_tokens/index.html:67
+#: app/templates/api_tokens/index.html:67
 msgid "Revoke"
 msgstr "Révoquer"
 
-#: templates/api_tokens/index.html:78
+#: app/templates/api_tokens/index.html:78
 msgid "You have not created any API tokens yet."
-msgstr "Vous n'avez pas encore créé de token API."
+msgstr "Vous n'avez pas encore créé de jeton d'API."
 
-#: templates/api_tokens/index.html:80
+#: app/templates/api_tokens/index.html:80
 msgid "Create a token"
-msgstr "Créer un token"
+msgstr "Créer un jeton"
 
-#: templates/api_tokens/index.html:90
+#: app/templates/api_tokens/index.html:90
 msgid "How to use your API tokens"
-msgstr "Comment utiliser vos tokens API"
+msgstr "Comment utiliser vos jetons d'API"
 
-#: templates/api_tokens/index.html:93
+#: app/templates/api_tokens/index.html:93
 msgid ""
 "To use the List-IQ API with an authentication token, include the token in"
 " the <code>Authorization</code> header of your HTTP requests:"
-msgstr "Pour utiliser l'API List-IQ avec un token d'authentification, incluez le token dans l'en-tête <code>Authorization</code> de vos requêtes HTTP :"
+msgstr "Pour utiliser l'API List-IQ avec un jeton d'authentification, incluez le jeton dans l'en-tête <code>Authorization</code> de vos requêtes HTTP :"
 
-#: templates/api_tokens/index.html:99 templates/api_tokens/index.html:226
-#: templates/api_tokens/show_token.html:71
-#: templates/api_tokens/token_display.html:64
+#: app/templates/api_tokens/index.html:99
+#: app/templates/api_tokens/index.html:226
+#: app/templates/api_tokens/token_display.html:64
 msgid "Example with cURL:"
 msgstr "Exemple avec cURL :"
 
-#: templates/api_tokens/index.html:107 templates/api_tokens/index.html:233
-#: templates/api_tokens/show_token.html:79
-#: templates/api_tokens/token_display.html:72
+#: app/templates/api_tokens/index.html:107
+#: app/templates/api_tokens/index.html:233
+#: app/templates/api_tokens/token_display.html:72
 msgid "Example with Python:"
 msgstr "Exemple avec Python :"
 
-#: templates/api_tokens/index.html:112 templates/api_tokens/index.html:237
-#: templates/api_tokens/show_token.html:84
-#: templates/api_tokens/token_display.html:77
+#: app/templates/api_tokens/index.html:112
+#: app/templates/api_tokens/index.html:237
+#: app/templates/api_tokens/token_display.html:77
 msgid "Configuration"
 msgstr "Configuration"
 
-#: templates/api_tokens/index.html:116 templates/api_tokens/index.html:241
-#: templates/api_tokens/show_token.html:88
-#: templates/api_tokens/token_display.html:81
+#: app/templates/api_tokens/index.html:116
+#: app/templates/api_tokens/index.html:241
+#: app/templates/api_tokens/token_display.html:81
 msgid "Headers with the authentication token"
-msgstr "En-têtes avec le token d'authentification"
+msgstr "En-têtes avec le jeton d'authentification"
 
-#: templates/api_tokens/index.html:122 templates/api_tokens/index.html:247
-#: templates/api_tokens/show_token.html:94
-#: templates/api_tokens/token_display.html:87
+#: app/templates/api_tokens/index.html:122
+#: app/templates/api_tokens/index.html:247
+#: app/templates/api_tokens/token_display.html:87
 msgid "Example: get all lists"
-msgstr "Exemple : récupérer toutes les listes"
+msgstr "Exemple : obtenir toutes les listes"
 
-#: templates/api_tokens/index.html:133
+#: app/templates/api_tokens/index.html:133
 msgid "Security Best Practices"
 msgstr "Bonnes pratiques de sécurité"
 
-#: templates/api_tokens/index.html:137
+#: app/templates/api_tokens/index.html:137
 msgid "Secure Storage"
 msgstr "Stockage sécurisé"
 
-#: templates/api_tokens/index.html:137
+#: app/templates/api_tokens/index.html:137
 msgid ""
 "Never store your API tokens in plaintext in your source code or in "
 "unsecured files."
-msgstr "Ne stockez jamais vos tokens API en clair dans votre code source ou dans des fichiers non sécurisés."
+msgstr "Ne stockez jamais vos jetons d'API en clair dans votre code source ou dans des fichiers non sécurisés."
 
-#: templates/api_tokens/index.html:138
+#: app/templates/api_tokens/index.html:138
 msgid "Always use HTTPS in production to prevent token interception."
-msgstr "Utilisez toujours HTTPS en production pour éviter l'interception des tokens."
+msgstr "Utilisez toujours HTTPS en production pour éviter l'interception des jetons."
 
-#: templates/api_tokens/index.html:139
+#: app/templates/api_tokens/index.html:139
 msgid "Expiration"
 msgstr "Expiration"
 
-#: templates/api_tokens/index.html:139
+#: app/templates/api_tokens/index.html:139
 msgid "Set an expiration date for sensitive tokens."
-msgstr "Définissez une date d'expiration pour les tokens sensibles."
+msgstr "Définissez une date d'expiration pour les jetons sensibles."
 
-#: templates/api_tokens/index.html:140
+#: app/templates/api_tokens/index.html:140
 msgid "Regular Revocation"
 msgstr "Révocation régulière"
 
-#: templates/api_tokens/index.html:140
+#: app/templates/api_tokens/index.html:140
 msgid "Revoke and renew your API tokens regularly."
-msgstr "Révoquez et renouvelez régulièrement vos tokens API."
+msgstr "Révoquez et renouvelez régulièrement vos jetons d'API."
 
-#: templates/api_tokens/index.html:141
+#: app/templates/api_tokens/index.html:141
 msgid "Monitoring"
 msgstr "Surveillance"
 
-#: templates/api_tokens/index.html:141
+#: app/templates/api_tokens/index.html:141
 msgid "Monitor the usage of your tokens to detect any suspicious activity."
-msgstr "Surveillez l'utilisation de vos tokens pour détecter toute activité suspecte."
+msgstr "Surveillez l'utilisation de vos jetons pour détecter toute activité suspecte."
 
-#: templates/api_tokens/index.html:151
+#: app/templates/api_tokens/index.html:151
 msgid "Create a new API token"
-msgstr "Créer un nouveau token API"
+msgstr "Créer un nouveau jeton d'API"
 
-#: templates/api_tokens/index.html:159
+#: app/templates/api_tokens/index.html:159
 msgid "Token Name"
-msgstr "Nom du token"
+msgstr "Nom du jeton"
 
-#: templates/api_tokens/index.html:160
+#: app/templates/api_tokens/index.html:160
 msgid "E.g.: Sync script"
-msgstr "Ex: Script de synchronisation"
+msgstr "Ex: Script de synchro"
 
-#: templates/api_tokens/index.html:161
+#: app/templates/api_tokens/index.html:161
 msgid "Give your token a descriptive name to easily identify it."
-msgstr "Donnez un nom descriptif à votre token pour l'identifier facilement."
+msgstr "Donnez un nom descriptif à votre jeton pour l'identifier facilement."
 
-#: templates/api_tokens/index.html:165
+#: app/templates/api_tokens/index.html:165
 msgid "Expiration Date"
 msgstr "Date d'expiration"
 
-#: templates/api_tokens/index.html:167
+#: app/templates/api_tokens/index.html:167
 msgid "Leave blank for a token without an expiration date."
-msgstr "Laissez vide pour un token sans date d'expiration."
+msgstr "Laissez vide pour un jeton sans date d'expiration."
 
-#: templates/api_tokens/index.html:172
+#: app/templates/api_tokens/index.html:172
 msgid "Create Token"
-msgstr "Créer le token"
+msgstr "Créer le jeton"
 
-#: templates/api_tokens/index.html:184 templates/api_tokens/show_token.html:3
-#: templates/api_tokens/show_token.html:13
-#: templates/api_tokens/token_display.html:3
-#: templates/api_tokens/token_display.html:9
+#: app/templates/api_tokens/index.html:184
+#: app/templates/api_tokens/token_display.html:3
+#: app/templates/api_tokens/token_display.html:9
 msgid "Your New API Token"
-msgstr "Votre Nouveau Token API"
+msgstr "Votre nouveau jeton d'API"
 
-#: templates/api_tokens/index.html:190 templates/api_tokens/show_token.html:26
-#: templates/api_tokens/token_display.html:27
+#: app/templates/api_tokens/index.html:190
+#: app/templates/api_tokens/token_display.html:27
 msgid "Warning:"
 msgstr "Attention :"
 
-#: templates/api_tokens/index.html:190 templates/api_tokens/show_token.html:14
-#: templates/api_tokens/show_token.html:26
-#: templates/api_tokens/token_display.html:10
-#: templates/api_tokens/token_display.html:27
+#: app/templates/api_tokens/index.html:190
+#: app/templates/api_tokens/token_display.html:10
+#: app/templates/api_tokens/token_display.html:27
 msgid ""
 "This token will only be displayed once. Copy it now and keep it in a safe"
 " place."
-msgstr "Ce token ne sera affiché qu'une seule fois. Copiez-le maintenant et conservez-le en lieu sûr."
+msgstr "Ce jeton ne sera affiché qu'une seule fois. Copiez-le maintenant et conservez-le en lieu sûr."
 
-#: templates/api_tokens/index.html:194
+#: app/templates/api_tokens/index.html:194
 msgid "Security Token:"
-msgstr "Token de sécurité :"
+msgstr "Jeton de sécurité :"
 
-#: templates/api_tokens/index.html:198
-#: templates/api_tokens/token_display.html:35
+#: app/templates/api_tokens/index.html:198
+#: app/templates/api_tokens/token_display.html:35
+#: app/templates/lists/edit.html:238 app/templates/lists/edit.html:241
+#: app/templates/lists/edit.html:250 app/templates/lists/edit.html:253
+#: app/templates/lists/edit.html:262 app/templates/lists/edit.html:265
 msgid "Copy"
 msgstr "Copier"
 
-#: templates/api_tokens/index.html:202 templates/api_tokens/show_token.html:48
-#: templates/api_tokens/show_token.html:148
-#: templates/api_tokens/token_display.html:39
+#: app/templates/api_tokens/index.html:202
+#: app/templates/api_tokens/token_display.html:39
+#: app/templates/api_tokens/token_display.html:184
 msgid "Token copied to clipboard!"
-msgstr "Token copié dans le presse-papiers !"
+msgstr "Jeton copié dans le presse-papiers !"
 
-#: templates/api_tokens/index.html:208 templates/api_tokens/show_token.html:52
-#: templates/api_tokens/token_display.html:45
+#: app/templates/api_tokens/index.html:208
+#: app/templates/api_tokens/token_display.html:45
 msgid "Created on:"
 msgstr "Créé le :"
 
-#: templates/api_tokens/index.html:211 templates/api_tokens/show_token.html:54
-#: templates/api_tokens/token_display.html:47
+#: app/templates/api_tokens/index.html:211
+#: app/templates/api_tokens/token_display.html:47
 msgid "Expires on:"
 msgstr "Expire le :"
 
-#: templates/api_tokens/index.html:217 templates/api_tokens/show_token.html:62
-#: templates/api_tokens/token_display.html:55
+#: app/templates/api_tokens/index.html:217
+#: app/templates/api_tokens/token_display.html:55
 msgid "How to use your API token"
-msgstr "Comment utiliser votre token API"
+msgstr "Comment utiliser votre jeton d'API"
 
-#: templates/api_tokens/index.html:220 templates/api_tokens/show_token.html:65
-#: templates/api_tokens/token_display.html:58
+#: app/templates/api_tokens/index.html:220
+#: app/templates/api_tokens/token_display.html:58
 msgid ""
 "To use the List-IQ API with this authentication token, include it in the "
 "<code>Authorization</code> header of your HTTP requests:"
-msgstr "Pour utiliser l'API List-IQ avec ce token d'authentification, incluez-le dans l'en-tête <code>Authorization</code> de vos requêtes HTTP :"
+msgstr "Pour utiliser l'API List-IQ avec ce jeton d'authentification, incluez-le dans l'en-tête <code>Authorization</code> de vos requêtes HTTP :"
 
-#: templates/api_tokens/index.html:223 templates/api_tokens/index.html:229
-#: templates/api_tokens/index.html:239
+#: app/templates/api_tokens/index.html:223
+#: app/templates/api_tokens/index.html:229
+#: app/templates/api_tokens/index.html:239
 msgid "your_token"
-msgstr "votre_token"
+msgstr "votre_jeton"
 
-#: templates/api_tokens/index.html:257
+#: app/templates/api_tokens/index.html:257
 msgid ""
 "For more information on how to use this token, see the \"How to use your "
 "API tokens\" section below."
-msgstr "Pour plus d'informations sur l'utilisation de ce token, consultez la section \"Comment utiliser vos tokens API\" ci-dessous."
+msgstr "Pour plus d'informations sur l'utilisation de ce jeton, consultez la section \"Comment utiliser vos jetons d'API\" ci-dessous."
 
-#: templates/api_tokens/index.html:262
+#: app/templates/api_tokens/index.html:262
 msgid "I have copied my token"
-msgstr "J'ai copié mon token"
+msgstr "J'ai copié mon jeton"
 
-#: templates/api_tokens/index.html:279
+#: app/templates/api_tokens/index.html:279
 msgid "Creating..."
 msgstr "Création en cours..."
 
-#: templates/api_tokens/index.html:305
+#: app/templates/api_tokens/index.html:305
 msgid "Server error"
-msgstr "Erreur de serveur"
+msgstr "Erreur du serveur"
 
-#: templates/api_tokens/index.html:333
+#: app/templates/api_tokens/index.html:333
 msgid "Error creating token:"
-msgstr "Erreur lors de la création du token :"
+msgstr "Erreur lors de la création du jeton :"
 
-#: templates/api_tokens/index.html:347 templates/api_tokens/show_token.html:129
-#: templates/api_tokens/token_display.html:120
+#: app/templates/api_tokens/index.html:347
 msgid "Copied!"
 msgstr "Copié !"
 
-#: templates/api_tokens/index.html:356
+#: app/templates/api_tokens/index.html:356
 msgid "Copy error. Please copy manually."
 msgstr "Erreur de copie. Veuillez copier manuellement."
 
-#: templates/api_tokens/index.html:362
+#: app/templates/api_tokens/index.html:362
 msgid "Invalid date"
 msgstr "Date invalide"
 
-#: templates/api_tokens/show_token.html:20
-#: templates/api_tokens/token_display.html:21
-msgid "Security Token"
-msgstr "Token de sécurité"
-
-#: templates/api_tokens/show_token.html:30
-#: templates/api_tokens/token_display.html:31
-msgid "Your API token:"
-msgstr "Votre token API :"
-
-#: templates/api_tokens/show_token.html:41
-msgid "Copy Token"
-msgstr "Copier le token"
-
-#: templates/api_tokens/show_token.html:44
-#: templates/api_tokens/token_display.html:41
-msgid "Use this token in the <code>Authorization: Bearer <token></code> header"
-msgstr "Utilisez ce token dans l'en-tête <code>Authorization: Bearer <token></code>"
-
-#: templates/api_tokens/show_token.html:104
-#: templates/api_tokens/token_display.html:14
-#: templates/api_tokens/token_display.html:97
+#: app/templates/api_tokens/token_display.html:14
+#: app/templates/api_tokens/token_display.html:97
 msgid "Back to Token Management"
-msgstr "Retour à la gestion des tokens"
+msgstr "Retour à la gestion des jetons"
 
-#: templates/api_tokens/show_token.html:140
-msgid "Error during copy:"
-msgstr "Erreur lors de la copie :"
+#: app/templates/api_tokens/token_display.html:21
+msgid "Security Token"
+msgstr "Jeton de Sécurité"
 
-#: templates/api_tokens/show_token.html:141
+#: app/templates/api_tokens/token_display.html:31
+msgid "Your API token:"
+msgstr "Votre jeton d'API :"
+
+#: app/templates/api_tokens/token_display.html:41
+msgid "Use this token in the <code>Authorization: Bearer <token></code> header"
+msgstr "Utilisez ce jeton dans l'en-tête <code>Authorization: Bearer <jeton></code>"
+
+#: app/templates/api_tokens/token_display.html:178
 msgid "Error during copy. Please select manually."
 msgstr "Erreur lors de la copie. Veuillez sélectionner manuellement."
 
-#: templates/api_tokens/token_display.html:131
-msgid "Copy error:"
-msgstr "Erreur de copie :"
-
-#: templates/api_tokens/token_display.html:132
-msgid "Could not copy. Please do it manually."
-msgstr "Impossible de copier. Veuillez le faire manuellement."
-
-#: templates/errors/403.html:3 templates/errors/403.html:16
-#: templates/errors/403.html:20
+#: app/templates/errors/403.html:3 app/templates/errors/403.html:16
+#: app/templates/errors/403.html:20
 msgid "Access Denied"
-msgstr "Accès refusé"
+msgstr "Accès Refusé"
 
-#: templates/errors/403.html:8
+#: app/templates/errors/403.html:8
 msgid "Redirecting..."
-msgstr "Redirection en cours..."
+msgstr "Redirection..."
 
-#: templates/errors/403.html:21
+#: app/templates/errors/403.html:21
 msgid "Contact the administrator."
 msgstr "Contactez l'administrateur."
 
-#: templates/errors/403.html:24
+#: app/templates/errors/403.html:24
 msgid "Back to Home"
 msgstr "Retour à l'accueil"
 
-#: templates/help/automatic_lists_guide.html:3
-#: templates/help/automatic_lists_guide.html:10
+#: app/templates/help/automatic_lists_guide.html:3
+#: app/templates/help/automatic_lists_guide.html:10
 msgid "Help - Automatic Lists"
 msgstr "Aide - Listes automatiques"
 
-#: templates/help/automatic_lists_guide.html:14
+#: app/templates/help/automatic_lists_guide.html:14
 msgid "Automatic Lists User Guide"
 msgstr "Guide d'utilisation des listes automatiques"
 
-#: templates/help/automatic_lists_guide.html:17
+#: app/templates/help/automatic_lists_guide.html:17
 msgid ""
 "This page explains how to configure and use automatic lists to retrieve "
 "data from various sources."
-msgstr "Cette page explique comment configurer et utiliser les listes automatiques pour récupérer des données depuis diverses sources."
+msgstr "Cette page explique comment configurer et utiliser les listes automatiques pour récupérer des données à partir de diverses sources."
 
-#: templates/help/automatic_lists_guide.html:23
-#: templates/help/automatic_lists_guide.html:34
+#: app/templates/help/automatic_lists_guide.html:23
+#: app/templates/help/automatic_lists_guide.html:34
 msgid "Data Source Types"
 msgstr "Types de sources de données"
 
-#: templates/help/automatic_lists_guide.html:24
-#: templates/help/automatic_lists_guide.html:48
+#: app/templates/help/automatic_lists_guide.html:24
+#: app/templates/help/automatic_lists_guide.html:48
 msgid "Configuration with API Script"
-msgstr "Configuration avec API Script"
+msgstr "Configuration avec un script API"
 
-#: templates/help/automatic_lists_guide.html:25
-#: templates/help/automatic_lists_guide.html:97
+#: app/templates/help/automatic_lists_guide.html:25
+#: app/templates/help/automatic_lists_guide.html:97
 msgid "Configuration with API Curl"
-msgstr "Configuration avec API Curl"
+msgstr "Configuration avec une commande API Curl"
 
-#: templates/help/automatic_lists_guide.html:26
-#: templates/help/automatic_lists_guide.html:129
+#: app/templates/help/automatic_lists_guide.html:26
+#: app/templates/help/automatic_lists_guide.html:129
 msgid "Configuration with URL"
-msgstr "Configuration avec URL"
+msgstr "Configuration avec une URL"
 
-#: templates/help/automatic_lists_guide.html:27
-#: templates/help/automatic_lists_guide.html:159
+#: app/templates/help/automatic_lists_guide.html:27
+#: app/templates/help/automatic_lists_guide.html:159
 msgid "Scheduling Updates"
 msgstr "Planification des mises à jour"
 
-#: templates/help/automatic_lists_guide.html:37
+#: app/templates/help/automatic_lists_guide.html:37
 msgid ""
 "The application supports several types of data sources for automatic "
 "lists:"
-msgstr "L'application supporte plusieurs types de sources de données pour les listes automatiques :"
+msgstr "L'application prend en charge plusieurs types de sources de données pour les listes automatiques :"
 
-#: templates/help/automatic_lists_guide.html:39
+#: app/templates/help/automatic_lists_guide.html:39
 msgid "API Script"
-msgstr "API Script"
+msgstr "Script API"
 
-#: templates/help/automatic_lists_guide.html:39
+#: app/templates/help/automatic_lists_guide.html:39
 msgid "Use a custom script (Python, JavaScript, etc.)"
-msgstr "Utilisation d'un script personnalisé (Python, JavaScript, etc.)"
+msgstr "Utiliser un script personnalisé (Python, JavaScript, etc.)"
 
-#: templates/help/automatic_lists_guide.html:40
+#: app/templates/help/automatic_lists_guide.html:40
 msgid "API Curl"
 msgstr "API Curl"
 
-#: templates/help/automatic_lists_guide.html:40
+#: app/templates/help/automatic_lists_guide.html:40
 msgid "Use a curl command to retrieve data"
-msgstr "Utilisation d'une commande curl pour récupérer des données"
+msgstr "Utiliser une commande curl pour récupérer des données"
 
-#: templates/help/automatic_lists_guide.html:41
+#: app/templates/help/automatic_lists_guide.html:41
 msgid "URL"
 msgstr "URL"
 
-#: templates/help/automatic_lists_guide.html:41
+#: app/templates/help/automatic_lists_guide.html:41
 msgid "Direct data retrieval from a URL (JSON or CSV)"
 msgstr "Récupération directe de données depuis une URL (JSON ou CSV)"
 
-#: templates/help/automatic_lists_guide.html:51
+#: app/templates/help/automatic_lists_guide.html:51
 msgid "This method allows you to use a custom script to retrieve and format data."
-msgstr "Cette méthode permet d'utiliser un script personnalisé pour récupérer et formater des données."
+msgstr "Cette méthode vous permet d'utiliser un script personnalisé pour récupérer et formater les données."
 
-#: templates/help/automatic_lists_guide.html:53
-#: templates/help/automatic_lists_guide.html:102
-#: templates/help/automatic_lists_guide.html:134
+#: app/templates/help/automatic_lists_guide.html:53
+#: app/templates/help/automatic_lists_guide.html:102
+#: app/templates/help/automatic_lists_guide.html:134
 msgid "Configuration Steps"
 msgstr "Étapes de configuration"
 
-#: templates/help/automatic_lists_guide.html:55
-#: templates/help/automatic_lists_guide.html:104
-#: templates/help/automatic_lists_guide.html:136
+#: app/templates/help/automatic_lists_guide.html:55
+#: app/templates/help/automatic_lists_guide.html:104
+#: app/templates/help/automatic_lists_guide.html:136
 msgid "Create a new list or edit an existing one"
 msgstr "Créez une nouvelle liste ou modifiez une liste existante"
 
-#: templates/help/automatic_lists_guide.html:56
-#: templates/help/automatic_lists_guide.html:105
-#: templates/help/automatic_lists_guide.html:137
+#: app/templates/help/automatic_lists_guide.html:56
+#: app/templates/help/automatic_lists_guide.html:105
+#: app/templates/help/automatic_lists_guide.html:137
 msgid "In the \"Update Type\" section, select \"Automatic\""
 msgstr "Dans la section \"Type de mise à jour\", sélectionnez \"Automatique\""
 
-#: templates/help/automatic_lists_guide.html:57
-#: templates/help/automatic_lists_guide.html:106
+#: app/templates/help/automatic_lists_guide.html:57
+#: app/templates/help/automatic_lists_guide.html:106
 msgid "In \"Data Source\", select \"API\""
 msgstr "Dans \"Source de données\", sélectionnez \"API\""
 
-#: templates/help/automatic_lists_guide.html:58
+#: app/templates/help/automatic_lists_guide.html:58
 msgid "In \"API Type\", select \"Script\""
 msgstr "Dans \"Type d'API\", sélectionnez \"Script\""
 
-#: templates/help/automatic_lists_guide.html:59
+#: app/templates/help/automatic_lists_guide.html:59
 msgid "Enter your script in the \"Script Code\" field"
-msgstr "Saisissez votre script dans le champ \"Code du script\""
+msgstr "Entrez votre script dans le champ \"Code du script\""
 
-#: templates/help/automatic_lists_guide.html:60
+#: app/templates/help/automatic_lists_guide.html:60
 msgid "Select the script language (Python, JavaScript, etc.)"
 msgstr "Sélectionnez le langage du script (Python, JavaScript, etc.)"
 
-#: templates/help/automatic_lists_guide.html:61
-#: templates/help/automatic_lists_guide.html:109
-#: templates/help/automatic_lists_guide.html:142
+#: app/templates/help/automatic_lists_guide.html:61
+#: app/templates/help/automatic_lists_guide.html:109
+#: app/templates/help/automatic_lists_guide.html:142
 msgid "Configure the update schedule (cron format)"
-msgstr "Configurez la planification de mise à jour (format cron)"
+msgstr "Configurez la planification de la mise à jour (format cron)"
 
-#: templates/help/automatic_lists_guide.html:65
+#: app/templates/help/automatic_lists_guide.html:65
 msgid "Python Script Format"
 msgstr "Format du script Python"
 
-#: templates/help/automatic_lists_guide.html:85
-#: templates/help/automatic_lists_guide.html:117
-#: templates/help/automatic_lists_guide.html:147
+#: app/templates/help/automatic_lists_guide.html:85
+#: app/templates/help/automatic_lists_guide.html:117
+#: app/templates/help/automatic_lists_guide.html:147
 msgid "Important points:"
 msgstr "Points importants :"
 
-#: templates/help/automatic_lists_guide.html:87
+#: app/templates/help/automatic_lists_guide.html:87
 msgid "The script must print the data in JSON format"
-msgstr "Le script doit imprimer (print) les données au format JSON"
+msgstr "Le script doit imprimer les données au format JSON"
 
-#: templates/help/automatic_lists_guide.html:88
-#: templates/help/automatic_lists_guide.html:120
+#: app/templates/help/automatic_lists_guide.html:88
+#: app/templates/help/automatic_lists_guide.html:120
 msgid "The data must match the columns defined in the list"
 msgstr "Les données doivent correspondre aux colonnes définies dans la liste"
 
-#: templates/help/automatic_lists_guide.html:89
+#: app/templates/help/automatic_lists_guide.html:89
 msgid ""
 "You can use standard Python modules and those installed in the "
 "environment (requests, pandas, etc.)"
-msgstr "Vous pouvez utiliser les modules Python standards et ceux installés dans l'environnement (requests, pandas, etc.)"
+msgstr "Vous pouvez utiliser les modules Python standard et ceux installés dans l'environnement (requests, pandas, etc.)"
 
-#: templates/help/automatic_lists_guide.html:100
+#: app/templates/help/automatic_lists_guide.html:100
 msgid "This method allows you to use a curl command to retrieve data from an API."
-msgstr "Cette méthode permet d'utiliser une commande curl pour récupérer des données depuis une API."
+msgstr "Cette méthode vous permet d'utiliser une commande curl pour récupérer des données depuis une API."
 
-#: templates/help/automatic_lists_guide.html:107
+#: app/templates/help/automatic_lists_guide.html:107
 msgid "In \"API Type\", select \"Curl\""
 msgstr "Dans \"Type d'API\", sélectionnez \"Curl\""
 
-#: templates/help/automatic_lists_guide.html:108
+#: app/templates/help/automatic_lists_guide.html:108
 msgid "Enter your curl command in the designated field"
-msgstr "Saisissez votre commande curl dans le champ prévu"
+msgstr "Entrez votre commande curl dans le champ désigné"
 
-#: templates/help/automatic_lists_guide.html:113
+#: app/templates/help/automatic_lists_guide.html:113
 msgid "Example curl command"
 msgstr "Exemple de commande curl"
 
-#: templates/help/automatic_lists_guide.html:119
+#: app/templates/help/automatic_lists_guide.html:119
 msgid "The curl command must return data in JSON format"
 msgstr "La commande curl doit retourner des données au format JSON"
 
-#: templates/help/automatic_lists_guide.html:121
+#: app/templates/help/automatic_lists_guide.html:121
 msgid "Make sure to include necessary authentication headers if required"
-msgstr "Assurez-vous d'inclure les en-têtes nécessaires pour l'authentification si requis"
+msgstr "Assurez-vous d'inclure les en-têtes d'authentification nécessaires si requis"
 
-#: templates/help/automatic_lists_guide.html:132
+#: app/templates/help/automatic_lists_guide.html:132
 msgid ""
 "This method allows you to directly retrieve data from a URL that returns "
 "JSON or CSV."
-msgstr "Cette méthode permet de récupérer directement des données depuis une URL qui retourne du JSON ou du CSV."
+msgstr "Cette méthode vous permet de récupérer directement des données depuis une URL qui renvoie du JSON ou du CSV."
 
-#: templates/help/automatic_lists_guide.html:138
+#: app/templates/help/automatic_lists_guide.html:138
 msgid "In \"Data Source\", select \"Remote URL\""
 msgstr "Dans \"Source de données\", sélectionnez \"URL distante\""
 
-#: templates/help/automatic_lists_guide.html:139
+#: app/templates/help/automatic_lists_guide.html:139
 msgid "Enter the URL in the designated field"
-msgstr "Saisissez l'URL dans le champ prévu"
+msgstr "Entrez l'URL dans le champ désigné"
 
-#: templates/help/automatic_lists_guide.html:140
+#: app/templates/help/automatic_lists_guide.html:140
 msgid "Select the data format (JSON or CSV)"
 msgstr "Sélectionnez le format des données (JSON ou CSV)"
 
-#: templates/help/automatic_lists_guide.html:141
+#: app/templates/help/automatic_lists_guide.html:141
 msgid "If necessary, configure authentication settings"
 msgstr "Si nécessaire, configurez les paramètres d'authentification"
 
-#: templates/help/automatic_lists_guide.html:149
+#: app/templates/help/automatic_lists_guide.html:149
 msgid "The URL must be accessible from the server where the application is hosted"
 msgstr "L'URL doit être accessible depuis le serveur où l'application est hébergée"
 
-#: templates/help/automatic_lists_guide.html:150
+#: app/templates/help/automatic_lists_guide.html:150
 msgid "For JSON data, the structure must be an array of objects"
 msgstr "Pour les données JSON, la structure doit être un tableau d'objets"
 
-#: templates/help/automatic_lists_guide.html:151
+#: app/templates/help/automatic_lists_guide.html:151
 msgid "For CSV data, the first row must contain the column names"
 msgstr "Pour les données CSV, la première ligne doit contenir les noms des colonnes"
 
-#: templates/help/automatic_lists_guide.html:162
+#: app/templates/help/automatic_lists_guide.html:162
 msgid ""
 "You can configure the update frequency for automatic lists using cron "
 "syntax."
 msgstr "Vous pouvez configurer la fréquence de mise à jour des listes automatiques en utilisant la syntaxe cron."
 
-#: templates/help/automatic_lists_guide.html:164
+#: app/templates/help/automatic_lists_guide.html:164
 msgid "Schedule Examples"
 msgstr "Exemples de planification"
 
-#: templates/help/automatic_lists_guide.html:168
+#: app/templates/help/automatic_lists_guide.html:168
 msgid "Cron Expression"
-msgstr "Expression cron"
+msgstr "Expression Cron"
 
-#: templates/help/automatic_lists_guide.html:169
-#: templates/help/json_config_help.html:72
-#: templates/help/json_config_help.html:156 templates/lists/edit.html:36
+#: app/templates/help/automatic_lists_guide.html:169
+#: app/templates/help/json_config_help.html:72
+#: app/templates/help/json_config_help.html:156
+#: app/templates/lists/edit.html:37
 msgid "Description"
 msgstr "Description"
 
-#: templates/help/automatic_lists_guide.html:175
+#: app/templates/help/automatic_lists_guide.html:175
 msgid "Every hour (at minute 0)"
 msgstr "Toutes les heures (à la minute 0)"
 
-#: templates/help/automatic_lists_guide.html:179
+#: app/templates/help/automatic_lists_guide.html:179
 msgid "Every day at midnight"
 msgstr "Tous les jours à minuit"
 
-#: templates/help/automatic_lists_guide.html:183
+#: app/templates/help/automatic_lists_guide.html:183
 msgid "Monday to Friday at 8:00 AM"
 msgstr "Du lundi au vendredi à 8h00"
 
-#: templates/help/automatic_lists_guide.html:187
+#: app/templates/help/automatic_lists_guide.html:187
 msgid "On the first day of each month at midnight"
 msgstr "Le premier jour de chaque mois à minuit"
 
-#: templates/help/automatic_lists_guide.html:191
+#: app/templates/help/automatic_lists_guide.html:191
 msgid "Every 15 minutes"
 msgstr "Toutes les 15 minutes"
 
-#: templates/help/automatic_lists_guide.html:197
+#: app/templates/help/automatic_lists_guide.html:197
 msgid ""
 "Cron syntax consists of 5 fields: minute (0-59), hour (0-23), day of "
 "month (1-31), month (1-12), day of week (0-6, where 0 is Sunday)."
-msgstr "La syntaxe cron se compose de 5 champs : minute (0-59), heure (0-23), jour du mois (1-31), mois (1-12), jour de la semaine (0-6, où 0 est dimanche)."
+msgstr "La syntaxe Cron se compose de 5 champs : minute (0-59), heure (0-23), jour du mois (1-31), mois (1-12), jour de la semaine (0-6, où 0 est dimanche)."
 
-#: templates/help/curl_api_help.html:3 templates/help/curl_api_help.html:10
+#: app/templates/help/curl_api_help.html:3
+#: app/templates/help/curl_api_help.html:10
 msgid "Help - Curl Commands for APIs"
 msgstr "Aide - Commandes Curl pour les API"
 
-#: templates/help/curl_api_help.html:14
+#: app/templates/help/curl_api_help.html:14
 msgid "Guide for Curl Commands for APIs"
 msgstr "Guide des commandes Curl pour les API"
 
-#: templates/help/curl_api_help.html:17
+#: app/templates/help/curl_api_help.html:17
 msgid ""
 "This page provides examples and best practices for creating Curl commands"
 " that retrieve data from APIs."
 msgstr "Cette page fournit des exemples et des bonnes pratiques pour créer des commandes Curl qui récupèrent des données depuis des API."
 
-#: templates/help/curl_api_help.html:23 templates/help/python_api_help.html:23
+#: app/templates/help/curl_api_help.html:23
+#: app/templates/help/python_api_help.html:23
 msgid "Basic Structure"
 msgstr "Structure de base"
 
-#: templates/help/curl_api_help.html:24 templates/help/python_api_help.html:24
+#: app/templates/help/curl_api_help.html:24
+#: app/templates/help/python_api_help.html:24
 msgid "Simple REST API"
 msgstr "API REST simple"
 
-#: templates/help/curl_api_help.html:25 templates/help/curl_api_help.html:72
-#: templates/help/python_api_help.html:25
-#: templates/help/python_api_help.html:103
+#: app/templates/help/curl_api_help.html:25
+#: app/templates/help/curl_api_help.html:72
+#: app/templates/help/python_api_help.html:25
+#: app/templates/help/python_api_help.html:103
 msgid "API with Authentication Key"
 msgstr "API avec clé d'authentification"
 
-#: templates/help/curl_api_help.html:26 templates/help/curl_api_help.html:86
+#: app/templates/help/curl_api_help.html:26
+#: app/templates/help/curl_api_help.html:86
 msgid "Custom Headers"
 msgstr "En-têtes personnalisés"
 
-#: templates/help/curl_api_help.html:27 templates/help/curl_api_help.html:106
+#: app/templates/help/curl_api_help.html:27
+#: app/templates/help/curl_api_help.html:106
 msgid "Sending Data (POST)"
 msgstr "Envoi de données (POST)"
 
-#: templates/help/curl_api_help.html:28 templates/help/curl_api_help.html:125
-#: templates/help/python_api_help.html:27
-#: templates/help/python_api_help.html:225
+#: app/templates/help/curl_api_help.html:28
+#: app/templates/help/curl_api_help.html:125
+#: app/templates/help/python_api_help.html:27
+#: app/templates/help/python_api_help.html:225
 msgid "Error Handling"
 msgstr "Gestion des erreurs"
 
-#: templates/help/curl_api_help.html:29 templates/help/curl_api_help.html:141
-#: templates/help/python_api_help.html:29
-#: templates/help/python_api_help.html:340
+#: app/templates/help/curl_api_help.html:29
+#: app/templates/help/curl_api_help.html:141
+#: app/templates/help/python_api_help.html:29
+#: app/templates/help/python_api_help.html:340
 msgid "Advanced Examples"
 msgstr "Exemples avancés"
 
-#: templates/help/curl_api_help.html:36
+#: app/templates/help/curl_api_help.html:36
 msgid "Basic Structure of a Curl Command"
 msgstr "Structure de base d'une commande Curl"
 
-#: templates/help/curl_api_help.html:39
+#: app/templates/help/curl_api_help.html:39
 msgid ""
 "Here is the basic structure of a Curl command to retrieve data from an "
 "API:"
 msgstr "Voici la structure de base d'une commande Curl pour récupérer des données depuis une API :"
 
-#: templates/help/curl_api_help.html:42
+#: app/templates/help/curl_api_help.html:42
 msgid ""
 "The Curl command must return data in JSON format for the application to "
 "process it correctly."
 msgstr "La commande Curl doit retourner des données au format JSON pour que l'application puisse les traiter correctement."
 
-#: templates/help/curl_api_help.html:44
+#: app/templates/help/curl_api_help.html:44
 msgid "Common options:"
 msgstr "Options courantes :"
 
-#: templates/help/curl_api_help.html:46
+#: app/templates/help/curl_api_help.html:46
 msgid "Specifies the HTTP method (GET, POST, PUT, DELETE, etc.)"
 msgstr "Spécifie la méthode HTTP (GET, POST, PUT, DELETE, etc.)"
 
-#: templates/help/curl_api_help.html:47
+#: app/templates/help/curl_api_help.html:47
 msgid "Adds a header to the request"
 msgstr "Ajoute un en-tête à la requête"
 
-#: templates/help/curl_api_help.html:48
+#: app/templates/help/curl_api_help.html:48
 msgid "Sends data in the request body"
 msgstr "Envoie des données dans le corps de la requête"
 
-#: templates/help/curl_api_help.html:49
+#: app/templates/help/curl_api_help.html:49
 msgid "Writes the output to a file"
 msgstr "Écrit la sortie dans un fichier"
 
-#: templates/help/curl_api_help.html:50
+#: app/templates/help/curl_api_help.html:50
 msgid "Silent mode (does not show the progress bar)"
 msgstr "Mode silencieux (n'affiche pas la barre de progression)"
 
-#: templates/help/curl_api_help.html:51
+#: app/templates/help/curl_api_help.html:51
 msgid "Verbose mode (displays detailed information)"
 msgstr "Mode verbeux (affiche des informations détaillées)"
 
-#: templates/help/curl_api_help.html:58 templates/help/python_api_help.html:69
+#: app/templates/help/curl_api_help.html:58
+#: app/templates/help/python_api_help.html:69
 msgid "Example with a Simple REST API"
 msgstr "Exemple avec une API REST simple"
 
-#: templates/help/curl_api_help.html:61
+#: app/templates/help/curl_api_help.html:61
 msgid "Example of a Curl command to retrieve data from the JSONPlaceholder API:"
-msgstr "Exemple de commande Curl pour récupérer des données depuis l'API JSONPlaceholder :"
+msgstr "Exemple de commande Curl pour récupérer des données de l'API JSONPlaceholder :"
 
-#: templates/help/curl_api_help.html:63
+#: app/templates/help/curl_api_help.html:63
 msgid "To retrieve a specific item:"
 msgstr "Pour récupérer un élément spécifique :"
 
-#: templates/help/curl_api_help.html:65
+#: app/templates/help/curl_api_help.html:65
 msgid "To filter results with query parameters:"
 msgstr "Pour filtrer les résultats avec des paramètres de requête :"
 
-#: templates/help/curl_api_help.html:75
+#: app/templates/help/curl_api_help.html:75
 msgid ""
 "Example of a Curl command for an API requiring an API key (like "
 "OpenWeatherMap):"
-msgstr "Exemple de commande Curl pour une API nécessitant une clé d'API (comme OpenWeatherMap) :"
+msgstr "Exemple de commande Curl pour une API nécessitant une clé API (comme OpenWeatherMap) :"
 
-#: templates/help/curl_api_help.html:76 templates/help/curl_api_help.html:78
-#: templates/help/json_config_help.html:261
-#: templates/help/python_api_help.html:111
-#: templates/help/python_api_help.html:162
+#: app/templates/help/curl_api_help.html:76
+#: app/templates/help/curl_api_help.html:78
+#: app/templates/help/json_config_help.html:261
+#: app/templates/help/python_api_help.html:111
+#: app/templates/help/python_api_help.html:162
 msgid "your_api_key"
-msgstr "votre_clé_api"
+msgstr "votre_cle_api"
 
-#: templates/help/curl_api_help.html:77
+#: app/templates/help/curl_api_help.html:77
 msgid "With the API key in the header:"
-msgstr "Avec la clé d'API dans l'en-tête :"
+msgstr "Avec la clé API dans l'en-tête :"
 
-#: templates/help/curl_api_help.html:79
+#: app/templates/help/curl_api_help.html:79
 msgid "With token authentication (Bearer Token):"
 msgstr "Avec authentification par jeton (Bearer Token) :"
 
-#: templates/help/curl_api_help.html:80 templates/help/curl_api_help.html:162
+#: app/templates/help/curl_api_help.html:80
+#: app/templates/help/curl_api_help.html:162
 msgid "your_access_token"
-msgstr "votre_jeton_d_acces"
+msgstr "votre_jeton_acces"
 
-#: templates/help/curl_api_help.html:89
+#: app/templates/help/curl_api_help.html:89
 msgid "Example of a Curl command with custom headers:"
 msgstr "Exemple de commande Curl avec des en-têtes personnalisés :"
 
-#: templates/help/curl_api_help.html:94
+#: app/templates/help/curl_api_help.html:94
 msgid "Common headers:"
 msgstr "En-têtes courants :"
 
-#: templates/help/curl_api_help.html:96
+#: app/templates/help/curl_api_help.html:96
 msgid "Type of content sent (e.g., application/json)"
 msgstr "Type de contenu envoyé (ex: application/json)"
 
-#: templates/help/curl_api_help.html:97
+#: app/templates/help/curl_api_help.html:97
 msgid "Type of content accepted in response"
 msgstr "Type de contenu accepté en réponse"
 
-#: templates/help/curl_api_help.html:98
+#: app/templates/help/curl_api_help.html:98
 msgid "Authentication information"
 msgstr "Informations d'authentification"
 
-#: templates/help/curl_api_help.html:99
+#: app/templates/help/curl_api_help.html:99
 msgid "Application identifier"
 msgstr "Identifiant de l'application"
 
-#: templates/help/curl_api_help.html:109
+#: app/templates/help/curl_api_help.html:109
 msgid "Example of a Curl command to send data in JSON format:"
 msgstr "Exemple de commande Curl pour envoyer des données au format JSON :"
 
-#: templates/help/curl_api_help.html:113
+#: app/templates/help/curl_api_help.html:113
 msgid "With form data:"
 msgstr "Avec des données de formulaire :"
 
-#: templates/help/curl_api_help.html:116
+#: app/templates/help/curl_api_help.html:116
 msgid "With a JSON file:"
 msgstr "Avec un fichier JSON :"
 
-#: templates/help/curl_api_help.html:128
+#: app/templates/help/curl_api_help.html:128
 msgid "To display HTTP status codes:"
-msgstr "Pour afficher les codes d'état HTTP :"
+msgstr "Pour afficher les codes de statut HTTP :"
 
-#: templates/help/curl_api_help.html:130
+#: app/templates/help/curl_api_help.html:130
 msgid "To display the headers and body of the response:"
 msgstr "Pour afficher les en-têtes et le corps de la réponse :"
 
-#: templates/help/curl_api_help.html:132
+#: app/templates/help/curl_api_help.html:132
 msgid "To display detailed information about the request and response:"
 msgstr "Pour afficher des informations détaillées sur la requête et la réponse :"
 
-#: templates/help/curl_api_help.html:134
+#: app/templates/help/curl_api_help.html:134
 msgid "To follow redirects:"
 msgstr "Pour suivre les redirections :"
 
-#: templates/help/curl_api_help.html:144
-#: templates/help/python_api_help.html:343
+#: app/templates/help/curl_api_help.html:144
+#: app/templates/help/python_api_help.html:343
 msgid "API with OAuth Authentication"
 msgstr "API avec authentification OAuth"
 
-#: templates/help/curl_api_help.html:154
-#: templates/help/python_api_help.html:374
+#: app/templates/help/curl_api_help.html:154
+#: app/templates/help/python_api_help.html:374
 msgid "API with Token Authentication"
-msgstr "API avec authentification par jeton (token)"
+msgstr "API avec authentification par jeton"
 
-#: templates/help/curl_api_help.html:155
+#: app/templates/help/curl_api_help.html:155
 msgid "Step 1: Get the authentication token"
 msgstr "Étape 1 : Obtenir le jeton d'authentification"
 
-#: templates/help/curl_api_help.html:158
-#: templates/help/python_api_help.html:379
+#: app/templates/help/curl_api_help.html:158
+#: app/templates/help/python_api_help.html:379
 msgid "your_username"
 msgstr "votre_nom_utilisateur"
 
-#: templates/help/curl_api_help.html:158
-#: templates/help/python_api_help.html:380
+#: app/templates/help/curl_api_help.html:158
+#: app/templates/help/python_api_help.html:380
 msgid "your_password"
 msgstr "votre_mot_de_passe"
 
-#: templates/help/curl_api_help.html:160
+#: app/templates/help/curl_api_help.html:160
 msgid "Step 2: Use the token to access data"
 msgstr "Étape 2 : Utiliser le jeton pour accéder aux données"
 
-#: templates/help/curl_api_help.html:164
+#: app/templates/help/curl_api_help.html:164
 msgid "API with Pagination"
 msgstr "API avec pagination"
 
-#: templates/help/curl_api_help.html:165
-#: templates/help/python_api_help.html:171
+#: app/templates/help/curl_api_help.html:165
+#: app/templates/help/python_api_help.html:171
 msgid "Get the first page"
-msgstr "Récupérer la première page"
+msgstr "Obtenir la première page"
 
-#: templates/help/curl_api_help.html:168
+#: app/templates/help/curl_api_help.html:168
 msgid "Get the next page"
-msgstr "Récupérer la page suivante"
+msgstr "Obtenir la page suivante"
 
-#: templates/help/curl_api_help.html:171
+#: app/templates/help/curl_api_help.html:171
 msgid "API with Filtering and Sorting"
 msgstr "API avec filtrage et tri"
 
-#: templates/help/curl_api_help.html:174
+#: app/templates/help/curl_api_help.html:174
 msgid "API with Timeout"
 msgstr "API avec timeout"
 
-#: templates/help/json_config_help.html:3
-#: templates/help/json_config_help.html:10
+#: app/templates/help/json_config_help.html:3
+#: app/templates/help/json_config_help.html:10
 msgid "Help - JSON Configuration"
 msgstr "Aide - Configuration JSON"
 
-#: templates/help/json_config_help.html:14
+#: app/templates/help/json_config_help.html:14
 msgid "JSON Configuration Guide for APIs"
 msgstr "Guide de configuration JSON pour les API"
 
-#: templates/help/json_config_help.html:17
+#: app/templates/help/json_config_help.html:17
 msgid ""
 "This page explains how to configure JSON data processing in the List-IQ "
 "application."
 msgstr "Cette page explique comment configurer le traitement des données JSON dans l'application List-IQ."
 
-#: templates/help/json_config_help.html:23
-#: templates/help/json_config_help.html:35
+#: app/templates/help/json_config_help.html:23
+#: app/templates/help/json_config_help.html:35
 msgid "JSON Basics"
-msgstr "Notions de base JSON"
+msgstr "Bases du JSON"
 
-#: templates/help/json_config_help.html:24
-#: templates/help/json_config_help.html:62
+#: app/templates/help/json_config_help.html:24
+#: app/templates/help/json_config_help.html:62
 msgid "Data Path"
-msgstr "Chemin d'accès aux données"
+msgstr "Chemin des données"
 
-#: templates/help/json_config_help.html:25
-#: templates/help/json_config_help.html:108
+#: app/templates/help/json_config_help.html:25
+#: app/templates/help/json_config_help.html:108
 msgid "Column Selection"
 msgstr "Sélection des colonnes"
 
-#: templates/help/json_config_help.html:26
-#: templates/help/json_config_help.html:147
+#: app/templates/help/json_config_help.html:26
+#: app/templates/help/json_config_help.html:147
 msgid "Data Types"
 msgstr "Types de données"
 
-#: templates/help/json_config_help.html:27
-#: templates/help/json_config_help.html:190
+#: app/templates/help/json_config_help.html:27
+#: app/templates/help/json_config_help.html:190
 msgid "Common JSON Structures"
 msgstr "Structures JSON courantes"
 
-#: templates/help/json_config_help.html:28
-#: templates/help/json_config_help.html:232
+#: app/templates/help/json_config_help.html:28
+#: app/templates/help/json_config_help.html:232
 msgid "Practical Examples"
 msgstr "Exemples pratiques"
 
-#: templates/help/json_config_help.html:38
+#: app/templates/help/json_config_help.html:38
 msgid ""
 "JSON (JavaScript Object Notation) is a lightweight data format used for "
 "data exchange. Here are the basic elements:"
 msgstr "JSON (JavaScript Object Notation) est un format de données léger utilisé pour l'échange de données. Voici les éléments de base :"
 
-#: templates/help/json_config_help.html:40
+#: app/templates/help/json_config_help.html:40
 msgid "Objects"
 msgstr "Objets"
 
-#: templates/help/json_config_help.html:40
+#: app/templates/help/json_config_help.html:40
 #, python-brace-format
 msgid "collections of key/value pairs enclosed in curly braces <code>{ }</code>"
 msgstr "collections de paires clé/valeur entourées d'accolades <code>{ }</code>"
 
-#: templates/help/json_config_help.html:41
+#: app/templates/help/json_config_help.html:41
 msgid "Arrays"
 msgstr "Tableaux"
 
-#: templates/help/json_config_help.html:41
+#: app/templates/help/json_config_help.html:41
 msgid "ordered collections of values enclosed in square brackets <code>[ ]</code>"
 msgstr "collections ordonnées de valeurs entourées de crochets <code>[ ]</code>"
 
-#: templates/help/json_config_help.html:42
+#: app/templates/help/json_config_help.html:42
 msgid "Values"
 msgstr "Valeurs"
 
-#: templates/help/json_config_help.html:42
+#: app/templates/help/json_config_help.html:42
 msgid "can be strings, numbers, booleans, null, objects, or arrays"
-msgstr "peuvent être des chaînes, des nombres, des booléens, null, des objets ou des tableaux"
+msgstr "peuvent être des chaînes de caractères, des nombres, des booléens, null, des objets ou des tableaux"
 
-#: templates/help/json_config_help.html:44
+#: app/templates/help/json_config_help.html:44
 msgid "Example JSON structure:"
 msgstr "Exemple de structure JSON :"
 
-#: templates/help/json_config_help.html:65
+#: app/templates/help/json_config_help.html:65
 msgid ""
 "The data path allows you to specify where the relevant data is located in"
 " the JSON response. In the List-IQ application, you use dot notation to "
 "access nested objects."
-msgstr "Le chemin d'accès aux données permet de spécifier où se trouvent les données pertinentes dans la réponse JSON. Dans l'application List-IQ, vous utilisez la notation par points pour accéder aux objets imbriqués."
+msgstr "Le chemin des données vous permet de spécifier où se trouvent les données pertinentes dans la réponse JSON. Dans l'application List-IQ, vous utilisez la notation par points pour accéder aux objets imbriqués."
 
-#: templates/help/json_config_help.html:67
+#: app/templates/help/json_config_help.html:67
 msgid "Path Examples"
-msgstr "Exemples de chemins d'accès"
+msgstr "Exemples de chemin"
 
-#: templates/help/json_config_help.html:71
+#: app/templates/help/json_config_help.html:71
 msgid "Path"
 msgstr "Chemin"
 
-#: templates/help/json_config_help.html:73
+#: app/templates/help/json_config_help.html:73
 msgid "Example JSON"
-msgstr "Exemple de JSON"
+msgstr "Exemple JSON"
 
-#: templates/help/json_config_help.html:79
+#: app/templates/help/json_config_help.html:79
 msgid "Accesses the \"data\" property at the root"
 msgstr "Accède à la propriété \"data\" à la racine"
 
-#: templates/help/json_config_help.html:84
+#: app/templates/help/json_config_help.html:84
 msgid "Accesses the \"items\" property within the \"data\" object"
 msgstr "Accède à la propriété \"items\" dans l'objet \"data\""
 
-#: templates/help/json_config_help.html:89
+#: app/templates/help/json_config_help.html:89
 msgid "Accesses the \"results\" property at the root"
 msgstr "Accède à la propriété \"results\" à la racine"
 
-#: templates/help/json_config_help.html:94
+#: app/templates/help/json_config_help.html:94
 msgid "Accesses \"items\" in \"body\" in \"response\""
 msgstr "Accède à \"items\" dans \"body\" dans \"response\""
 
-#: templates/help/json_config_help.html:101
+#: app/templates/help/json_config_help.html:101
 msgid ""
 "The path must point to an array of objects. If the response contains a "
 "single object, the application will automatically convert it to an array."
 msgstr "Le chemin doit pointer vers un tableau d'objets. Si la réponse contient un seul objet, l'application le convertira automatiquement en tableau."
 
-#: templates/help/json_config_help.html:111
+#: app/templates/help/json_config_help.html:111
 msgid ""
 "After specifying the data path, you can select the columns (properties) "
 "you want to include in your list."
-msgstr "Après avoir spécifié le chemin d'accès aux données, vous pouvez sélectionner les colonnes (propriétés) que vous souhaitez inclure dans votre liste."
+msgstr "Après avoir spécifié le chemin des données, vous pouvez sélectionner les colonnes (propriétés) que vous souhaitez inclure dans votre liste."
 
-#: templates/help/json_config_help.html:113
-#: templates/help/json_config_help.html:157
+#: app/templates/help/json_config_help.html:113
+#: app/templates/help/json_config_help.html:157
 msgid "Example"
 msgstr "Exemple"
 
-#: templates/help/json_config_help.html:114
+#: app/templates/help/json_config_help.html:114
 msgid "If your JSON looks like this:"
 msgstr "Si votre JSON ressemble à ceci :"
 
-#: templates/help/json_config_help.html:129
+#: app/templates/help/json_config_help.html:129
 msgid "You could select the following columns:"
 msgstr "Vous pourriez sélectionner les colonnes suivantes :"
 
-#: templates/help/json_config_help.html:131
-#: templates/help/json_config_help.html:135
+#: app/templates/help/json_config_help.html:131
+#: app/templates/help/json_config_help.html:135
 msgid "type: number"
 msgstr "type : nombre"
 
-#: templates/help/json_config_help.html:132
-#: templates/help/json_config_help.html:133
+#: app/templates/help/json_config_help.html:132
+#: app/templates/help/json_config_help.html:133
 msgid "type: text"
 msgstr "type : texte"
 
-#: templates/help/json_config_help.html:134
+#: app/templates/help/json_config_help.html:134
 msgid "type: date"
 msgstr "type : date"
 
-#: templates/help/json_config_help.html:137
+#: app/templates/help/json_config_help.html:137
 msgid ""
 "The application automatically extracts these properties from each object "
 "in the array."
-msgstr "L'application extrait automatiquement ces propriétés de chaque objet dans le tableau."
+msgstr "L'application extrait automatiquement ces propriétés de chaque objet du tableau."
 
-#: templates/help/json_config_help.html:140
+#: app/templates/help/json_config_help.html:140
 msgid "Tip:"
 msgstr "Astuce :"
 
-#: templates/help/json_config_help.html:140
+#: app/templates/help/json_config_help.html:140
 msgid "For nested properties, use dot notation (e.g., <code>author.name</code>)."
-msgstr "Pour les propriétés imbriquées, utilisez la notation par points (par exemple, <code>author.name</code>)."
+msgstr "Pour les propriétés imbriquées, utilisez la notation par points (ex: <code>author.name</code>)."
 
-#: templates/help/json_config_help.html:150
+#: app/templates/help/json_config_help.html:150
 msgid "The List-IQ application supports several data types for columns:"
 msgstr "L'application List-IQ prend en charge plusieurs types de données pour les colonnes :"
 
-#: templates/help/json_config_help.html:155
+#: app/templates/help/json_config_help.html:155
 msgid "Type"
 msgstr "Type"
 
-#: templates/help/json_config_help.html:162 templates/lists/edit.html:249
-#: templates/lists/edit.html:412
+#: app/templates/help/json_config_help.html:162
+#: app/templates/lists/edit.html:286 app/templates/lists/edit.html:460
 msgid "Text"
 msgstr "Texte"
 
-#: templates/help/json_config_help.html:163
+#: app/templates/help/json_config_help.html:163
 msgid "Strings of characters"
 msgstr "Chaînes de caractères"
 
-#: templates/help/json_config_help.html:167 templates/lists/edit.html:251
-#: templates/lists/edit.html:414
+#: app/templates/help/json_config_help.html:167
+#: app/templates/lists/edit.html:288 app/templates/lists/edit.html:462
 msgid "Number"
 msgstr "Nombre"
 
-#: templates/help/json_config_help.html:168
+#: app/templates/help/json_config_help.html:168
 msgid "Numeric values (integers or decimals)"
 msgstr "Valeurs numériques (entiers ou décimaux)"
 
-#: templates/help/json_config_help.html:172 templates/lists/edit.html:252
-#: templates/lists/edit.html:415
+#: app/templates/help/json_config_help.html:172
+#: app/templates/lists/edit.html:289 app/templates/lists/edit.html:463
 msgid "Date"
 msgstr "Date"
 
-#: templates/help/json_config_help.html:173
+#: app/templates/help/json_config_help.html:173
 msgid "Dates in ISO format or similar"
 msgstr "Dates au format ISO ou similaire"
 
-#: templates/help/json_config_help.html:177 templates/lists/edit.html:250
-#: templates/lists/edit.html:413
+#: app/templates/help/json_config_help.html:177
+#: app/templates/lists/edit.html:287 app/templates/lists/edit.html:461
 msgid "IP Address"
 msgstr "Adresse IP"
 
-#: templates/help/json_config_help.html:178
+#: app/templates/help/json_config_help.html:178
 msgid "IPv4 or IPv6 addresses"
-msgstr "Adresses IP v4 ou v6"
+msgstr "Adresses IPv4 ou IPv6"
 
-#: templates/help/json_config_help.html:184
+#: app/templates/help/json_config_help.html:184
 msgid ""
 "The application attempts to automatically detect the data type, but you "
 "can change it manually if necessary."
 msgstr "L'application tente de détecter automatiquement le type de données, mais vous pouvez le modifier manuellement si nécessaire."
 
-#: templates/help/json_config_help.html:193
+#: app/templates/help/json_config_help.html:193
 msgid "Root-level array of objects"
 msgstr "Tableau d'objets à la racine"
 
-#: templates/help/json_config_help.html:199
-#: templates/help/json_config_help.html:210
-#: templates/help/json_config_help.html:226
-#: templates/help/json_config_help.html:255
-#: templates/help/json_config_help.html:299
-#: templates/help/json_config_help.html:329
+#: app/templates/help/json_config_help.html:199
+#: app/templates/help/json_config_help.html:210
+#: app/templates/help/json_config_help.html:226
+#: app/templates/help/json_config_help.html:255
+#: app/templates/help/json_config_help.html:299
+#: app/templates/help/json_config_help.html:329
 msgid "Data Path:"
-msgstr "Chemin d'accès :"
+msgstr "Chemin des données :"
 
-#: templates/help/json_config_help.html:199
+#: app/templates/help/json_config_help.html:199
 msgid "Leave empty (or simply use <code>.</code>)"
-msgstr "Laissez vide (ou utilisez simplement <code>.</code>)"
+msgstr "Laisser vide (ou utiliser simplement <code>.</code>)"
 
-#: templates/help/json_config_help.html:201
+#: app/templates/help/json_config_help.html:201
 msgid "Property containing an array of objects"
 msgstr "Propriété contenant un tableau d'objets"
 
-#: templates/help/json_config_help.html:212
+#: app/templates/help/json_config_help.html:212
 msgid "Nested structure with pagination"
 msgstr "Structure imbriquée avec pagination"
 
-#: templates/help/json_config_help.html:235
+#: app/templates/help/json_config_help.html:235
 msgid "Example 1: JSONPlaceholder API"
 msgstr "Exemple 1 : API JSONPlaceholder"
 
-#: templates/help/json_config_help.html:236
-#: templates/help/json_config_help.html:260
-#: templates/help/json_config_help.html:304
+#: app/templates/help/json_config_help.html:236
+#: app/templates/help/json_config_help.html:260
+#: app/templates/help/json_config_help.html:304
 msgid "Curl command:"
-msgstr "Commande curl :"
+msgstr "Commande Curl :"
 
-#: templates/help/json_config_help.html:238
-#: templates/help/json_config_help.html:262
-#: templates/help/json_config_help.html:306
+#: app/templates/help/json_config_help.html:238
+#: app/templates/help/json_config_help.html:262
+#: app/templates/help/json_config_help.html:306
 msgid "JSON response (excerpt):"
 msgstr "Réponse JSON (extrait) :"
 
-#: templates/help/json_config_help.html:253
-#: templates/help/json_config_help.html:297
-#: templates/help/json_config_help.html:327
+#: app/templates/help/json_config_help.html:253
+#: app/templates/help/json_config_help.html:297
+#: app/templates/help/json_config_help.html:327
 msgid "Configuration:"
 msgstr "Configuration :"
 
-#: templates/help/json_config_help.html:255
-#: templates/help/json_config_help.html:329
+#: app/templates/help/json_config_help.html:255
+#: app/templates/help/json_config_help.html:329
 msgid "empty"
 msgstr "vide"
 
-#: templates/help/json_config_help.html:256
-#: templates/help/json_config_help.html:300
-#: templates/help/json_config_help.html:330
+#: app/templates/help/json_config_help.html:256
+#: app/templates/help/json_config_help.html:300
+#: app/templates/help/json_config_help.html:330
 msgid "Columns:"
 msgstr "Colonnes :"
 
-#: templates/help/json_config_help.html:256
-#: templates/help/json_config_help.html:300
-#: templates/help/json_config_help.html:330
+#: app/templates/help/json_config_help.html:256
+#: app/templates/help/json_config_help.html:300
+#: app/templates/help/json_config_help.html:330
 msgid "number"
 msgstr "nombre"
 
-#: templates/help/json_config_help.html:256
-#: templates/help/json_config_help.html:300
-#: templates/help/json_config_help.html:330
+#: app/templates/help/json_config_help.html:256
+#: app/templates/help/json_config_help.html:300
+#: app/templates/help/json_config_help.html:330
 msgid "text"
 msgstr "texte"
 
-#: templates/help/json_config_help.html:259
+#: app/templates/help/json_config_help.html:259
 msgid "Example 2: OpenWeatherMap API"
 msgstr "Exemple 2 : API OpenWeatherMap"
 
-#: templates/help/json_config_help.html:300
-#: templates/help/json_config_help.html:330
+#: app/templates/help/json_config_help.html:300
+#: app/templates/help/json_config_help.html:330
 msgid "date"
 msgstr "date"
 
-#: templates/help/json_config_help.html:303
+#: app/templates/help/json_config_help.html:303
 msgid "Example 3: GitHub API"
 msgstr "Exemple 3 : API GitHub"
 
-#: templates/help/python_api_help.html:3 templates/help/python_api_help.html:10
+#: app/templates/help/python_api_help.html:3
+#: app/templates/help/python_api_help.html:10
 msgid "Help - Python Scripts for APIs"
 msgstr "Aide - Scripts Python pour les API"
 
-#: templates/help/python_api_help.html:14
+#: app/templates/help/python_api_help.html:14
 msgid "Guide for Python Scripts for APIs"
 msgstr "Guide des scripts Python pour les API"
 
-#: templates/help/python_api_help.html:17
+#: app/templates/help/python_api_help.html:17
 msgid ""
 "This page provides examples and best practices for creating Python "
 "scripts that retrieve data from APIs."
 msgstr "Cette page fournit des exemples et des bonnes pratiques pour créer des scripts Python qui récupèrent des données depuis des API."
 
-#: templates/help/python_api_help.html:26
-#: templates/help/python_api_help.html:154
+#: app/templates/help/python_api_help.html:26
+#: app/templates/help/python_api_help.html:154
 msgid "Handling Pagination"
 msgstr "Gestion de la pagination"
 
-#: templates/help/python_api_help.html:28
-#: templates/help/python_api_help.html:287
+#: app/templates/help/python_api_help.html:28
+#: app/templates/help/python_api_help.html:287
 msgid "Data Transformation"
 msgstr "Transformation des données"
 
-#: templates/help/python_api_help.html:36
+#: app/templates/help/python_api_help.html:36
 msgid "Basic Structure of a Python Script for API"
 msgstr "Structure de base d'un script Python pour API"
 
-#: templates/help/python_api_help.html:39
+#: app/templates/help/python_api_help.html:39
 msgid ""
 "Here is the basic structure of a Python script to retrieve data from an "
 "API:"
 msgstr "Voici la structure de base d'un script Python pour récupérer des données depuis une API :"
 
-#: templates/help/python_api_help.html:45
+#: app/templates/help/python_api_help.html:45
 msgid "Your code to retrieve data"
 msgstr "Votre code pour récupérer les données"
 
-#: templates/help/python_api_help.html:48
-#: templates/help/python_api_help.html:83
+#: app/templates/help/python_api_help.html:48
+#: app/templates/help/python_api_help.html:83
 msgid "Check if the request was successful"
 msgstr "Vérifier si la requête a réussi"
 
-#: templates/help/python_api_help.html:50
-#: templates/help/python_api_help.html:85
+#: app/templates/help/python_api_help.html:50
+#: app/templates/help/python_api_help.html:85
 msgid "Convert the response to JSON"
 msgstr "Convertir la réponse en JSON"
 
-#: templates/help/python_api_help.html:54
-#: templates/help/python_api_help.html:89
-#: templates/help/python_api_help.html:139
-#: templates/help/python_api_help.html:326
-#: templates/help/python_api_help.html:364
-#: templates/help/python_api_help.html:406
+#: app/templates/help/python_api_help.html:54
+#: app/templates/help/python_api_help.html:89
+#: app/templates/help/python_api_help.html:139
+#: app/templates/help/python_api_help.html:326
+#: app/templates/help/python_api_help.html:364
+#: app/templates/help/python_api_help.html:406
 msgid "Error:"
 msgstr "Erreur :"
 
-#: templates/help/python_api_help.html:57
+#: app/templates/help/python_api_help.html:57
 msgid "This function is automatically called by the system"
-msgstr "Cette fonction est appelée automatiquement par le système"
+msgstr "Cette fonction est automatiquement appelée par le système"
 
-#: templates/help/python_api_help.html:60
-#: templates/help/python_api_help.html:281
-#: templates/help/python_api_help.html:334
-#: templates/help/python_api_help.html:372
-#: templates/help/python_api_help.html:414
+#: app/templates/help/python_api_help.html:60
+#: app/templates/help/python_api_help.html:281
+#: app/templates/help/python_api_help.html:334
+#: app/templates/help/python_api_help.html:372
+#: app/templates/help/python_api_help.html:414
 msgid "Number of items retrieved:"
 msgstr "Nombre d'éléments récupérés :"
 
-#: templates/help/python_api_help.html:62
+#: app/templates/help/python_api_help.html:62
 msgid ""
 "Your script must always contain a <code>main()</code> function that "
 "returns the data as a list of objects."
-msgstr "Votre script doit toujours contenir une fonction <code>main()</code> qui retourne les données sous forme de liste d'objets."
+msgstr "Votre script doit toujours contenir une fonction <code>main()</code> qui renvoie les données sous forme de liste d'objets."
 
-#: templates/help/python_api_help.html:72
+#: app/templates/help/python_api_help.html:72
 msgid "Example of a script to retrieve data from the JSONPlaceholder API:"
-msgstr "Exemple de script pour récupérer des données depuis l'API JSONPlaceholder :"
+msgstr "Exemple de script pour récupérer des données de l'API JSONPlaceholder :"
 
-#: templates/help/python_api_help.html:76
-#: templates/help/python_api_help.html:355
+#: app/templates/help/python_api_help.html:76
+#: app/templates/help/python_api_help.html:355
 msgid "API URL"
 msgstr "URL de l'API"
 
-#: templates/help/python_api_help.html:80
+#: app/templates/help/python_api_help.html:80
 msgid "Make the GET request"
 msgstr "Effectuer la requête GET"
 
-#: templates/help/python_api_help.html:92
-#: templates/help/python_api_help.html:142
-#: templates/help/python_api_help.html:329
-#: templates/help/python_api_help.html:367
-#: templates/help/python_api_help.html:409
+#: app/templates/help/python_api_help.html:92
+#: app/templates/help/python_api_help.html:142
+#: app/templates/help/python_api_help.html:329
+#: app/templates/help/python_api_help.html:367
+#: app/templates/help/python_api_help.html:409
 msgid "An error occurred:"
 msgstr "Une erreur est survenue :"
 
-#: templates/help/python_api_help.html:97
+#: app/templates/help/python_api_help.html:97
 msgid "Number of articles retrieved:"
 msgstr "Nombre d'articles récupérés :"
 
-#: templates/help/python_api_help.html:106
+#: app/templates/help/python_api_help.html:106
 msgid "Example of a script for an API requiring an API key (like OpenWeatherMap):"
-msgstr "Exemple de script pour une API nécessitant une clé d'API (comme OpenWeatherMap) :"
+msgstr "Exemple de script pour une API nécessitant une clé API (comme OpenWeatherMap) :"
 
-#: templates/help/python_api_help.html:110
+#: app/templates/help/python_api_help.html:110
 msgid "API Parameters"
 msgstr "Paramètres de l'API"
 
-#: templates/help/python_api_help.html:111
-#: templates/help/python_api_help.html:162
+#: app/templates/help/python_api_help.html:111
+#: app/templates/help/python_api_help.html:162
 msgid "Replace with your API key"
 msgstr "Remplacez par votre clé API"
 
-#: templates/help/python_api_help.html:115
+#: app/templates/help/python_api_help.html:115
 msgid "Request Parameters"
 msgstr "Paramètres de la requête"
 
-#: templates/help/python_api_help.html:123
+#: app/templates/help/python_api_help.html:123
 msgid "Make the GET request with parameters"
-msgstr "Effectuer la requête GET avec les paramètres"
+msgstr "Effectuer la requête GET avec des paramètres"
 
-#: templates/help/python_api_help.html:129
+#: app/templates/help/python_api_help.html:129
 msgid "Transform the data to fit our format"
-msgstr "Transformer les données pour les adapter à notre format"
+msgstr "Transformer les données pour qu'elles correspondent à notre format"
 
-#: templates/help/python_api_help.html:148
+#: app/templates/help/python_api_help.html:148
 msgid "Weather in"
 msgstr "Météo à"
 
-#: templates/help/python_api_help.html:157
+#: app/templates/help/python_api_help.html:157
 msgid ""
 "Example of a script to retrieve paginated data (like The Movie Database "
 "API):"
-msgstr "Exemple de script pour récupérer des données paginées (comme l'API de The Movie Database) :"
+msgstr "Exemple de script pour récupérer des données paginées (comme l'API The Movie Database) :"
 
-#: templates/help/python_api_help.html:161
+#: app/templates/help/python_api_help.html:161
 msgid "Base Parameters"
 msgstr "Paramètres de base"
 
-#: templates/help/python_api_help.html:171
-msgid "Get the first page"
-msgstr "Récupérer la première page"
-
-#: templates/help/python_api_help.html:176
+#: app/templates/help/python_api_help.html:176
 msgid "API Error:"
 msgstr "Erreur API :"
 
-#: templates/help/python_api_help.html:181
+#: app/templates/help/python_api_help.html:181
 msgid "Extract the total number of pages and the results from the first page"
 msgstr "Extraire le nombre total de pages et les résultats de la première page"
 
-#: templates/help/python_api_help.html:182
+#: app/templates/help/python_api_help.html:182
 msgid "Limit to a maximum of 5 pages"
-msgstr "Limiter à 5 pages maximum"
+msgstr "Limiter à un maximum de 5 pages"
 
-#: templates/help/python_api_help.html:183
+#: app/templates/help/python_api_help.html:183
 msgid "Total number of pages:"
 msgstr "Nombre total de pages :"
 
-#: templates/help/python_api_help.html:187
+#: app/templates/help/python_api_help.html:187
 msgid "Get the remaining pages"
-msgstr "Récupérer les pages restantes"
+msgstr "Obtenir les pages restantes"
 
-#: templates/help/python_api_help.html:193
+#: app/templates/help/python_api_help.html:193
 msgid "API error for page"
 msgstr "Erreur API pour la page"
 
-#: templates/help/python_api_help.html:198
+#: app/templates/help/python_api_help.html:198
 msgid "Page"
 msgstr "Page"
 
-#: templates/help/python_api_help.html:198
+#: app/templates/help/python_api_help.html:198
 msgid "retrieved,"
 msgstr "récupérée,"
 
-#: templates/help/python_api_help.html:198
+#: app/templates/help/python_api_help.html:198
 msgid "results"
 msgstr "résultats"
 
-#: templates/help/python_api_help.html:200
+#: app/templates/help/python_api_help.html:200
 msgid "Transform the data to get only the necessary information"
-msgstr "Transformer les données pour obtenir uniquement les informations nécessaires"
+msgstr "Transformer les données pour n'obtenir que les informations nécessaires"
 
-#: templates/help/python_api_help.html:214
+#: app/templates/help/python_api_help.html:214
 msgid "Error retrieving data:"
 msgstr "Erreur lors de la récupération des données :"
 
-#: templates/help/python_api_help.html:219
+#: app/templates/help/python_api_help.html:219
 msgid "Number of movies found:"
 msgstr "Nombre de films trouvés :"
 
-#: templates/help/python_api_help.html:228
+#: app/templates/help/python_api_help.html:228
 msgid "Example of a script with robust error handling:"
-msgstr "Exemple de script avec une gestion des erreurs robuste :"
+msgstr "Exemple de script avec une gestion robuste des erreurs :"
 
-#: templates/help/python_api_help.html:229
+#: app/templates/help/python_api_help.html:229
 msgid "Logging configuration"
-msgstr "Configuration du logging"
+msgstr "Configuration de la journalisation"
 
-#: templates/help/python_api_help.html:240
+#: app/templates/help/python_api_help.html:240
 msgid "seconds"
 msgstr "secondes"
 
-#: templates/help/python_api_help.html:244
+#: app/templates/help/python_api_help.html:244
 msgid "Attempt"
 msgstr "Tentative"
 
-#: templates/help/python_api_help.html:245
+#: app/templates/help/python_api_help.html:245
 msgid "10-second timeout"
-msgstr "Timeout de 10 secondes"
+msgstr "timeout de 10 secondes"
 
-#: templates/help/python_api_help.html:249
+#: app/templates/help/python_api_help.html:249
 msgid "Data retrieved successfully:"
 msgstr "Données récupérées avec succès :"
 
-#: templates/help/python_api_help.html:249
+#: app/templates/help/python_api_help.html:249
 msgid "items"
 msgstr "éléments"
 
-#: templates/help/python_api_help.html:253
+#: app/templates/help/python_api_help.html:253
 msgid "Request limit reached. Waiting for"
 msgstr "Limite de requêtes atteinte. Attente de"
 
-#: templates/help/python_api_help.html:253
+#: app/templates/help/python_api_help.html:253
 msgid "seconds."
 msgstr "secondes."
 
-#: templates/help/python_api_help.html:256
+#: app/templates/help/python_api_help.html:256
 msgid "HTTP Error:"
 msgstr "Erreur HTTP :"
 
-#: templates/help/python_api_help.html:262
+#: app/templates/help/python_api_help.html:262
 msgid "The request timed out"
 msgstr "La requête a expiré (timeout)"
 
-#: templates/help/python_api_help.html:268
+#: app/templates/help/python_api_help.html:268
 msgid "Connection error"
 msgstr "Erreur de connexion"
 
-#: templates/help/python_api_help.html:274
+#: app/templates/help/python_api_help.html:274
 msgid "Unexpected error:"
 msgstr "Erreur inattendue :"
 
-#: templates/help/python_api_help.html:290
+#: app/templates/help/python_api_help.html:290
 msgid "Example of a script with data transformation and filtering:"
 msgstr "Exemple de script avec transformation et filtrage des données :"
 
-#: templates/help/python_api_help.html:303
+#: app/templates/help/python_api_help.html:303
 msgid "Get posts for each user"
-msgstr "Récupérer les posts pour chaque utilisateur"
+msgstr "Obtenir les publications pour chaque utilisateur"
 
-#: templates/help/python_api_help.html:305
+#: app/templates/help/python_api_help.html:305
 msgid "Limit to 5 users for the example"
 msgstr "Limiter à 5 utilisateurs pour l'exemple"
 
-#: templates/help/python_api_help.html:312
+#: app/templates/help/python_api_help.html:312
 msgid "Filter and transform the data"
 msgstr "Filtrer et transformer les données"
 
-#: templates/help/python_api_help.html:320
+#: app/templates/help/python_api_help.html:320
 msgid "Truncate the content"
 msgstr "Tronquer le contenu"
 
-#: templates/help/python_api_help.html:343
-msgid "API with OAuth Authentication"
-msgstr "API avec authentification OAuth"
-
-#: templates/help/python_api_help.html:348
+#: app/templates/help/python_api_help.html:348
 msgid "OAuth Authentication Parameters"
 msgstr "Paramètres d'authentification OAuth"
 
-#: templates/help/python_api_help.html:349
+#: app/templates/help/python_api_help.html:349
 msgid "your_client_key"
-msgstr "votre_client_key"
+msgstr "votre_cle_client"
 
-#: templates/help/python_api_help.html:350
+#: app/templates/help/python_api_help.html:350
 msgid "your_client_secret"
-msgstr "votre_client_secret"
+msgstr "votre_secret_client"
 
-#: templates/help/python_api_help.html:352
+#: app/templates/help/python_api_help.html:352
 msgid "Create OAuth1 authentication"
-msgstr "Créer l'authentification OAuth1"
+msgstr "Créer une authentification OAuth1"
 
-#: templates/help/python_api_help.html:374
-msgid "API with Token Authentication"
-msgstr "API avec authentification par jeton (token)"
-
-#: templates/help/python_api_help.html:378
+#: app/templates/help/python_api_help.html:378
 msgid "Authentication Parameters"
 msgstr "Paramètres d'authentification"
 
-#: templates/help/python_api_help.html:379
-msgid "your_username"
-msgstr "votre_nom_utilisateur"
-
-#: templates/help/python_api_help.html:380
-msgid "your_password"
-msgstr "votre_mot_de_passe"
-
-#: templates/help/python_api_help.html:384
+#: app/templates/help/python_api_help.html:384
 msgid "Get the authentication token"
 msgstr "Obtenir le jeton d'authentification"
 
-#: templates/help/python_api_help.html:391
+#: app/templates/help/python_api_help.html:391
 msgid "Authentication error:"
 msgstr "Erreur d'authentification :"
 
-#: templates/help/python_api_help.html:397
+#: app/templates/help/python_api_help.html:397
 msgid "Use the token to access data"
 msgstr "Utiliser le jeton pour accéder aux données"
+
+#: app/templates/lists/code.html:12 app/templates/lists/edit.html:31
+msgid "General Information"
+msgstr "Informations générales"
+
+#: app/templates/lists/code.html:15 app/templates/lists/edit.html:162
+msgid "Security"
+msgstr "Sécurité"
+
+#: app/templates/lists/code.html:18 app/templates/lists/edit.html:179
+msgid "Public Access"
+msgstr "Accès public"
+
+#: app/templates/lists/code.html:27 app/templates/lists/edit.html:275
+msgid "Columns"
+msgstr "Colonnes"
+
+#: app/templates/lists/code.html:32 app/templates/lists/edit.html:301
+msgid "Add a column"
+msgstr "Ajouter une colonne"
+
+#: app/templates/lists/edit.html:3 app/templates/lists/edit.html:24
+msgid "Edit "
+msgstr "Modifier "
+
+#: app/templates/lists/edit.html:13 app/templates/lists/index.html:52
+msgid "Edit"
+msgstr "Modifier"
+
+#: app/templates/lists/edit.html:41
+msgid "Update Type"
+msgstr "Type de mise à jour"
+
+#: app/templates/lists/edit.html:43
+msgid "Manual"
+msgstr "Manuelle"
+
+#: app/templates/lists/edit.html:44
+msgid "Automatic"
+msgstr "Automatique"
+
+#: app/templates/lists/edit.html:51
+msgid ""
+"You can add data manually or import a CSV/JSON file from the list "
+"management page."
+msgstr "Vous pouvez ajouter des données manuellement ou importer un fichier CSV/JSON depuis la page de gestion de la liste."
+
+#: app/templates/lists/edit.html:57
+msgid "Data Source"
+msgstr "Source de données"
+
+#: app/templates/lists/edit.html:60
+msgid "Remote URL"
+msgstr "URL distante"
+
+#: app/templates/lists/edit.html:64
+msgid "API"
+msgstr "API"
+
+#: app/templates/lists/edit.html:70
+msgid "Curl"
+msgstr "Curl"
+
+#: app/templates/lists/edit.html:74
+msgid "Script"
+msgstr "Script"
+
+#: app/templates/lists/edit.html:79
+msgid "JSON configuration will be available after saving the list."
+msgstr "La configuration JSON sera disponible après l'enregistrement de la liste."
+
+#: app/templates/lists/edit.html:86
+msgid "Source URL"
+msgstr "URL de la source"
+
+#: app/templates/lists/edit.html:92
+msgid "Data Format"
+msgstr "Format des données"
+
+#: app/templates/lists/edit.html:97
+msgid "Choose the source file format (CSV or JSON)"
+msgstr "Choisissez le format du fichier source (CSV ou JSON)"
+
+#: app/templates/lists/edit.html:103
+msgid "Curl Command"
+msgstr "Commande Curl"
+
+#: app/templates/lists/edit.html:106
+msgid "See Curl command examples"
+msgstr "Voir les exemples de commandes Curl"
+
+#: app/templates/lists/edit.html:112
+msgid ""
+"Enter a complete curl command with necessary headers and options. The "
+"command will be executed as is."
+msgstr "Entrez une commande curl complète avec les en-têtes et options nécessaires. La commande sera exécutée telle quelle."
+
+#: app/templates/lists/edit.html:112
+msgid "Example:"
+msgstr "Exemple :"
+
+#: app/templates/lists/edit.html:123
+msgid "Source Code"
+msgstr "Code source"
+
+#: app/templates/lists/edit.html:126
+msgid "See Python script examples"
+msgstr "Voir les exemples de scripts Python"
+
+#: app/templates/lists/edit.html:130
+msgid "Your code here..."
+msgstr "Votre code ici..."
+
+#: app/templates/lists/edit.html:136
+msgid "Schedule (Cron)"
+msgstr "Planification (Cron)"
+
+#: app/templates/lists/edit.html:140
+msgid "Format: minute hour day month day_of_week (0 */1 * * *)"
+msgstr "Format : minute heure jour mois jour_de_semaine (0 */1 * * *)"
+
+#: app/templates/lists/edit.html:144
+msgid "Results Limit"
+msgstr "Limite de résultats"
+
+#: app/templates/lists/edit.html:147
+msgid "Maximum number of results to import (0 = no limit)"
+msgstr "Nombre maximal de résultats à importer (0 = sans limite)"
+
+#: app/templates/lists/edit.html:154
+msgid "Active list"
+msgstr "Liste active"
+
+#: app/templates/lists/edit.html:159
+msgid "Published list"
+msgstr "Liste publiée"
+
+#: app/templates/lists/edit.html:168
+msgid "Restrict access by IP address"
+msgstr "Restreindre l'accès par adresse IP"
+
+#: app/templates/lists/edit.html:171
+msgid "Allowed IP Addresses"
+msgstr "Adresses IP autorisées"
+
+#: app/templates/lists/edit.html:174
+msgid ""
+"Accepted formats: Individual IPs, CIDR ranges, or IP ranges. Separate "
+"entries with commas or semicolons."
+msgstr "Formats acceptés : IP individuelles, plages CIDR, ou plages IP. Séparez les entrées par des virgules ou des points-virgules."
+
+#: app/templates/lists/edit.html:184
+msgid ""
+"The options below allow you to generate public URLs to access the list's "
+"data without authentication. IP restrictions also apply to these accesses"
+" if enabled."
+msgstr "Les options ci-dessous vous permettent de générer des URL publiques pour accéder aux données de la liste sans authentification. Les restrictions IP s'appliquent également à ces accès si elles sont activées."
+
+#: app/templates/lists/edit.html:190
+msgid "Enable public access in CSV format"
+msgstr "Activer l'accès public au format CSV"
+
+#: app/templates/lists/edit.html:195
+msgid "Include headers in public CSV"
+msgstr "Inclure les en-têtes dans le CSV public"
+
+#: app/templates/lists/edit.html:201
+msgid "Enable public access in TXT format (single column)"
+msgstr "Activer l'accès public au format TXT (colonne unique)"
+
+#: app/templates/lists/edit.html:204
+msgid "Column to export"
+msgstr "Colonne à exporter"
+
+#: app/templates/lists/edit.html:219
+msgid "Include header in TXT file"
+msgstr "Inclure l'en-tête dans le fichier TXT"
+
+#: app/templates/lists/edit.html:225
+msgid "Enable public access in JSON format"
+msgstr "Activer l'accès public au format JSON"
+
+#: app/templates/lists/edit.html:230
+msgid "Action required:"
+msgstr "Action requise :"
+
+#: app/templates/lists/edit.html:230
+msgid "Click \"Save\" to generate the public access URLs."
+msgstr "Cliquez sur \"Enregistrer\" pour générer les URL d'accès public."
+
+#: app/templates/lists/edit.html:232
+msgid "Public Access URLs"
+msgstr "URL d'accès public"
+
+#: app/templates/lists/edit.html:234
+msgid "CSV URL:"
+msgstr "URL CSV :"
+
+#: app/templates/lists/edit.html:240 app/templates/lists/edit.html:252
+#: app/templates/lists/edit.html:264
+msgid "URL generated after registration"
+msgstr "URL générée après enregistrement"
+
+#: app/templates/lists/edit.html:246
+msgid "TXT URL:"
+msgstr "URL TXT :"
+
+#: app/templates/lists/edit.html:258
+msgid "JSON URL:"
+msgstr "URL JSON :"
+
+#: app/templates/lists/edit.html:276
+msgid "Are you sure you want to delete the column"
+msgstr "Êtes-vous sûr de vouloir supprimer la colonne"
+
+#: app/templates/lists/edit.html:282 app/templates/lists/edit.html:456
+msgid "Column name"
+msgstr "Nom de la colonne"
+
+#: app/templates/lists/edit.html:311
+msgid ""
+"Are you sure you want to delete all data from this list ? \n"
+"This action is irreversible."
+msgstr "Êtes-vous sûr de vouloir supprimer toutes les données de cette liste ?\nCette action est irréversible."
+
+#: app/templates/lists/edit.html:312
+msgid "All data has been successfully deleted."
+msgstr "Toutes les données ont été supprimées avec succès."
+
+#: app/templates/lists/edit.html:313
+msgid "An error occurred while deleting data."
+msgstr "Une erreur s'est produite lors de la suppression des données."
+
+#: app/templates/lists/edit.html:314
+msgid "Delete All Data"
+msgstr "Supprimer toutes les données"
+
+#: app/templates/lists/edit.html:319
+msgid "Are you sure you want to delete this list? This action is irreversible."
+msgstr "Êtes-vous sûr de vouloir supprimer cette liste ? Cette action est irréversible."
+
+#: app/templates/lists/edit.html:320
+msgid "Delete List"
+msgstr "Supprimer la liste"
+
+#: app/templates/lists/edit.html:326
+msgid "Save"
+msgstr "Enregistrer"
+
+#: app/templates/lists/edit.html:404
+msgid "An error occurred while saving"
+msgstr "Une erreur s'est produite lors de l'enregistrement"
+
+#: app/templates/lists/edit.html:406
+msgid "Error details:"
+msgstr "Détails de l'erreur :"
+
+#: app/templates/lists/edit.html:413
+msgid "An error occurred while communicating with the server: "
+msgstr "Une erreur s'est produite lors de la communication avec le serveur : "
+
+#: app/templates/lists/edit.html:477
+msgid "this column"
+msgstr "cette colonne"
+
+#: app/templates/lists/edit.html:504
+msgid "rows deleted"
+msgstr "lignes supprimées"
+
+#: app/templates/lists/edit.html:526
+msgid "Deletion error"
+msgstr "Erreur de suppression"
+
+#: app/templates/lists/edit.html:527
+msgid "List deleted successfully"
+msgstr "Liste supprimée avec succès"
+
+#: app/templates/lists/edit.html:530
+msgid "An error occurred during deletion: "
+msgstr "Une erreur s'est produite lors de la suppression : "
+
+#: app/templates/lists/index.html:29
+msgid "Last update:"
+msgstr "Dernière mise à jour :"
+
+#: app/templates/lists/index.html:43
+msgid "IP Restricted"
+msgstr "Restreint par IP"
+
+#: app/templates/lists/index.html:48
+msgid "View"
+msgstr "Consulter"
+
+#: app/templates/lists/index.html:68
+msgid "No lists available."
+msgstr "Aucune liste disponible."
+
+#: app/templates/lists/index.html:70
+msgid "Create a new list"
+msgstr "Créer une nouvelle liste"
+
+#: app/templates/lists/view.html:46
+msgid "Export"
+msgstr "Exporter"
+
+#: app/templates/lists/view.html:55
+msgid "Settings"
+msgstr "Paramètres"
+
+#: app/templates/lists/view.html:59 app/templates/lists/view.html:359
+msgid "Update data"
+msgstr "Mettre à jour les données"
+
+#: app/templates/lists/view.html:73
+msgid "CSV Configuration"
+msgstr "Configuration CSV"
+
+#: app/templates/lists/view.html:154
+msgid "Add a row"
+msgstr "Ajouter une ligne"
+
+#: app/templates/lists/view.html:170 app/templates/lists/view.html:228
+msgid "Select a date"
+msgstr "Sélectionner une date"
+
+#: app/templates/lists/view.html:181 app/templates/lists/view.html:239
+msgid "e.g.: 192.168.1.1 or 192.168.1.0/24"
+msgstr "ex: 192.168.1.1 ou 192.168.1.0/24"
+
+#: app/templates/lists/view.html:190 app/templates/lists/view.html:248
+msgid ""
+"Accepted format: IPv4 (e.g., 192.168.1.1 or 192.168.1.0/24) or IPv6 "
+"(e.g., 2001:db8::1 or 2001:db8::/64)"
+msgstr "Format accepté : IPv4 (ex: 192.168.1.1 ou 192.168.1.0/24) ou IPv6 (ex: 2001:db8::1 ou 2001:db8::/64)"
+
+#: app/templates/lists/view.html:211
+msgid "Edit a row"
+msgstr "Modifier une ligne"
+
+#: app/templates/lists/view.html:269
+msgid "Import data"
+msgstr "Importer des données"
+
+#: app/templates/lists/view.html:275
+msgid "File to import"
+msgstr "Fichier à importer"
+
+#: app/templates/lists/view.html:278
+msgid "The file (CSV or JSON) must have the following columns:"
+msgstr "Le fichier (CSV ou JSON) doit comporter les colonnes suivantes :"
+
+#: app/templates/lists/view.html:283
+msgid "Accepted formats:"
+msgstr "Formats acceptés :"
+
+#: app/templates/lists/view.html:285
+msgid "file with column headers and comma-separated values"
+msgstr "fichier avec en-têtes de colonnes et valeurs séparées par des virgules"
+
+#: app/templates/lists/view.html:286
+msgid "list of objects with column names as keys"
+msgstr "liste d'objets avec les noms des colonnes comme clés"
+
+#: app/templates/lists/view.html:365
+msgid "Update in progress..."
+msgstr "Mise à jour en cours..."
+
+#: app/templates/lists/view.html:382
+msgid "Execution logs"
+msgstr "Journaux d'exécution"
+
+#: app/templates/lists/view.html:411
+msgid "Starting update..."
+msgstr "Démarrage de la mise à jour..."
+
+#: app/templates/lists/view.html:458
+msgid "Data updated successfully"
+msgstr "Données mises à jour avec succès"
+
+#: app/templates/lists/view.html:463
+msgid "Reload page to see changes"
+msgstr "Rechargez la page pour voir les changements"
+
+#: app/templates/lists/view.html:470
+msgid "Error updating data"
+msgstr "Erreur lors de la mise à jour des données"
+
+#: app/templates/lists/view.html:479
+msgid "Error communicating with server"
+msgstr "Erreur de communication avec le serveur"

@@ -1,48 +1,89 @@
 /**
- * Correctif pour permettre l'édition immédiate des nouvelles lignes ajoutées
- * Ce script remplace la fonction initializeEditButtons pour supprimer la vérification
- * qui empêche la réinitialisation des gestionnaires d'événements
+ * Fix to allow immediate editing of newly added rows.
+ * This script replaces the initializeEditButtons function to remove the check
+<<<<<<< HEAD
+ * that prevents re-initialization of event handlers.
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Correctif pour l\'édition des nouvelles lignes chargé');
+    console.log('Fix for editing new rows loaded');
     
-    // Remplacer la fonction initializeEditButtons existante
+    // Replace the existing initializeEditButtons function
     window.initializeEditButtons = function() {
-        console.log('Initialisation/réinitialisation des boutons d\'édition (version corrigée)');
+        console.log('Initializing/re-initializing edit buttons (fixed version)');
         
-        // Ajouter des gestionnaires d'événements pour les boutons d'édition
+        // Add event handlers for edit buttons
         document.querySelectorAll('.edit-row-btn').forEach(button => {
-            // Supprimer d'abord les gestionnaires existants pour éviter les doublons
+            // First, remove existing handlers to avoid duplicates
             button.removeEventListener('click', handleEditButtonClick);
             
-            // Ajouter le nouveau gestionnaire
+=======
+ * that prevents re-initializing event handlers.
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Patch for new row editing loaded');
+
+    // Replace the existing initializeEditButtons function
+    window.initializeEditButtons = function() {
+        console.log('Initializing/re-initializing edit buttons (patched version)');
+
+        // Add event handlers for the edit buttons
+        document.querySelectorAll('.edit-row-btn').forEach(button => {
+            // First, remove existing handlers to avoid duplicates
+            button.removeEventListener('click', handleEditButtonClick);
+
+>>>>>>> origin/pybabel_update
+            // Add the new handler
             button.addEventListener('click', handleEditButtonClick);
         });
     };
+<<<<<<< HEAD
     
-    // Fonction de gestion du clic sur le bouton d'édition
+    // Function to handle the click on the edit button
     function handleEditButtonClick() {
         const rowId = this.getAttribute('data-row-id');
         const rowDataStr = this.getAttribute('data-row-data');
-        console.log('Clic sur le bouton d\'édition pour la ligne:', rowId);
-        console.log('Données brutes:', rowDataStr);
+        console.log('Click on edit button for row:', rowId);
+        console.log('Raw data:', rowDataStr);
         
+=======
+
+    // Handler function for the edit button click
+    function handleEditButtonClick() {
+        const rowId = this.getAttribute('data-row-id');
+        const rowDataStr = this.getAttribute('data-row-data');
+        console.log('Edit button clicked for row:', rowId);
+        console.log('Raw data:', rowDataStr);
+
+>>>>>>> origin/pybabel_update
         try {
-            // Convertir la chaîne JSON en objet JavaScript
+            // Convert the JSON string to a JavaScript object
             const rowData = JSON.parse(rowDataStr);
-            console.log('Données parsées:', rowData);
+            console.log('Parsed data:', rowData);
+<<<<<<< HEAD
             
-            // Appeler la fonction editRow
+=======
+
+>>>>>>> origin/pybabel_update
+            // Call the editRow function
             editRow(rowId, rowData);
         } catch (error) {
-            console.error('Erreur lors du parsing des données:', error);
+            console.error('Error parsing data:', error);
         }
     }
+<<<<<<< HEAD
     
-    // Appliquer le correctif après un court délai pour s'assurer que le script original est chargé
+    // Apply the fix after a short delay to ensure the original script is loaded
     setTimeout(function() {
-        // Réinitialiser les boutons d'édition avec la nouvelle fonction
+        // Re-initialize edit buttons with the new function
         initializeEditButtons();
-        console.log('Correctif appliqué avec succès');
+        console.log('Fix applied successfully');
+=======
+
+    // Apply the patch after a short delay to ensure the original script has loaded
+    setTimeout(function() {
+        // Re-initialize the edit buttons with the new function
+        initializeEditButtons();
+        console.log('Patch applied successfully');
+>>>>>>> origin/pybabel_update
     }, 500);
 });

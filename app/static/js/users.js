@@ -1,63 +1,92 @@
 /**
- * Fonctions JavaScript pour la gestion des utilisateurs
+<<<<<<< HEAD
+ * JavaScript functions for user management
+=======
+ * JavaScript functions for user management.
+ * NOTE: This file is prepared for i18n extraction.
+ * It uses window.translations and window._() from translations.js
+>>>>>>> origin/pybabel_update
  */
 
-// Fonction pour supprimer un utilisateur
+// Function to delete a user
 function deleteUser(userId, username) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur "${username}" ?`)) {
-        console.log(`Tentative de suppression de l'utilisateur ${username} (ID: ${userId})`);
+<<<<<<< HEAD
+    if (confirm(t('users.delete_confirm', { username: username }))) {
+        console.log(t('users.attempting_delete', { username: username, userId: userId }));
+=======
+    // The user-facing string is wrapped for translation.
+    // Debug the translation
+    console.log('Translation key:', 'Are you sure you want to delete user');
+    console.log('Translation value:', window.translations["Are you sure you want to delete user"]);
+    console.log('window._ result:', window._("Are you sure you want to delete user"));
+    
+    if (confirm(window._("Are you sure you want to delete user") + (" "+username+" ?"))){
+>>>>>>> origin/pybabel_update
         
-        // Utiliser le formulaire caché avec le token CSRF déjà inclus
+        // Use the hidden form with the CSRF token already included
         const form = document.getElementById(`delete-form-${userId}`);
         
         if (form) {
-            console.log('Formulaire de suppression trouvé, soumission...');
+<<<<<<< HEAD
+            console.log(t('users.delete_form_found'));
             form.submit();
         } else {
-            console.error(`Formulaire de suppression non trouvé pour l'utilisateur ${userId}`);
-            alert(`Erreur: Impossible de trouver le formulaire de suppression pour l'utilisateur ${username}`);
+            console.error(t('users.delete_error_form', { username: username }));
+            alert(t('users.delete_error'));
+=======
+            console.log('Delete form found, submitting...');
+            form.submit();
+        } else {
+            console.error(`Delete form not found for user ${userId}`);
+            // The user-facing alert is also wrapped for translation.
+            alert(window.interpolate(window._("Error: Could not find the delete form for user %s"), [username]));
+>>>>>>> origin/pybabel_update
         }
     }
 }
 
-// Fonction pour initialiser les gestionnaires d'événements
+// Function to initialize event handlers
 function initDeleteButtons() {
-    console.log('Initialisation des boutons de suppression');
+    console.log('Initializing delete buttons');
     
-    // D'abord, supprimer tous les gestionnaires d'événements existants
-    // pour éviter les doublons
+<<<<<<< HEAD
+    // First, remove all existing event handlers
+    // to avoid duplicates
+=======
+    // First, remove all existing event handlers to avoid duplicates
+>>>>>>> origin/pybabel_update
     const deleteButtons = document.querySelectorAll('.delete-user-btn');
     deleteButtons.forEach(button => {
-        // Utiliser une copie du bouton pour supprimer tous les gestionnaires
+        // Use a copy of the button to remove all handlers
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
     });
     
-    // Récupérer les nouveaux boutons après le remplacement
+    // Get the new buttons after replacement
     const newDeleteButtons = document.querySelectorAll('.delete-user-btn');
-    console.log(`Nombre de boutons de suppression trouvés: ${newDeleteButtons.length}`);
+    console.log(`Number of delete buttons found: ${newDeleteButtons.length}`);
     
-    // Ajouter des gestionnaires d'événements pour les boutons de suppression
+    // Add event handlers for the delete buttons
     newDeleteButtons.forEach(button => {
-        console.log('Ajout d\'un gestionnaire d\'événement pour le bouton');
+        console.log('Adding an event handler for the button');
         
         button.addEventListener('click', function(event) {
-            // Empêcher les clics multiples
+            // Prevent multiple clicks
             event.preventDefault();
             if (this.disabled) return;
             this.disabled = true;
             
-            console.log('Bouton de suppression cliqué');
+            console.log('Delete button clicked');
             const userId = this.getAttribute('data-user-id');
             const username = this.getAttribute('data-username');
-            console.log(`Suppression de l'utilisateur: ${username} (ID: ${userId})`);
+            console.log(`Deleting user: ${username} (ID: ${userId})`);
             deleteUser(userId, username);
         });
     });
 }
 
-// Initialisation des événements lorsque le DOM est chargé
+// Initialize events when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Module de gestion des utilisateurs chargé');
+    console.log('User management module loaded');
     initDeleteButtons();
 });

@@ -8,6 +8,7 @@ from functools import wraps
 # Flask imports
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from .decorators import admin_required
 
 # Application imports
@@ -58,7 +59,7 @@ def json_config(list_id):
                   (config.get('is_json') == True or config.get('format') == 'json'))
     
     if not (is_curl_api or is_json_url):
-        flash('This list does not require JSON configuration', 'warning')
+        flash(_('This list does not require JSON configuration'), 'warning')
         return redirect(url_for('list_bp.view_list', list_id=list_id))
     
     # Form processing
@@ -125,14 +126,14 @@ def json_config(list_id):
             # The update_from_url method already passes force_update=True to DataImporter.import_data
             if list_obj.update_from_url():
                 current_app.logger.info(f"List {list_id} updated successfully")
-                flash('JSON configuration saved and data import successful', 'success')
+                flash(_('JSON configuration saved and data import successful'), 'success')
             else:
                 current_app.logger.error(f"Failed to update list {list_id}")
-                flash('JSON configuration saved but error during data import', 'warning')
+                flash(_('JSON configuration saved but error during data import'), 'warning')
                 
         except Exception as e:
             current_app.logger.error(f"Error during data import: {str(e)}")
-            flash(f'JSON configuration saved but error during data import: {str(e)}', 'warning')
+            flash(_('JSON configuration saved but error during data import: %(error)s', error=str(e)), 'warning')
         
         return redirect(url_for('list_bp.view_list', list_id=list_id))
     
@@ -161,7 +162,7 @@ def json_config(list_id):
             curl_command = config.get('curl_command', '')
             if not curl_command:
                 current_app.logger.error("Curl command not defined")
-                raise Exception("Curl error: command not defined")
+                raise Exception(_("Curl error: command not defined"))
             
             # Detect a self-looping curl on the service's public JSON API
             from ..utils.internal_access import get_internal_list_data_from_public_json_url
@@ -189,21 +190,21 @@ def json_config(list_id):
 
                 if not output:
                     current_app.logger.error("Error executing curl command: no output")
-                    raise Exception("Curl error: no output")
+                    raise Exception(_("Curl error: no output"))
             except subprocess.CalledProcessError as e:
                 current_app.logger.error(f"Error executing curl command: {e}")
                 current_app.logger.error(f"Error output: {e.stderr}")
-                raise Exception(f"Curl error: {e}")
+                raise Exception(_("Curl error: %(error)s", error=e))
             except Exception as e:
                 current_app.logger.error(f"Exception executing curl command: {e}")
-                raise Exception(f"Curl error: {e}")
+                raise Exception(_("Curl error: %(error)s", error=e))
         
         elif is_json_url:
             # Get the URL from the configuration
             url = config.get('url', '')
             if not url:
                 current_app.logger.error("URL not defined")
-                raise Exception("Error: URL not defined")
+                raise Exception(_("Error: URL not defined"))
             
             current_app.logger.info(f"Getting JSON data from URL: {url}")
             
@@ -234,14 +235,14 @@ def json_config(list_id):
                         current_app.logger.info(f"URL request result (raw text): {output[:200]}...")
                 except requests.exceptions.SSLError as ssl_err:
                     current_app.logger.error(f"SSL error while getting data: {str(ssl_err)}")
-                    raise Exception(f"SSL error: {str(ssl_err)}")
+                    raise Exception(_("SSL error: %(error)s", error=str(ssl_err)))
                 except Exception as e:
                     current_app.logger.error(f"Error getting data from URL: {str(e)}")
-                    raise Exception(f"Error getting data: {str(e)}")
+                    raise Exception(_("Error getting data: %(error)s", error=str(e)))
         
         else:
             current_app.logger.error("Unsupported data source")
-            raise Exception("Error: unsupported data source")
+            raise Exception(_("Error: unsupported data source"))
         
         # Parse the JSON output
         if output:
@@ -351,7 +352,7 @@ def test_json_path(list_id):
                     data_path = data['data_path']
             except Exception as e:
                 current_app.logger.error(f"Error getting JSON data: {str(e)}")
-                result['message'] = f"Error getting JSON data: {str(e)}"
+                result['message'] = _("Error getting JSON data: %(error)s", error=str(e))
                 return jsonify(result)
         else:
             data_path = request.form.get('data_path', '')
@@ -379,7 +380,7 @@ def test_json_path(list_id):
             # Execute the curl command to get the data
             curl_command = config.get('curl_command', '')
             if not curl_command:
-                result['message'] = "Curl command not defined"
+                result['message'] = _("Curl command not defined")
                 return jsonify(result)
 
             # Detect a self-looping curl on the service's public JSON API
@@ -401,11 +402,11 @@ def test_json_path(list_id):
                         output = stream.read()
                         current_app.logger.info(f"Curl command result: {output[:200]}...")
                         if not output:
-                            result['message'] = "Error executing curl command: no output"
+                            result['message'] = _("Error executing curl command: no output")
                             return jsonify(result)
                     except Exception as e:
                         current_app.logger.error(f"Error executing curl command: {str(e)}")
-                        result['message'] = f"Error executing curl command: {str(e)}"
+                        result['message'] = _("Error executing curl command: %(error)s", error=str(e))
                         return jsonify(result)
             else:
                 # General case: normal shell execution
@@ -415,11 +416,11 @@ def test_json_path(list_id):
                     output = stream.read()
                     current_app.logger.info(f"Curl command result: {output[:200]}...")
                     if not output:
-                        result['message'] = "Error executing curl command: no output"
+                        result['message'] = _("Error executing curl command: no output")
                         return jsonify(result)
                 except Exception as e:
                     current_app.logger.error(f"Error executing curl command: {str(e)}")
-                    result['message'] = f"Error executing curl command: {str(e)}"
+                    result['message'] = _("Error executing curl command: %(error)s", error=str(e))
                     return jsonify(result)
 
         
@@ -427,7 +428,7 @@ def test_json_path(list_id):
             # Get the URL from the configuration
             url = config.get('url', '')
             if not url:
-                result['message'] = "URL not defined"
+                result['message'] = _("URL not defined")
                 return jsonify(result)
             
             current_app.logger.info(f"Getting JSON data from URL: {url}")
@@ -452,19 +453,19 @@ def test_json_path(list_id):
                     current_app.logger.info(f"URL request result (raw text): {output[:200]}...")
                 
                 if not output:
-                    result['message'] = "Error retrieving data from URL: no data"
+                    result['message'] = _("Error retrieving data from URL: no data")
                     return jsonify(result)
             except requests.exceptions.SSLError as ssl_err:
                 current_app.logger.error(f"SSL error getting data: {str(ssl_err)}")
-                result['message'] = f"SSL error: {str(ssl_err)}"
+                result['message'] = _("SSL error: %(error)s", error=str(ssl_err))
                 return jsonify(result)
             except Exception as e:
                 current_app.logger.error(f"Error getting data from URL: {str(e)}")
-                result['message'] = f"Error getting data from URL: {str(e)}"
+                result['message'] = _("Error getting data from URL: %(error)s", error=str(e))
                 return jsonify(result)
         
         else:
-            result['message'] = "Unsupported data source"
+            result['message'] = _("Unsupported data source")
             return jsonify(result)
         
         # Parse the JSON output
@@ -473,7 +474,7 @@ def test_json_path(list_id):
             current_app.logger.info("JSON parsing successful")
         except Exception as e:
             current_app.logger.error(f"Error parsing JSON: {str(e)}")
-            result['message'] = f"Error parsing JSON: {str(e)}"
+            result['message'] = _("Error parsing JSON: %(error)s", error=str(e))
             return jsonify(result)
         
         # Navigate through the data according to the provided path
@@ -500,11 +501,11 @@ def test_json_path(list_id):
                         data = data[key]
                     else:
                         current_app.logger.warning(f"Key '{key}' not found in the list element")
-                        result['message'] = f"Key '{key}' not found in the list element"
+                        result['message'] = _("Key '%(key)s' not found in the list element", key=key)
                         return jsonify(result)
                 else:
                     current_app.logger.warning(f"Key '{key}' not found in the data")
-                    result['message'] = f"Key '{key}' not found in the data"
+                    result['message'] = _("Key '%(key)s' not found in the data", key=key)
                     return jsonify(result)
             
             # Check that the extracted data is usable
@@ -513,21 +514,21 @@ def test_json_path(list_id):
                     # Display the first element as an example
                     sample = data[0] if isinstance(data[0], dict) else data
                     result['success'] = True
-                    result['message'] = f"Valid path. {len(data)} elements found."
+                    result['message'] = _("Valid path. %(count)s elements found.", count=len(data))
                     result['data'] = sample
                 else:
                     result['success'] = True
-                    result['message'] = "Valid path."
+                    result['message'] = _("Valid path.")
                     result['data'] = data
             else:
-                result['message'] = f"The path points to a simple value ({type(data).__name__}), not an object or a list"
+                result['message'] = _("The path points to a simple value (%(type)s), not an object or a list", type=type(data).__name__)
                 
         except Exception as e:
             current_app.logger.error(f"Error navigating JSON data: {str(e)}")
-            result['message'] = f"Error navigating JSON data: {str(e)}"
+            result['message'] = _("Error navigating JSON data: %(error)s", error=str(e))
     except Exception as e:
         current_app.logger.error(f"Error testing JSON path: {str(e)}")
-        result['message'] = f"Error testing JSON path: {str(e)}"
+        result['message'] = _("Error testing JSON path: %(error)s", error=str(e))
     
     current_app.logger.info(f"Final result: {result}")
     return jsonify(result)

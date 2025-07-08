@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from ..models.user import User
 from ..models.ldap_config import LDAPConfig
 from ..services.ldap_service import LDAPService
@@ -14,7 +15,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or not current_user.is_admin:
-            flash('Unauthorized access', 'danger')
+            flash(_('Unauthorized access'), 'danger')
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
     return decorated_function
@@ -43,15 +44,15 @@ def new_user():
             current_app.logger.info(f"Attempting to create user: {username}, {email}")
 
             if not username or not email or not password:
-                flash('All fields are required', 'danger')
+                flash(_('All fields are required'), 'danger')
                 return redirect(url_for('admin.new_user'))
 
             if User.query.filter_by(username=username).first():
-                flash('This username already exists', 'danger')
+                flash(_('This username already exists'), 'danger')
                 return redirect(url_for('admin.new_user'))
 
             if User.query.filter_by(email=email).first():
-                flash('This email address already exists', 'danger')
+                flash(_('This email address already exists'), 'danger')
                 return redirect(url_for('admin.new_user'))
 
             user = User(
@@ -71,13 +72,13 @@ def new_user():
                 ip_address = request.remote_addr
                 admin_logger.info(f"User creation - Name: {username} - Email: {email} - Admin: {is_admin} - By: {current_user.username} (ID: {current_user.id}) - IP: {ip_address}")
             
-            flash('User created successfully', 'success')
+            flash(_('User created successfully'), 'success')
             return redirect(url_for('admin.users'))
             
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error creating user: {str(e)}")
-            flash(f'Error during creation: {str(e)}', 'danger')
+            flash(_('Error during creation: %(error)s', error=str(e)), 'danger')
             return redirect(url_for('admin.new_user'))
 
     return render_template('admin/new_user.html')
@@ -100,18 +101,18 @@ def edit_user(user_id):
             current_app.logger.info(f"Attempting to edit user {user_id}: {username}, {email}")
 
             if not username or not email:
-                flash('Username and email are required', 'danger')
+                flash(_('Username and email are required'), 'danger')
                 return redirect(url_for('admin.edit_user', user_id=user_id))
 
             existing_user = User.query.filter_by(username=username).first()
             if existing_user and existing_user.id != user_id:
-                flash('This username already exists', 'danger')
+                flash(_('This username already exists'), 'danger')
                 return redirect(url_for('admin.edit_user', user_id=user_id))
 
             # Temporarily commented out to resolve database connection issue
             # existing_email = User.query.filter_by(email=email).first()
             # if existing_email and existing_email.id != user_id:
-            #     flash('This email address already exists', 'danger')
+            #     flash(_('This email address already exists'), 'danger')
             #     return redirect(url_for('admin.edit_user', user_id=user_id))
 
             user.username = username
@@ -130,13 +131,13 @@ def edit_user(user_id):
                 ip_address = request.remote_addr
                 admin_logger.info(f"User modification - ID: {user_id} - Name: {username} - Admin: {is_admin} - Password changed: {bool(password)} - By: {current_user.username} (ID: {current_user.id}) - IP: {ip_address}")
             
-            flash('User modified successfully', 'success')
+            flash(_('User modified successfully'), 'success')
             return redirect(url_for('admin.users'))
             
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error modifying user {user_id}: {str(e)}")
-            flash(f'Error during modification: {str(e)}', 'danger')
+            flash(_('Error during modification: %(error)s', error=str(e)), 'danger')
             return redirect(url_for('admin.edit_user', user_id=user_id))
 
     return render_template('admin/edit_user.html', user=user)
@@ -151,7 +152,7 @@ def delete_user(user_id):
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     
     if current_user.id == user_id:
-        error_msg = 'You cannot delete your own account'
+        error_msg = _('You cannot delete your own account')
         if is_ajax:
             return jsonify({'success': False, 'error': error_msg}), 400
         else:
@@ -193,22 +194,22 @@ def delete_user(user_id):
         
         
         if is_ajax:
-            return jsonify({'success': True, 'message': f"User {user.username} was deleted successfully"})
+            return jsonify({'success': True, 'message': _('User %(username)s was deleted successfully', username=user.username)})
         else:
-            flash(f"User {user.username} was deleted successfully", 'success')
+            flash(_('User %(username)s was deleted successfully', username=user.username), 'success')
             return redirect(url_for('admin.users'))
         
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error deleting user {user_id}: {str(e)}")
         
-        error_msg = "Error during deletion"
+        error_msg = _("Error during deletion")
         
         # Check if the error is due to a foreign key constraint
         if 'foreign key constraint fails' in str(e).lower():
-            error_msg = "Cannot delete this user because they are referenced by other items in the database."
+            error_msg = _("Cannot delete this user because they are referenced by other items in the database.")
         else:
-            error_msg = f"Error during deletion: {str(e)}"
+            error_msg = _('Error during deletion: %(error)s', error=str(e))
         
         if is_ajax:
             return jsonify({'success': False, 'error': error_msg}), 500
@@ -251,10 +252,10 @@ def save_ldap_config():
                 if '-----BEGIN CERTIFICATE-----' in ca_cert_content and '-----END CERTIFICATE-----' in ca_cert_content:
                     config.ca_cert = ca_cert_content
                 else:
-                    flash('The provided file does not appear to be a valid PEM certificate', 'warning')
+                    flash(_('The provided file does not appear to be a valid PEM certificate'), 'warning')
             except Exception as e:
                 current_app.logger.error(f"Error reading CA certificate: {str(e)}")
-                flash(f"Error reading CA certificate: {str(e)}", 'danger')
+                flash(_('Error reading CA certificate: %(error)s', error=str(e)), 'danger')
         
         # Option to remove the CA certificate
         if request.form.get('remove_ca_cert') == 'on':
@@ -284,11 +285,11 @@ def save_ldap_config():
         
         db.session.commit()
         
-        flash('LDAP configuration saved successfully', 'success')
+        flash(_('LDAP configuration saved successfully'), 'success')
         return redirect(url_for('admin.ldap_config'))
     except Exception as e:
         current_app.logger.error(f"Error saving LDAP configuration: {str(e)}")
-        flash(f"Error during save: {str(e)}", 'danger')
+        flash(_('Error during save: %(error)s', error=str(e)), 'danger')
         return redirect(url_for('admin.ldap_config'))
 
 
@@ -320,11 +321,11 @@ def test_ldap_config():
                     temp_config.ca_cert = ca_cert_content
                     current_app.logger.info(f"CA certificate provided in the form used for testing (size: {len(ca_cert_content)} bytes)")
                 else:
-                    flash('The provided file does not appear to be a valid PEM certificate', 'warning')
+                    flash(_('The provided file does not appear to be a valid PEM certificate'), 'warning')
                     current_app.logger.warning("The provided CA file is not a valid PEM certificate")
             except Exception as e:
                 current_app.logger.error(f"Error reading CA certificate for test: {str(e)}")
-                flash(f"Error reading CA certificate: {str(e)}", 'danger')
+                flash(_('Error reading CA certificate: %(error)s', error=str(e)), 'danger')
         else:
             # Use the existing configuration's CA certificate
             existing_config = LDAPConfig.get_config()
@@ -334,7 +335,7 @@ def test_ldap_config():
             # If certificate verification is enabled but no certificate is available
             if temp_config.verify_cert and not temp_config.ca_cert:
                 current_app.logger.warning("Certificate verification is enabled but no CA certificate is available")
-                flash('Certificate verification is enabled but no CA certificate is available', 'warning')
+                flash(_('Certificate verification is enabled but no CA certificate is available'), 'warning')
         
         # Authentication parameters
         temp_config.bind_dn = request.form.get('bind_dn')
@@ -368,18 +369,18 @@ def test_ldap_config():
         if success:
             return jsonify({
                 'success': True,
-                'message': message
+                'message': _(message)  # Assuming message is a simple string key
             })
         else:
             return jsonify({
                 'success': False,
-                'message': message
+                'message': _(message)  # Assuming message is a simple string key
             })
     except Exception as e:
         current_app.logger.error(f"Error testing LDAP configuration: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f"Unexpected error: {str(e)}"
+            'message': _('Unexpected error: %(error)s', error=str(e))
         })
 
 
@@ -398,6 +399,6 @@ def get_ldap_groups():
         current_app.logger.error(f"Error retrieving LDAP groups: {str(e)}")
         return jsonify({
             'success': False,
-            'message': f"Error: {str(e)}",
+            'message': _('Error: %(error)s', error=str(e)),
             'groups': []
         })
