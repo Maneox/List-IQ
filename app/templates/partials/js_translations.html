@@ -1,25 +1,56 @@
 {% macro js_translations() %}
 <script>
 // Define translations object for JavaScript
-window.translations = {
-    // Common UI messages
-    "Are you sure you want to delete this row?": "{{ _('Are you sure you want to delete this row?')|safe }}",
-    "Error: Missing CSRF token": "{{ _('Error: Missing CSRF token')|safe }}",
-    "Error during deletion": "{{ _('Error during deletion')|safe }}",
-    "Row updated successfully": "{{ _('Row updated successfully')|safe }}",
-    "Error while updating row. Please refresh the page.": "{{ _('Error while updating row. Please refresh the page.')|safe }}",
-    "Update": "{{ _('Update')|safe }}",
-    
-    // Add more translations as needed
-    // You can extract these from your JavaScript files using pybabel
-};
+window.translations = {};
+
+// Common UI messages
+window.translations["Are you sure you want to delete this row?"] = "{{ _('Are you sure you want to delete this row?')|safe }}";
+window.translations["Error: Missing CSRF token"] = "{{ _('Error: Missing CSRF token')|safe }}";
+window.translations["Error during deletion"] = "{{ _('Error during deletion')|safe }}";
+window.translations["Row updated successfully"] = "{{ _('Row updated successfully')|safe }}";
+window.translations["Error while updating row. Please refresh the page."] = "{{ _('Error while updating row. Please refresh the page.')|safe }}";
+window.translations["Update"] = "{{ _('Update')|safe }}";
+window.translations["No rows selected"] = "{{ _('No rows selected')|safe }}";
+window.translations["Are you sure you want to delete %s row(s)?"] = "{{ _('Are you sure you want to delete %s row(s)?')|safe }}";
+window.translations["No valid row IDs found"] = "{{ _('No valid row IDs found')|safe }}";
+window.translations["Error: Missing list ID"] = "{{ _('Error: Missing list ID')|safe }}";
+window.translations["Deleting..."] = "{{ _('Deleting...')|safe }}";
+window.translations["Delete selection"] = "{{ _('Delete selection')|safe }}";
+window.translations["%s row(s) deleted successfully"] = "{{ _('%s row(s) deleted successfully')|safe }}";
+window.translations["No rows could be deleted"] = "{{ _('No rows could be deleted')|safe }}";
+window.translations["Error during deletion: "] = "{{ _('Error during deletion: ')|safe }}";
+window.translations["Delete (%s)"] = "{{ _('Delete (%s)')|safe }}";
+window.translations["Importing..."] = "{{ _('Importing...')|safe }}";
+window.translations["Import"] = "{{ _('Import')|safe }}";
+window.translations["Error during import"] = "{{ _('Error during import')|safe }}";
+window.translations["Adding..."] = "{{ _('Adding...')|safe }}";
+window.translations["Error during add (%s)"] = "{{ _('Error during add (%s)')|safe }}";
+window.translations["Invalid server response"] = "{{ _('Invalid server response')|safe }}";
+window.translations["Error fetching row data"] = "{{ _('Error fetching row data')|safe }}";
+window.translations["Row data is invalid"] = "{{ _('Row data is invalid')|safe }}";
+window.translations["Row added successfully"] = "{{ _('Row added successfully')|safe }}";
+window.translations["Error during add"] = "{{ _('Error during add')|safe }}";
+window.translations["Add"] = "{{ _('Add')|safe }}";
+window.translations["Error: List ID not found"] = "{{ _('Error: List ID not found')|safe }}";
+window.translations["An error occurred while initializing the edit. See console for details."] = "{{ _('An error occurred while initializing the edit. See console for details.')|safe }}";
+window.translations["Error while fetching row data"] = "{{ _('Error while fetching row data')|safe }}";
+window.translations["An error occurred while fetching the data. See console for details."] = "{{ _('An error occurred while fetching the data. See console for details.')|safe }}";
+window.translations["Updating..."] = "{{ _('Updating...')|safe }}";
+window.translations["Error during update"] = "{{ _('Error during update')|safe }}";
+window.translations["Error fetching updated data"] = "{{ _('Error fetching updated data')|safe }}";
+window.translations["Row not found"] = "{{ _('Row not found')|safe }}";
+
+// User management messages
+window.translations["Are you sure you want to delete user"] = "{{ _('Are you sure you want to delete the user')|safe }}";
+window.translations["Error: Could not find the delete form for user %s"] = "{{ _('Error: Could not find the delete form for user %s')|safe }}";
 
 // Set current language for JavaScript
 window.currentLanguage = "{{ request.accept_languages.best_match(['en', 'fr']) or 'en' }}";
 
 // Debug information
-// console.log('Current language:', window.currentLanguage);
-// console.log('Translations object:', window.translations);
-// console.log('Translation test for delete row:', window.translations["Are you sure you want to delete this row?"]);
+console.log('Current language:', window.currentLanguage);
+console.log('Translations object:', window.translations);
+console.log('Translation test for delete row:', window.translations["Are you sure you want to delete this row?"]);
+console.log('Translation test for delete user:', window.translations["Are you sure you want to delete user"]);
 </script>
 {% endmacro %}

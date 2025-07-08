@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from ..models.list import List
 from ..services.list_service import ListService
 
@@ -44,7 +45,7 @@ def lists():
 def new_list():
     """New list creation page"""
     if not current_user.is_admin:
-        flash('Unauthorized access', 'danger')
+        flash(_('Unauthorized access'), 'danger')
         return redirect(url_for('ui.lists'))
     # Correction : passer list=None et columns=[] pour éviter erreur 500
     return render_template('lists/edit.html', list=None, columns=[])
@@ -60,7 +61,7 @@ def view_list(list_id):
     # 1. The user is an admin (can see all lists)
     # 2. The list is published (visible to all users)
     if not (current_user.is_admin or list_obj.is_published == 1):
-        flash('Unauthorized access - This list is not published', 'danger')
+        flash(_('Unauthorized access - This list is not published'), 'danger')
         current_app.logger.info(f"UI - Access denied to list {list_id} for user {current_user.id} - is_published: {list_obj.is_published}")
         return redirect(url_for('ui.lists'))
         
@@ -68,7 +69,7 @@ def view_list(list_id):
     if list_obj.ip_restriction_enabled:
         client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         if not list_obj.is_ip_allowed(client_ip):
-            flash('Access from this IP is not authorized', 'danger')
+            flash(_('Access from this IP is not authorized'), 'danger')
             return redirect(url_for('ui.lists'))
     
     # Get the list data
@@ -84,6 +85,6 @@ def edit_list(list_id):
     
     # Modification allowed only if the user is an admin
     if not current_user.is_admin:
-        flash('Unauthorized access - Only administrators can edit lists', 'danger')
+        flash(_('Unauthorized access - Only administrators can edit lists'), 'danger')
         return redirect(url_for('ui.lists'))
     return render_template('lists/edit.html', list=list_obj)

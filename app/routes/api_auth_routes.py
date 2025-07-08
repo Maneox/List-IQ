@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app, render_template, redirect, url_for, flash, session
 from flask_login import login_required, current_user, login_user
+from flask_babel import gettext as _
 from ..models.api_token import ApiToken
 from ..models.user import User
 from ..database import db, csrf
@@ -33,7 +34,7 @@ def create_token():
         data = request.form.to_dict()
     
     if not data or not data.get('name'):
-        return jsonify({'error': 'Token name is required'}), 400
+        return jsonify({'error': _('Token name is required')}), 400
     
     # Generate a unique token
     token_value = generate_token()
@@ -60,7 +61,7 @@ def create_token():
             current_app.logger.info(f"Converted expiration date: {expires_at}")
         except Exception as e:
             current_app.logger.error(f"Error converting date: {str(e)}")
-            return jsonify({'error': 'Invalid expiration date format. Use ISO format (YYYY-MM-DDTHH:MM:SS)'}), 400
+            return jsonify({'error': _('Invalid expiration date format. Use ISO format (YYYY-MM-DDTHH:MM:SS)')}), 400
     
     # Create the token in the database
     token = ApiToken(
@@ -131,12 +132,12 @@ def revoke_token(token_id):
     
     # Redirect to the token management page if the request comes from the browser and is not AJAX
     if is_html_request and not is_ajax_request:
-        flash('Token revoked successfully', 'success')
+        flash(_('Token revoked successfully'), 'success')
         return redirect(url_for('api_auth.manage_tokens'))
     
     # Otherwise, return a JSON response for API or AJAX calls
     return jsonify({
-        'message': 'Token revoked successfully',
+        'message': _('Token revoked successfully'),
         'token_id': token_id,
         'status': 'success'
     })
@@ -176,7 +177,7 @@ def token_auth_required(f):
             # If no Authorization header, try session authentication
             if current_user.is_authenticated:
                 return f(*args, **kwargs)
-            return jsonify({'error': 'Authentication required'}), 401
+            return jsonify({'error': _('Authentication required')}), 401
         
         # Extract the token
         token_value = auth_header.split(' ')[1]
@@ -185,11 +186,11 @@ def token_auth_required(f):
         token = ApiToken.query.filter_by(token=token_value, is_active=True).first()
         
         if not token:
-            return jsonify({'error': 'Invalid or revoked token'}), 401
+            return jsonify({'error': _('Invalid or revoked token')}), 401
         
         # Check if the token has expired
         if token.is_expired():
-            return jsonify({'error': 'Token expired'}), 401
+            return jsonify({'error': _('Token expired')}), 401
         
         # Update the last used date
         token.last_used_at = datetime.utcnow()
@@ -198,7 +199,7 @@ def token_auth_required(f):
         # Load the user associated with the token
         user = User.query.get(token.user_id)
         if not user or not user.is_active:
-            return jsonify({'error': 'Inactive or deleted user'}), 401
+            return jsonify({'error': _('Inactive or deleted user')}), 401
         
         # Set the current user for this request
         # Use login_user with remember=False to avoid creating a session cookie

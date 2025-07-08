@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-07-08 23:21+0200\n"
+"POT-Creation-Date: 2025-07-08 10:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,601 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
-
-#: app/routes/admin_routes.py:18 app/routes/ui_routes.py:48
-msgid "Unauthorized access"
-msgstr ""
-
-#: app/routes/admin_routes.py:47
-msgid "All fields are required"
-msgstr ""
-
-#: app/routes/admin_routes.py:51 app/routes/admin_routes.py:109
-msgid "This username already exists"
-msgstr ""
-
-#: app/routes/admin_routes.py:55
-msgid "This email address already exists"
-msgstr ""
-
-#: app/routes/admin_routes.py:75
-msgid "User created successfully"
-msgstr ""
-
-#: app/routes/admin_routes.py:81
-#, python-format
-msgid "Error during creation: %(error)s"
-msgstr ""
-
-#: app/routes/admin_routes.py:104
-msgid "Username and email are required"
-msgstr ""
-
-#: app/routes/admin_routes.py:134
-msgid "User modified successfully"
-msgstr ""
-
-#: app/routes/admin_routes.py:140
-#, python-format
-msgid "Error during modification: %(error)s"
-msgstr ""
-
-#: app/routes/admin_routes.py:155
-msgid "You cannot delete your own account"
-msgstr ""
-
-#: app/routes/admin_routes.py:197 app/routes/admin_routes.py:199
-#, python-format
-msgid "User %(username)s was deleted successfully"
-msgstr ""
-
-#: app/routes/admin_routes.py:206 app/templates/partials/js_translations.html:9
-msgid "Error during deletion"
-msgstr ""
-
-#: app/routes/admin_routes.py:210
-msgid ""
-"Cannot delete this user because they are referenced by other items in the"
-" database."
-msgstr ""
-
-#: app/routes/admin_routes.py:212 app/routes/list_routes.py:1901
-#: app/routes/list_routes.py:2331 app/routes/list_routes.py:2383
-#, python-format
-msgid "Error during deletion: %(error)s"
-msgstr ""
-
-#: app/routes/admin_routes.py:255 app/routes/admin_routes.py:324
-msgid "The provided file does not appear to be a valid PEM certificate"
-msgstr ""
-
-#: app/routes/admin_routes.py:258 app/routes/admin_routes.py:328
-#, python-format
-msgid "Error reading CA certificate: %(error)s"
-msgstr ""
-
-#: app/routes/admin_routes.py:288
-msgid "LDAP configuration saved successfully"
-msgstr ""
-
-#: app/routes/admin_routes.py:292
-#, python-format
-msgid "Error during save: %(error)s"
-msgstr ""
-
-#: app/routes/admin_routes.py:338
-msgid "Certificate verification is enabled but no CA certificate is available"
-msgstr ""
-
-#: app/routes/admin_routes.py:383
-#, python-format
-msgid "Unexpected error: %(error)s"
-msgstr ""
-
-#: app/routes/admin_routes.py:402 app/routes/list_routes.py:2390
-#, python-format
-msgid "Error: %(error)s"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:37
-msgid "Token name is required"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:64
-msgid "Invalid expiration date format. Use ISO format (YYYY-MM-DDTHH:MM:SS)"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:135 app/routes/api_auth_routes.py:140
-msgid "Token revoked successfully"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:180
-msgid "Authentication required"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:189
-msgid "Invalid or revoked token"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:193
-msgid "Token expired"
-msgstr ""
-
-#: app/routes/api_auth_routes.py:202
-msgid "Inactive or deleted user"
-msgstr ""
-
-#: app/routes/auth_routes.py:28
-msgid "Username and password are required"
-msgstr ""
-
-#: app/routes/auth_routes.py:53
-msgid "Logged in successfully"
-msgstr ""
-
-#: app/routes/auth_routes.py:63 app/routes/auth_routes.py:64
-msgid "Invalid username or password"
-msgstr ""
-
-#: app/routes/json_config_routes.py:62 app/routes/list_routes.py:43
-msgid "This list does not require JSON configuration"
-msgstr ""
-
-#: app/routes/json_config_routes.py:129
-msgid "JSON configuration saved and data import successful"
-msgstr ""
-
-#: app/routes/json_config_routes.py:132
-msgid "JSON configuration saved but error during data import"
-msgstr ""
-
-#: app/routes/json_config_routes.py:136
-#, python-format
-msgid "JSON configuration saved but error during data import: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:165
-msgid "Curl error: command not defined"
-msgstr ""
-
-#: app/routes/json_config_routes.py:193
-msgid "Curl error: no output"
-msgstr ""
-
-#: app/routes/json_config_routes.py:197 app/routes/json_config_routes.py:200
-#, python-format
-msgid "Curl error: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:207
-msgid "Error: URL not defined"
-msgstr ""
-
-#: app/routes/json_config_routes.py:238 app/routes/json_config_routes.py:460
-#, python-format
-msgid "SSL error: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:241 app/routes/list_routes.py:158
-#, python-format
-msgid "Error getting data: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:245
-msgid "Error: unsupported data source"
-msgstr ""
-
-#: app/routes/json_config_routes.py:355
-#, python-format
-msgid "Error getting JSON data: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:383
-msgid "Curl command not defined"
-msgstr ""
-
-#: app/routes/json_config_routes.py:405 app/routes/json_config_routes.py:419
-msgid "Error executing curl command: no output"
-msgstr ""
-
-#: app/routes/json_config_routes.py:409 app/routes/json_config_routes.py:423
-#, python-format
-msgid "Error executing curl command: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:431
-msgid "URL not defined"
-msgstr ""
-
-#: app/routes/json_config_routes.py:456
-msgid "Error retrieving data from URL: no data"
-msgstr ""
-
-#: app/routes/json_config_routes.py:464
-#, python-format
-msgid "Error getting data from URL: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:468
-msgid "Unsupported data source"
-msgstr ""
-
-#: app/routes/json_config_routes.py:477
-#, python-format
-msgid "Error parsing JSON: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:504
-#, python-format
-msgid "Key '%(key)s' not found in the list element"
-msgstr ""
-
-#: app/routes/json_config_routes.py:508
-#, python-format
-msgid "Key '%(key)s' not found in the data"
-msgstr ""
-
-#: app/routes/json_config_routes.py:517
-#, python-format
-msgid "Valid path. %(count)s elements found."
-msgstr ""
-
-#: app/routes/json_config_routes.py:521
-msgid "Valid path."
-msgstr ""
-
-#: app/routes/json_config_routes.py:524
-#, python-format
-msgid "The path points to a simple value (%(type)s), not an object or a list"
-msgstr ""
-
-#: app/routes/json_config_routes.py:528
-#, python-format
-msgid "Error navigating JSON data: %(error)s"
-msgstr ""
-
-#: app/routes/json_config_routes.py:531
-#, python-format
-msgid "Error testing JSON path: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:64
-msgid "This list does not require CSV configuration"
-msgstr ""
-
-#: app/routes/list_routes.py:89
-#, python-format
-msgid "List not found: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:94
-msgid ""
-"Data must be in JSON format. Make sure the Content-Type is "
-"application/json"
-msgstr ""
-
-#: app/routes/list_routes.py:102
-#, python-format
-msgid "Could not parse JSON data: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:107
-msgid "Null or invalid JSON data"
-msgstr ""
-
-#: app/routes/list_routes.py:112
-msgid "The 'separator' field is required"
-msgstr ""
-
-#: app/routes/list_routes.py:116
-msgid "The 'has_header' field is required"
-msgstr ""
-
-#: app/routes/list_routes.py:147
-msgid "No data source URL defined. Please configure a URL in the list settings."
-msgstr ""
-
-#: app/routes/list_routes.py:161
-#, python-format
-msgid "Error decoding CSV content: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:166
-msgid "The CSV content is empty"
-msgstr ""
-
-#: app/routes/list_routes.py:235
-#, python-format
-msgid "Error during preview: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:264
-msgid "The separator must be a single character"
-msgstr ""
-
-#: app/routes/list_routes.py:315 app/routes/list_routes.py:1303
-#: app/routes/list_routes.py:2182 app/routes/list_routes.py:2486
-#, python-format
-msgid "%(count)s rows imported successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:318
-#, python-format
-msgid "Error importing data: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:331 app/routes/list_routes.py:400
-#: app/routes/list_routes.py:419 app/routes/list_routes.py:1727
-#: app/routes/list_routes.py:1872 app/routes/list_routes.py:1912
-#: app/routes/list_routes.py:1957 app/routes/list_routes.py:2270
-#: app/routes/list_routes.py:2349
-msgid "List not found"
-msgstr ""
-
-#: app/routes/list_routes.py:411 app/routes/ui_routes.py:64
-msgid "Unauthorized access - This list is not published"
-msgstr ""
-
-#: app/routes/list_routes.py:425
-msgid "Unauthorized access - Only administrators can modify lists"
-msgstr ""
-
-#: app/routes/list_routes.py:444
-#, python-format
-msgid "Invalid date format. Use DD/MM/YYYY format: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:524
-#, python-format
-msgid "An error occurred while displaying the list: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:539
-msgid "Unknown user"
-msgstr ""
-
-#: app/routes/list_routes.py:551
-msgid "The columns field must be a list"
-msgstr ""
-
-#: app/routes/list_routes.py:556
-msgid "Each column must have at least a name field"
-msgstr ""
-
-#: app/routes/list_routes.py:633
-msgid "URL is required for 'url' source"
-msgstr ""
-
-#: app/routes/list_routes.py:837
-#, python-format
-msgid "Error adding columns: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:850 app/routes/list_routes.py:870
-msgid "Error creating the list"
-msgstr ""
-
-#: app/routes/list_routes.py:1320
-msgid "All columns and data were imported successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:1323
-msgid "Some columns may not have been imported correctly"
-msgstr ""
-
-#: app/routes/list_routes.py:1431 app/routes/list_routes.py:1484
-msgid "No data received"
-msgstr ""
-
-#: app/routes/list_routes.py:1471
-#, python-format
-msgid "Could not create list with ID %(id)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1477
-#, python-format
-msgid "Error creating list: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1642
-msgid ""
-"Cannot modify columns: the list already contains data. Please delete all "
-"data before modifying columns."
-msgstr ""
-
-#: app/routes/list_routes.py:1661
-msgid "The list does not exist in the database"
-msgstr ""
-
-#: app/routes/list_routes.py:1679
-#, python-format
-msgid "The list does not exist before creating column %(col_name)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1694
-#, python-format
-msgid "Error creating column %(col_name)s: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1707
-msgid "List updated successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:1716
-#, python-format
-msgid "Error updating list: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1742 app/templates/lists/edit.html:527
-msgid "List deleted successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:1760
-msgid "No data provided"
-msgstr ""
-
-#: app/routes/list_routes.py:1770
-#, python-format
-msgid "Missing columns: %(columns)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1791
-#, python-format
-msgid "Invalid date format for %(col_name)s: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1796
-#, python-format
-msgid "Invalid number format for %(col_name)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1809
-msgid "IPv6 mask must be between 0 and 128"
-msgstr ""
-
-#: app/routes/list_routes.py:1812
-msgid "IPv4 mask must be between 0 and 32"
-msgstr ""
-
-#: app/routes/list_routes.py:1817
-#, python-format
-msgid "Invalid IP format for %(col_name)s: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1840
-#: app/templates/partials/js_translations.html:31
-msgid "Row added successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:1893
-msgid "Row deleted successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:1896 app/routes/list_routes.py:1922
-#: app/routes/list_routes.py:1970
-#: app/templates/partials/js_translations.html:41
-msgid "Row not found"
-msgstr ""
-
-#: app/routes/list_routes.py:1944
-#, python-format
-msgid "Error during retrieval: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:1962 app/routes/list_routes.py:2278
-msgid "Invalid data"
-msgstr ""
-
-#: app/routes/list_routes.py:1989 app/routes/list_routes.py:1991
-#, python-format
-msgid "Invalid date format for column %(col_name)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2023 app/routes/list_routes.py:2540
-#: app/templates/lists/view.html:458
-msgid "Data updated successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:2028
-#, python-format
-msgid "Error during update: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2039
-msgid "No file selected"
-msgstr ""
-
-#: app/routes/list_routes.py:2045
-msgid "The file must be in CSV or JSON format"
-msgstr ""
-
-#: app/routes/list_routes.py:2091
-msgid "The CSV file does not contain column headers"
-msgstr ""
-
-#: app/routes/list_routes.py:2098
-#, python-format
-msgid "Invalid columns in CSV: %(columns)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2115 app/routes/list_routes.py:2118
-msgid "The JSON file must contain a list of objects"
-msgstr ""
-
-#: app/routes/list_routes.py:2128
-#, python-format
-msgid "Invalid columns in JSON: %(columns)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2138
-#, python-format
-msgid "JSON decoding error: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2200
-msgid "Unsupported format"
-msgstr ""
-
-#: app/routes/list_routes.py:2220
-msgid "No data to export"
-msgstr ""
-
-#: app/routes/list_routes.py:2283
-msgid "Invalid data format"
-msgstr ""
-
-#: app/routes/list_routes.py:2316 app/routes/list_routes.py:2374
-#, python-format
-msgid "%(count)s row(s) deleted successfully"
-msgstr ""
-
-#: app/routes/list_routes.py:2323
-#: app/templates/partials/js_translations.html:20
-msgid "No rows could be deleted"
-msgstr ""
-
-#: app/routes/list_routes.py:2406
-#, python-format
-msgid "An error occurred while displaying the edit form: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2430
-#, python-format
-msgid "An error occurred while displaying the lists: %(error)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2472
-msgid "No data source URL defined for this list"
-msgstr ""
-
-#: app/routes/list_routes.py:2478
-#, python-format
-msgid "Unsupported data format. Valid formats: %(formats)s"
-msgstr ""
-
-#: app/routes/list_routes.py:2512
-msgid "This list is not configured for automatic updates"
-msgstr ""
-
-#: app/routes/list_routes.py:2520
-msgid "No update configuration found for this list"
-msgstr ""
-
-#: app/routes/list_routes.py:2547
-msgid "Error during data update"
-msgstr ""
-
-#: app/routes/list_routes.py:2557
-msgid "An unexpected error occurred during the data update."
-msgstr ""
-
-#: app/routes/ui_routes.py:72
-msgid "Access from this IP is not authorized"
-msgstr ""
-
-#: app/routes/ui_routes.py:88
-msgid "Unauthorized access - Only administrators can edit lists"
-msgstr ""
 
 #: app/templates/api_docs.html:3 app/templates/api_docs.html:26
 #: app/templates/base.html:50
@@ -932,7 +337,7 @@ msgid "Age"
 msgstr ""
 
 #: app/templates/admin/edit_user.html:35 app/templates/admin/new_user.html:33
-#: app/templates/admin/users.html:22 app/templates/api_docs_postman.html:145
+#: app/templates/admin/users.html:23 app/templates/api_docs_postman.html:145
 msgid "Email"
 msgstr ""
 
@@ -1079,7 +484,7 @@ msgid "Close"
 msgstr ""
 
 #: app/templates/admin/edit_user.html:29 app/templates/admin/new_user.html:28
-#: app/templates/admin/users.html:21 app/templates/auth/login.html:28
+#: app/templates/admin/users.html:22 app/templates/auth/login.html:28
 msgid "Username"
 msgstr ""
 
@@ -1092,12 +497,12 @@ msgid "(leave blank to not change)"
 msgstr ""
 
 #: app/templates/admin/edit_user.html:51 app/templates/admin/new_user.html:44
-#: app/templates/admin/users.html:41
+#: app/templates/admin/users.html:42
 msgid "Administrator"
 msgstr ""
 
 #: app/templates/admin/edit_user.html:57 app/templates/admin/new_user.html:49
-#: app/templates/admin/users.html:36 app/templates/api_tokens/index.html:58
+#: app/templates/admin/users.html:37 app/templates/api_tokens/index.html:58
 #: app/templates/lists/index.html:40
 msgid "Active"
 msgstr ""
@@ -1376,7 +781,7 @@ msgid "An error occurred while loading groups"
 msgstr ""
 
 #: app/templates/admin/new_user.html:3 app/templates/admin/new_user.html:11
-#: app/templates/admin/users.html:9
+#: app/templates/admin/users.html:10
 msgid "New User"
 msgstr ""
 
@@ -1384,36 +789,36 @@ msgstr ""
 msgid "Create User"
 msgstr ""
 
-#: app/templates/admin/users.html:3 app/templates/admin/users.html:7
+#: app/templates/admin/users.html:3 app/templates/admin/users.html:8
 msgid "User Administration"
 msgstr ""
 
-#: app/templates/admin/users.html:23 app/templates/api_tokens/index.html:33
+#: app/templates/admin/users.html:24 app/templates/api_tokens/index.html:33
 msgid "Status"
 msgstr ""
 
-#: app/templates/admin/users.html:24
+#: app/templates/admin/users.html:25
 msgid "Role"
 msgstr ""
 
-#: app/templates/admin/users.html:25
+#: app/templates/admin/users.html:26
 msgid "Last Login"
 msgstr ""
 
-#: app/templates/admin/users.html:26 app/templates/api_tokens/index.html:34
+#: app/templates/admin/users.html:27 app/templates/api_tokens/index.html:34
 msgid "Actions"
 msgstr ""
 
-#: app/templates/admin/users.html:36 app/templates/api_tokens/index.html:60
+#: app/templates/admin/users.html:37 app/templates/api_tokens/index.html:60
 #: app/templates/lists/index.html:40
 msgid "Inactive"
 msgstr ""
 
-#: app/templates/admin/users.html:41
+#: app/templates/admin/users.html:42
 msgid "User"
 msgstr ""
 
-#: app/templates/admin/users.html:48 app/templates/lists/index.html:33
+#: app/templates/admin/users.html:49 app/templates/lists/index.html:33
 msgid "Never"
 msgstr ""
 
@@ -3067,6 +2472,10 @@ msgstr ""
 msgid "Deletion error"
 msgstr ""
 
+#: app/templates/lists/edit.html:527
+msgid "List deleted successfully"
+msgstr ""
+
 #: app/templates/lists/edit.html:530
 msgid "An error occurred during deletion: "
 msgstr ""
@@ -3092,17 +2501,14 @@ msgid "Create a new list"
 msgstr ""
 
 #: app/templates/lists/view.html:34
-#: app/templates/partials/js_translations.html:18
 msgid "Delete selection"
 msgstr ""
 
 #: app/templates/lists/view.html:38 app/templates/lists/view.html:198
-#: app/templates/partials/js_translations.html:33
 msgid "Add"
 msgstr ""
 
 #: app/templates/lists/view.html:41 app/templates/lists/view.html:292
-#: app/templates/partials/js_translations.html:24
 msgid "Import"
 msgstr ""
 
@@ -3145,7 +2551,7 @@ msgid "Edit a row"
 msgstr ""
 
 #: app/templates/lists/view.html:256
-#: app/templates/partials/js_translations.html:12
+#: app/templates/partials/js_translations.html:11
 msgid "Update"
 msgstr ""
 
@@ -3185,6 +2591,10 @@ msgstr ""
 msgid "Starting update..."
 msgstr ""
 
+#: app/templates/lists/view.html:458
+msgid "Data updated successfully"
+msgstr ""
+
 #: app/templates/lists/view.html:463
 msgid "Reload page to see changes"
 msgstr ""
@@ -3197,123 +2607,31 @@ msgstr ""
 msgid "Error communicating with server"
 msgstr ""
 
-#: app/templates/partials/js_translations.html:7
+#: app/templates/partials/js_translations.html:6
 msgid "Are you sure you want to delete this row?"
 msgstr ""
 
-#: app/templates/partials/js_translations.html:8
+#: app/templates/partials/js_translations.html:7
 msgid "Error: Missing CSRF token"
 msgstr ""
 
-#: app/templates/partials/js_translations.html:10
+#: app/templates/partials/js_translations.html:8
+msgid "Error during deletion"
+msgstr ""
+
+#: app/templates/partials/js_translations.html:9
 msgid "Row updated successfully"
 msgstr ""
 
-#: app/templates/partials/js_translations.html:11
+#: app/templates/partials/js_translations.html:10
 msgid "Error while updating row. Please refresh the page."
 msgstr ""
 
-#: app/templates/partials/js_translations.html:13
-msgid "No rows selected"
-msgstr ""
-
 #: app/templates/partials/js_translations.html:14
-#, python-format
-msgid "Are you sure you want to delete %s row(s)?"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:15
-msgid "No valid row IDs found"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:16
-msgid "Error: Missing list ID"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:17
-msgid "Deleting..."
-msgstr ""
-
-#: app/templates/partials/js_translations.html:19
-#, python-format
-msgid "%s row(s) deleted successfully"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:21
-msgid "Error during deletion: "
-msgstr ""
-
-#: app/templates/partials/js_translations.html:22
-#, python-format
-msgid "Delete (%s)"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:23
-msgid "Importing..."
-msgstr ""
-
-#: app/templates/partials/js_translations.html:25
-msgid "Error during import"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:26
-msgid "Adding..."
-msgstr ""
-
-#: app/templates/partials/js_translations.html:27
-#, python-format
-msgid "Error during add (%s)"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:28
-msgid "Invalid server response"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:29
-msgid "Error fetching row data"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:30
-msgid "Row data is invalid"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:32
-msgid "Error during add"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:34
-msgid "Error: List ID not found"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:35
-msgid "An error occurred while initializing the edit. See console for details."
-msgstr ""
-
-#: app/templates/partials/js_translations.html:36
-msgid "Error while fetching row data"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:37
-msgid "An error occurred while fetching the data. See console for details."
-msgstr ""
-
-#: app/templates/partials/js_translations.html:38
-msgid "Updating..."
-msgstr ""
-
-#: app/templates/partials/js_translations.html:39
-msgid "Error during update"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:40
-msgid "Error fetching updated data"
-msgstr ""
-
-#: app/templates/partials/js_translations.html:44
 msgid "Are you sure you want to delete the user"
 msgstr ""
 
-#: app/templates/partials/js_translations.html:45
+#: app/templates/partials/js_translations.html:15
 #, python-format
 msgid "Error: Could not find the delete form for user %s"
 msgstr ""
