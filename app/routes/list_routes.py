@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort, current_app, send_file, session, g
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from ..models.list import List, ListColumn, ListData
 from ..models.user import User
 from ..database import db, csrf
@@ -39,7 +40,7 @@ def json_config_redirect(list_id):
         # Redirect to the new URL path
         return redirect(url_for('json_config_bp.json_config', list_id=list_id))
     else:
-        flash('This list does not require JSON configuration', 'warning')
+        flash(_('This list does not require JSON configuration'), 'warning')
         return redirect(url_for('list_bp.view_list', list_id=list_id))
 
 @list_bp.route('/lists/<int:list_id>/csv-config', methods=['GET'])
@@ -60,7 +61,7 @@ def csv_config(list_id):
             is_csv = True
     
     if not is_csv:
-        flash('This list does not require CSV configuration', 'warning')
+        flash(_('This list does not require CSV configuration'), 'warning')
         return redirect(url_for('list_bp.view_list', list_id=list_id))
     
     return render_template('lists/csv_config.html', list=list_obj)
@@ -85,12 +86,12 @@ def preview_csv(list_id):
             current_app.logger.info(f"List found: ID={list_obj.id}, Name={list_obj.name}")
         except Exception as e:
             current_app.logger.error(f"Error getting list {list_id}: {str(e)}")
-            return jsonify({'error': f"List not found: {str(e)}"}), 404
+            return jsonify({'error': _("List not found: %(error)s", error=str(e))}), 404
         
         # Check if the data is in JSON format
         if not request.is_json:
             current_app.logger.error(f"Data is not in JSON format. Content-Type: {request.content_type}")
-            return jsonify({'error': 'Data must be in JSON format. Make sure the Content-Type is application/json'}), 400
+            return jsonify({'error': _('Data must be in JSON format. Make sure the Content-Type is application/json')}), 400
         
         # Try to parse the JSON data
         try:
@@ -98,21 +99,21 @@ def preview_csv(list_id):
             current_app.logger.info(f"Received JSON data: {data}")
         except Exception as e:
             current_app.logger.error(f"Error parsing JSON: {str(e)}")
-            return jsonify({'error': f'Could not parse JSON data: {str(e)}'}), 400
+            return jsonify({'error': _('Could not parse JSON data: %(error)s', error=str(e))}), 400
         
         # Check if the data is null or empty
         if data is None:
             current_app.logger.error("Null JSON data")
-            return jsonify({'error': 'Null or invalid JSON data'}), 400
+            return jsonify({'error': _('Null or invalid JSON data')}), 400
         
         # Check if the data contains the required fields
         if 'separator' not in data:
             current_app.logger.error("'separator' field missing from JSON data")
-            return jsonify({'error': "The 'separator' field is required"}), 400
+            return jsonify({'error': _("The 'separator' field is required")}), 400
         
         if 'has_header' not in data:
             current_app.logger.error("'has_header' field missing from JSON data")
-            return jsonify({'error': "The 'has_header' field is required"}), 400
+            return jsonify({'error': _("The 'has_header' field is required")}), 400
         
         # Log received data for debugging
         current_app.logger.info(f"Data received for preview: {data}")
@@ -143,7 +144,7 @@ def preview_csv(list_id):
         
         if not url:
             current_app.logger.error("No data source URL defined")
-            return jsonify({'error': 'No data source URL defined. Please configure a URL in the list settings.'}), 400
+            return jsonify({'error': _('No data source URL defined. Please configure a URL in the list settings.')}), 400
         
         current_app.logger.info(f"Getting data from URL: {url}")
         
@@ -154,15 +155,15 @@ def preview_csv(list_id):
             csv_content = response.content.decode('utf-8')
         except requests.exceptions.RequestException as e:
             current_app.logger.error(f"Error getting data from URL: {str(e)}")
-            return jsonify({'error': f"Error getting data: {str(e)}"}), 400
+            return jsonify({'error': _("Error getting data: %(error)s", error=str(e))}), 400
         except UnicodeDecodeError as e:
             current_app.logger.error(f"Error decoding CSV content: {str(e)}")
-            return jsonify({'error': f"Error decoding CSV content: {str(e)}"}), 400
+            return jsonify({'error': _("Error decoding CSV content: %(error)s", error=str(e))}), 400
         
         # Check that the content is not empty
         if not csv_content.strip():
             current_app.logger.error("The CSV content is empty")
-            return jsonify({'error': 'The CSV content is empty'}), 400
+            return jsonify({'error': _('The CSV content is empty')}), 400
         
         # Log the first few lines of the CSV content for debugging
         preview_lines = csv_content.split('\n')[:3]
@@ -231,7 +232,7 @@ def preview_csv(list_id):
         except Exception as e:
             current_app.logger.error(f"Error during CSV preview: {str(e)}")
             current_app.logger.exception(e)  # Log the full exception
-            return jsonify({'error': f"Error during preview: {str(e)}"}), 500
+            return jsonify({'error': _("Error during preview: %(error)s", error=str(e))}), 500
         
     except Exception as e:
         current_app.logger.error(f"Error during CSV preview: {str(e)}")
@@ -260,7 +261,7 @@ def save_csv_config(list_id):
         # Check that the separator is a single character
         if len(separator) != 1:
             current_app.logger.error(f"The separator '{separator}' is not a single character")
-            return jsonify({'error': "The separator must be a single character"}), 400
+            return jsonify({'error': _("The separator must be a single character")}), 400
             
         has_header = data.get('has_header', True)
         column_names = data.get('column_names', [])
@@ -311,10 +312,10 @@ def save_csv_config(list_id):
             from ..models.data_importer import DataImporter
             importer = DataImporter(list_obj)
             row_count = importer.import_data(force_update=True)
-            flash(f'{row_count if row_count is not None else 0} rows imported successfully', 'success')
+            flash(_('%(count)s rows imported successfully', count=row_count if row_count is not None else 0), 'success')
         except Exception as import_error:
             # Keep only the flash message for the user
-            flash(f"Error importing data: {str(import_error)}", 'danger')
+            flash(_("Error importing data: %(error)s", error=str(import_error)), 'danger')
         
         return jsonify({'success': True})
         
@@ -327,7 +328,7 @@ def check_ip_restriction(f):
     def decorated_function(list_id, *args, **kwargs):
         list_obj = List.query.get(list_id)
         if not list_obj:
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
             
         if list_obj.ip_restriction_enabled:
             # Get client IP, considering different possible configurations
@@ -396,7 +397,7 @@ def check_list_access(f):
     def decorated_function(list_id, *args, **kwargs):
         list_obj = List.query.get(list_id)
         if not list_obj:
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
         
         # Access allowed if:
         # 1. The user is an admin (can see all lists)
@@ -407,7 +408,7 @@ def check_list_access(f):
         # Log for debugging
         current_app.logger.info(f"Access denied to list {list_id} for user {current_user.id} - is_published: {list_obj.is_published}")
         
-        return jsonify({'error': 'Unauthorized access - This list is not published'}), 403
+        return jsonify({'error': _('Unauthorized access - This list is not published')}), 403
     return decorated_function
 
 def check_list_ownership(f):
@@ -415,13 +416,13 @@ def check_list_ownership(f):
     def decorated_function(list_id, *args, **kwargs):
         list_obj = List.query.get(list_id)
         if not list_obj:
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
         
         # Modification allowed only if the user is an admin
         if current_user.is_admin:
             return f(list_id, *args, **kwargs)
         
-        return jsonify({'error': 'Unauthorized access - Only administrators can modify lists'}), 403
+        return jsonify({'error': _('Unauthorized access - Only administrators can modify lists')}), 403
     return decorated_function
 
 def format_date_for_db(date_str):
@@ -440,7 +441,7 @@ def format_date_for_db(date_str):
         return date_obj.strftime('%d/%m/%Y')
         
     except ValueError as e:
-        raise ValueError(f"Invalid date format. Use DD/MM/YYYY format: {str(e)}")
+        raise ValueError(_("Invalid date format. Use DD/MM/YYYY format: %(error)s", error=str(e)))
 
 @list_bp.route('/lists/<int:list_id>')
 @login_required
@@ -520,7 +521,7 @@ def view_list(list_id):
     except Exception as e:
         current_app.logger.error(f"Error displaying list {list_id}: {str(e)}")
         current_app.logger.exception(e)
-        flash('An error occurred while displaying the list: ' + str(e), 'error')
+        flash(_('An error occurred while displaying the list: %(error)s', error=str(e)), 'error')
         return redirect(url_for('list_bp.lists_ui'))
 
 @list_bp.route('/api/lists', methods=['POST'])
@@ -535,7 +536,7 @@ def create_list():
         # Log the list creation attempt
         if admin_logger:
             ip_address = request.remote_addr
-            user_info = "Unknown user"
+            user_info = _("Unknown user")
             if hasattr(g, 'current_user') and g.current_user:
                 user_info = f"{g.current_user.username} (ID: {g.current_user.id})"
             admin_logger.info(f"List creation attempt - User: {user_info} - IP: {ip_address}")
@@ -547,12 +548,12 @@ def create_list():
         current_app.logger.info(f"Columns received: {columns}")
         
         if not isinstance(columns, list):
-            return jsonify({'error': 'The columns field must be a list'}), 400
+            return jsonify({'error': _('The columns field must be a list')}), 400
         
         formatted_columns = []
         for idx, col in enumerate(columns):
             if not isinstance(col, dict) or 'name' not in col:
-                return jsonify({'error': 'Each column must have at least a name field'}), 400
+                return jsonify({'error': _('Each column must have at least a name field')}), 400
             
             column = {
                 'name': col['name'],
@@ -629,7 +630,7 @@ def create_list():
             # Check if URL is provided for the 'url' source
             if update_config.get('source') == 'url' and not url:
                 current_app.logger.error(f"Missing URL for 'url' source. Data: {data}")
-                return jsonify({'error': "URL is required for 'url' source"}), 400
+                return jsonify({'error': _("URL is required for 'url' source")}), 400
             
             # Always include the URL if it is provided and the source is 'url'
             if url and update_config.get('source') == 'url':
@@ -833,7 +834,7 @@ def create_list():
                     except Exception as col_error:
                         db.session.rollback()
                         current_app.logger.error(f"Error adding columns: {str(col_error)}")
-                        return jsonify({'error': f"Error adding columns: {str(col_error)}"}), 500
+                        return jsonify({'error': _("Error adding columns: %(error)s", error=str(col_error))}), 500
                 
                 # Ensure the list is correctly persisted
                 db.session.commit()
@@ -846,7 +847,7 @@ def create_list():
                 list_exists = db.session.query(db.exists().where(List.id == list_obj.id)).scalar()
                 if not list_exists:
                     current_app.logger.error(f"List with ID {list_obj.id} does not exist in the database after creation")
-                    return jsonify({'error': "Error creating the list"}), 500
+                    return jsonify({'error': _("Error creating the list")}), 500
                 
                 # Do not import data automatically upon list creation
                 # to allow the user to configure CSV options
@@ -866,7 +867,7 @@ def create_list():
                         list_check = db.session.query(List).filter(List.id == list_obj.id).first()
                         if not list_check:
                             current_app.logger.error(f"List with ID {list_obj.id} no longer exists in the database after waiting")
-                            return jsonify({'error': "Error creating the list"}), 500
+                            return jsonify({'error': _("Error creating the list")}), 500
                         
                         # Do not try to modify auto_create_columns directly as it's a property
                         # Store the value in the private attribute _auto_create_columns
@@ -1299,7 +1300,7 @@ def create_list():
                     row_count = list_obj.import_data_from_url()
                     current_app.logger.info(f"Import successful: {row_count} rows imported")
                     
-                    response_data['import_result'] = f"{row_count} rows imported successfully"
+                    response_data['import_result'] = _("%(count)s rows imported successfully", count=row_count)
                 except Exception as e:
                     current_app.logger.error(f"Error importing data: {str(e)}")
                     current_app.logger.exception(e)
@@ -1316,10 +1317,10 @@ def create_list():
                     
                     if success:
                         current_app.logger.info(f"Full data update successful for list {list_obj.id}")
-                        response_data['update_result'] = "All columns and data were imported successfully"
+                        response_data['update_result'] = _("All columns and data were imported successfully")
                     else:
                         current_app.logger.warning(f"Full data update failed for list {list_obj.id}: {logs}")
-                        response_data['update_warning'] = "Some columns may not have been imported correctly"
+                        response_data['update_warning'] = _("Some columns may not have been imported correctly")
                 except Exception as update_error:
                     current_app.logger.error(f"Error during full data update: {str(update_error)}")
                     response_data['update_error'] = str(update_error)
@@ -1427,7 +1428,7 @@ def update_list(list_id):
                 current_app.logger.info(f"Value of {key}: {data[key]}")
         
         if not data:
-            return jsonify({'error': 'No data received'}), 400
+            return jsonify({'error': _('No data received')}), 400
             
         if not list_exists:
             current_app.logger.warning(f"List with ID {list_id} does not exist in the database. Attempting to create.")
@@ -1467,20 +1468,20 @@ def update_list(list_id):
                 list_exists = db.session.query(db.exists().where(List.id == list_id)).scalar()
                 if not list_exists:
                     current_app.logger.error(f"List with ID {list_id} could not be created")
-                    return jsonify({'error': f"Could not create list with ID {list_id}"}), 500
+                    return jsonify({'error': _("Could not create list with ID %(id)s", id=list_id)}), 500
                     
                 current_app.logger.info(f"List {list_id} created successfully")
             except Exception as create_error:
                 db.session.rollback()
                 current_app.logger.error(f"Error creating list {list_id}: {str(create_error)}")
-                return jsonify({'error': f"Error creating list: {str(create_error)}"}), 500
+                return jsonify({'error': _("Error creating list: %(error)s", error=str(create_error))}), 500
         else:
             # Get the existing list
             list_obj = List.query.get(list_id)
         
         # data is already defined above (JSON or form)
         if not data:
-            return jsonify({'error': 'No data received'}), 400
+            return jsonify({'error': _('No data received')}), 400
             
         current_app.logger.debug(f"Data received: {data}")
         
@@ -1638,7 +1639,7 @@ def update_list(list_id):
                 has_data = db.session.query(ListData).filter_by(list_id=list_id).first() is not None
                 if has_data:
                     return jsonify({
-                        'error': 'Cannot modify columns: the list already contains data. Please delete all data before modifying columns.'
+                        'error': _('Cannot modify columns: the list already contains data. Please delete all data before modifying columns.')
                     }), 400
             
             # First, set all positions to temporary negative values
@@ -1657,7 +1658,7 @@ def update_list(list_id):
             list_exists = db.session.query(db.exists().where(List.id == list_id)).scalar()
             if not list_exists:
                 current_app.logger.error(f"List with ID {list_id} does not exist in the database")
-                return jsonify({'error': "The list does not exist in the database"}), 404
+                return jsonify({'error': _("The list does not exist in the database")}), 404
             
             # Force a commit to ensure all previous modifications are persisted
             db.session.commit()
@@ -1675,7 +1676,7 @@ def update_list(list_id):
                         list_check = db.session.query(List).get(list_id)
                         if not list_check:
                             current_app.logger.error(f"List with ID {list_id} does not exist before creating column {col_name}")
-                            return jsonify({'error': f"The list does not exist before creating column {col_name}"}), 404
+                            return jsonify({'error': _("The list does not exist before creating column %(col_name)s", col_name=col_name)}), 404
                         
                         new_col = ListColumn(
                             name=col_name,
@@ -1690,7 +1691,7 @@ def update_list(list_id):
                     except Exception as col_err:
                         current_app.logger.error(f"Error creating column {col_name}: {str(col_err)}")
                         db.session.rollback()
-                        return jsonify({'error': f"Error creating column {col_name}: {str(col_err)}"}), 500
+                        return jsonify({'error': _("Error creating column %(col_name)s: %(error)s", col_name=col_name, error=str(col_err))}), 500
             
             # Final flush to ensure all modifications are ready to be committed
             db.session.flush()
@@ -1703,7 +1704,7 @@ def update_list(list_id):
             request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if wants_json:
             return jsonify({
-                'message': 'List updated successfully',
+                'message': _('List updated successfully'),
                 'redirect': url_for('list_bp.view_list', list_id=list_id)
             })
         else:
@@ -1712,7 +1713,7 @@ def update_list(list_id):
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error updating list {list_id}: {str(e)}")
-        return jsonify({'error': f"Error updating list: {str(e)}"}), 500
+        return jsonify({'error': _("Error updating list: %(error)s", error=str(e))}), 500
 
 @list_bp.route('/api/lists/<int:list_id>', methods=['DELETE'])
 @token_auth_required
@@ -1723,7 +1724,7 @@ def delete_list(list_id):
     try:
         list_obj = List.query.get(list_id)
         if not list_obj:
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
         
         current_app.logger.info(f"Deleting list {list_id}")
         
@@ -1738,7 +1739,7 @@ def delete_list(list_id):
         db.session.commit()
         
         current_app.logger.info(f"List {list_id} deleted successfully")
-        return jsonify({'message': 'List deleted successfully'})
+        return jsonify({'message': _('List deleted successfully')})
         
     except Exception as e:
         db.session.rollback()
@@ -1756,7 +1757,7 @@ def add_list_data(list_id):
         # Get the data
         data = request.get_json()
         if not data:
-            return jsonify({'error': 'No data provided'}), 400
+            return jsonify({'error': _('No data provided')}), 400
             
         # Get the list and its columns
         list_obj = List.query.get_or_404(list_id)
@@ -1766,7 +1767,7 @@ def add_list_data(list_id):
         missing_columns = set(columns.keys()) - set(data.keys())
         if missing_columns:
             return jsonify({
-                'error': f'Missing columns: {", ".join(missing_columns)}'
+                'error': _('Missing columns: %(columns)s', columns=", ".join(missing_columns))
             }), 400
             
         # Find the next available row_id
@@ -1787,12 +1788,12 @@ def add_list_data(list_id):
                         if value:
                             value = format_date_for_db(value)
                     except ValueError as e:
-                        return jsonify({'error': f'Invalid date format for {col_name}: {str(e)}'}), 400
+                        return jsonify({'error': _('Invalid date format for %(col_name)s: %(error)s', col_name=col_name, error=str(e))}), 400
                 elif column.column_type == 'number':
                     try:
                         value = int(value)
                     except ValueError:
-                        return jsonify({'error': f'Invalid number format for {col_name}'}), 400
+                        return jsonify({'error': _('Invalid number format for %(col_name)s', col_name=col_name)}), 400
                 elif column.column_type == 'ip':
                     try:
                         # Validate the IP address (with CIDR support)
@@ -1805,15 +1806,15 @@ def add_list_data(list_id):
                             mask_int = int(mask)
                             if ':' in ip:  # IPv6
                                 if not (0 <= mask_int <= 128):
-                                    raise ValueError("IPv6 mask must be between 0 and 128")
+                                    raise ValueError(_("IPv6 mask must be between 0 and 128"))
                             else:  # IPv4
                                 if not (0 <= mask_int <= 32):
-                                    raise ValueError("IPv4 mask must be between 0 and 32")
+                                    raise ValueError(_("IPv4 mask must be between 0 and 32"))
                         else:
                             # Simple IP format
                             ipaddress.ip_address(value)
                     except ValueError as e:
-                        return jsonify({'error': f'Invalid IP format for {col_name}: {str(e)}'}), 400
+                        return jsonify({'error': _('Invalid IP format for %(col_name)s: %(error)s', col_name=col_name, error=str(e))}), 400
                 
                 row_data.append(ListData(
                     list_id=list_id,
@@ -1836,7 +1837,7 @@ def add_list_data(list_id):
                 # Do not block the response if updating public files fails
         
         return jsonify({
-            'message': 'Row added successfully',
+            'message': _('Row added successfully'),
             'row_id': next_row_id
         })
         
@@ -1868,7 +1869,7 @@ def delete_row(list_id, row_id):
         list_obj = List.query.get(list_id)
         if not list_obj:
             current_app.logger.error(f"List {list_id} not found")
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
 
         # Delete all data for the row
         deleted = ListData.query.filter_by(
@@ -1889,15 +1890,15 @@ def delete_row(list_id, row_id):
                     current_app.logger.error(f"Error updating public files: {str(e)}")
                     # Do not block the response if updating public files fails
             
-            return jsonify({'message': 'Row deleted successfully'})
+            return jsonify({'message': _('Row deleted successfully')})
         else:
             current_app.logger.warning(f"Row {row_id} not found in list {list_id}")
-            return jsonify({'error': 'Row not found'}), 404
+            return jsonify({'error': _('Row not found')}), 404
 
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error deleting row {row_id}: {str(e)}")
-        return jsonify({'error': f'Error during deletion: {str(e)}'}), 400
+        return jsonify({'error': _('Error during deletion: %(error)s', error=str(e))}), 400
 
 @list_bp.route('/api/lists/<int:list_id>/data/<int:row_id>', methods=['GET'])
 @token_auth_required
@@ -1908,7 +1909,7 @@ def get_row_data(list_id, row_id):
         # Check that the list exists
         list_obj = List.query.get(list_id)
         if not list_obj:
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
 
         # Get all data for the row
         data_entries = ListData.query.filter_by(
@@ -1918,7 +1919,7 @@ def get_row_data(list_id, row_id):
 
         if not data_entries:
             current_app.logger.warning(f"No data found for row {row_id} of list {list_id}")
-            return jsonify({'error': 'Row not found'}), 404
+            return jsonify({'error': _('Row not found')}), 404
 
         # Organize the data
         response_data = {
@@ -1940,7 +1941,7 @@ def get_row_data(list_id, row_id):
 
     except Exception as e:
         current_app.logger.error(f"Error retrieving row {row_id}: {str(e)}")
-        return jsonify({'error': f'Error during retrieval: {str(e)}'}), 400
+        return jsonify({'error': _('Error during retrieval: %(error)s', error=str(e))}), 400
 
 @list_bp.route('/api/lists/<int:list_id>/data/<int:row_id>', methods=['PUT'])
 @token_auth_required
@@ -1953,12 +1954,12 @@ def update_row_data(list_id, row_id):
         # Check that the list exists
         list_obj = List.query.get(list_id)
         if not list_obj:
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
 
         # Get the JSON data
         data = request.get_json()
         if not data:
-            return jsonify({'error': 'Invalid data'}), 400
+            return jsonify({'error': _('Invalid data')}), 400
 
         # Check that the row exists
         existing_data = ListData.query.filter_by(
@@ -1966,7 +1967,7 @@ def update_row_data(list_id, row_id):
             row_id=row_id
         ).first()
         if not existing_data:
-            return jsonify({'error': 'Row not found'}), 404
+            return jsonify({'error': _('Row not found')}), 404
 
         # Update each column
         for column in list_obj.columns:
@@ -1985,9 +1986,9 @@ def update_row_data(list_id, row_id):
                             except ValueError:
                                 continue
                         if not valid_date:
-                            return jsonify({'error': f'Invalid date format for column {column.name}'}), 400
+                            return jsonify({'error': _('Invalid date format for column %(col_name)s', col_name=column.name)}), 400
                     except ValueError:
-                        return jsonify({'error': f'Invalid date format for column {column.name}'}), 400
+                        return jsonify({'error': _('Invalid date format for column %(col_name)s', col_name=column.name)}), 400
 
                 # Update or create the entry
                 data_entry = ListData.query.filter_by(
@@ -2019,12 +2020,12 @@ def update_row_data(list_id, row_id):
                 current_app.logger.error(f"Error updating public files: {str(e)}")
                 # Do not block the response if updating public files fails
         
-        return jsonify({'message': 'Data updated successfully'})
+        return jsonify({'message': _('Data updated successfully')})
 
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error updating row {row_id}: {str(e)}")
-        return jsonify({'error': f'Error during update: {str(e)}'}), 400
+        return jsonify({'error': _('Error during update: %(error)s', error=str(e))}), 400
 
 @list_bp.route('/api/lists/<int:list_id>/import', methods=['POST'])
 @token_auth_required
@@ -2035,13 +2036,13 @@ def import_list_data(list_id):
     try:
         file = request.files['file']
         if file.filename == '':
-            return jsonify({'error': 'No file selected'}), 400
+            return jsonify({'error': _('No file selected')}), 400
             
         # Check the file type (CSV or JSON)
         file_extension = file.filename.split('.')[-1].lower()
         
         if file_extension not in ['csv', 'json']:
-            return jsonify({'error': 'The file must be in CSV or JSON format'}), 400
+            return jsonify({'error': _('The file must be in CSV or JSON format')}), 400
             
         # Read the file content
         file_content = file.stream.read().decode("UTF8")
@@ -2087,14 +2088,14 @@ def import_list_data(list_id):
             
             # Check that all CSV columns match
             if not csv_reader.fieldnames:
-                return jsonify({'error': 'The CSV file does not contain column headers'}), 400
+                return jsonify({'error': _('The CSV file does not contain column headers')}), 400
                 
             csv_columns = set(csv_reader.fieldnames)
             
             if not csv_columns.issubset(list_columns):
                 invalid_columns = csv_columns - list_columns
                 return jsonify({
-                    'error': f'Invalid columns in CSV: {", ".join(invalid_columns)}'
+                    'error': _('Invalid columns in CSV: %(columns)s', columns=", ".join(invalid_columns))
                 }), 400
                 
             # Convert to a list for processing
@@ -2111,10 +2112,10 @@ def import_list_data(list_id):
                 
                 # Check that the JSON is a list of objects
                 if not isinstance(json_data, list):
-                    return jsonify({'error': 'The JSON file must contain a list of objects'}), 400
+                    return jsonify({'error': _('The JSON file must contain a list of objects')}), 400
                     
                 if not all(isinstance(row, dict) for row in json_data):
-                    return jsonify({'error': 'The JSON file must contain a list of objects'}), 400
+                    return jsonify({'error': _('The JSON file must contain a list of objects')}), 400
                     
                 # Check that all keys of the JSON objects match the list's columns
                 all_keys = set()
@@ -2124,7 +2125,7 @@ def import_list_data(list_id):
                 if not all_keys.issubset(list_columns):
                     invalid_columns = all_keys - list_columns
                     return jsonify({
-                        'error': f'Invalid columns in JSON: {", ".join(invalid_columns)}'
+                        'error': _('Invalid columns in JSON: %(columns)s', columns=", ".join(invalid_columns))
                     }), 400
                     
                 rows = json_data
@@ -2134,7 +2135,7 @@ def import_list_data(list_id):
                     current_app.logger.info(f"Results limit applied during JSON import: {list_obj.max_results} out of {len(rows)} available results")
                     rows = rows[:list_obj.max_results]
             except json.JSONDecodeError as e:
-                return jsonify({'error': f'JSON decoding error: {str(e)}'}), 400
+                return jsonify({'error': _('JSON decoding error: %(error)s', error=str(e))}), 400
         
         # Find the next available row_id
         max_row_id = db.session.query(db.func.max(ListData.row_id)).filter(
@@ -2178,7 +2179,7 @@ def import_list_data(list_id):
                 # Do not block the response if updating public files fails
         
         return jsonify({
-            'message': f'{row_count} rows imported successfully'
+            'message': _('%(count)s rows imported successfully', count=row_count)
         })
         
     except Exception as e:
@@ -2196,7 +2197,7 @@ def export_list_data(list_id):
     format_type = request.args.get('format', 'csv')
     
     if format_type not in ['json', 'csv']:
-        return jsonify({'error': 'Unsupported format'}), 400
+        return jsonify({'error': _('Unsupported format')}), 400
         
     try:
         # Get the list object
@@ -2216,7 +2217,7 @@ def export_list_data(list_id):
             return jsonify(filtered_data)
         else:  # CSV
             if not data:
-                return jsonify({'error': 'No data to export'}), 404
+                return jsonify({'error': _('No data to export')}), 404
                 
             # Create the CSV file in memory
             output = io.StringIO()
@@ -2266,7 +2267,7 @@ def bulk_delete_rows(list_id):
         list_obj = List.query.get(list_id)
         if not list_obj:
             current_app.logger.error(f"List {list_id} not found")
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
 
         # Get the IDs of the rows to delete
         data = request.get_json()
@@ -2274,12 +2275,12 @@ def bulk_delete_rows(list_id):
         
         if not data or 'row_ids' not in data:
             current_app.logger.error("Invalid data or 'row_ids' missing")
-            return jsonify({'error': 'Invalid data'}), 400
+            return jsonify({'error': _('Invalid data')}), 400
 
         row_ids = data['row_ids']
         if not isinstance(row_ids, list):
             current_app.logger.error(f"Invalid data format for row_ids: {type(row_ids)}")
-            return jsonify({'error': 'Invalid data format'}), 400
+            return jsonify({'error': _('Invalid data format')}), 400
 
         current_app.logger.info(f"Attempting to delete {len(row_ids)} rows: {row_ids}")
         
@@ -2312,14 +2313,14 @@ def bulk_delete_rows(list_id):
                     # Do not block the response if updating public files fails
             
             return jsonify({
-                'message': f'{deleted_count} row(s) deleted successfully',
+                'message': _('%(count)s row(s) deleted successfully', count=deleted_count),
                 'deleted_count': deleted_count,
                 'success': True
             })
         else:
             current_app.logger.warning(f"No rows could be deleted among the {len(row_ids)} requested rows")
             return jsonify({
-                'error': 'No rows could be deleted',
+                'error': _('No rows could be deleted'),
                 'success': False
             }), 404
 
@@ -2327,7 +2328,7 @@ def bulk_delete_rows(list_id):
         db.session.rollback()
         current_app.logger.error(f"Error during multiple deletion: {str(e)}")
         return jsonify({
-            'error': f'Error during deletion: {str(e)}',
+            'error': _('Error during deletion: %(error)s', error=str(e)),
             'success': False
         }), 400
 
@@ -2345,7 +2346,7 @@ def delete_all_list_data(list_id):
         list_obj = List.query.get(list_id)
         if not list_obj:
             current_app.logger.error(f"List {list_id} not found")
-            return jsonify({'error': 'List not found'}), 404
+            return jsonify({'error': _('List not found')}), 404
 
         # Count distinct row_ids before deletion to get actual number of logical rows
         try:
@@ -2370,7 +2371,7 @@ def delete_all_list_data(list_id):
                     # Do not block the response if updating public files fails
             
             return jsonify({
-                'message': f'{distinct_rows} row(s) deleted successfully',
+                'message': _('%(count)s row(s) deleted successfully', count=distinct_rows),
                 'deleted_count': distinct_rows,
                 'success': True
             })
@@ -2379,14 +2380,14 @@ def delete_all_list_data(list_id):
             db.session.rollback()
             current_app.logger.error(f"Error deleting all rows from list {list_id}: {str(e)}")
             return jsonify({
-                'error': f'Error during deletion: {str(e)}',
+                'error': _('Error during deletion: %(error)s', error=str(e)),
                 'success': False
             }), 500
 
     except Exception as e:
         current_app.logger.error(f"Error in delete_all_list_data: {str(e)}")
         return jsonify({
-            'error': f'Error: {str(e)}',
+            'error': _('Error: %(error)s', error=str(e)),
             'success': False
         }), 400
 
@@ -2402,7 +2403,7 @@ def edit_list_ui(list_id):
     except Exception as e:
         current_app.logger.error(f"Error displaying the edit form: {str(e)}")
         current_app.logger.exception(e)
-        return f"An error occurred while displaying the edit form: {str(e)}", 500
+        return _("An error occurred while displaying the edit form: %(error)s", error=str(e)), 500
 
 from sqlalchemy import text
 
@@ -2426,7 +2427,7 @@ def lists_ui():
     except Exception as e:
         current_app.logger.error(f"Error displaying lists: {str(e)}")
         current_app.logger.exception(e)
-        return f"An error occurred while displaying the lists: {str(e)}", 500
+        return _("An error occurred while displaying the lists: %(error)s", error=str(e)), 500
 
 @list_bp.route('/debug/list-columns')
 @login_required
@@ -2468,13 +2469,13 @@ def update_list_from_url(list_id):
         
         if not list_obj.data_source_url:
             return jsonify({
-                'error': 'No data source URL defined for this list',
+                'error': _('No data source URL defined for this list'),
                 'success': False
             }), 400
             
         if not list_obj.data_source_format or list_obj.data_source_format not in list_obj.DATA_FORMATS:
             return jsonify({
-                'error': f"Unsupported data format. Valid formats: {', '.join(list_obj.DATA_FORMATS)}",
+                'error': _("Unsupported data format. Valid formats: %(formats)s", formats=', '.join(list_obj.DATA_FORMATS)),
                 'success': False
             }), 400
         
@@ -2482,7 +2483,7 @@ def update_list_from_url(list_id):
         row_count = list_obj.import_data_from_url()
         
         return jsonify({
-            'message': f'{row_count} rows imported successfully',
+            'message': _('%(count)s rows imported successfully', count=row_count),
             'row_count': row_count,
             'success': True
         })
@@ -2508,7 +2509,7 @@ def update_list_data(list_id):
         # Check that the list is of automatic type
         if list_obj.update_type != 'automatic':
             return jsonify({
-                'error': 'This list is not configured for automatic updates',
+                'error': _('This list is not configured for automatic updates'),
                 'success': False
             }), 400
         
@@ -2516,7 +2517,7 @@ def update_list_data(list_id):
         config = list_obj.get_update_config
         if not config:
             return jsonify({
-                'error': 'No update configuration found for this list',
+                'error': _('No update configuration found for this list'),
                 'success': False
             }), 400
         
@@ -2536,14 +2537,14 @@ def update_list_data(list_id):
         }
         
         if success:
-            response['message'] = 'Data updated successfully'
+            response['message'] = _('Data updated successfully')
         else:
             # Extract the error message from the logs if available
             error_logs = [log for log in logs if log.startswith('ERROR:')]
             if error_logs:
                 response['error'] = error_logs[0].replace('ERROR: ', '')
             else:
-                response['error'] = 'Error during data update'
+                response['error'] = _('Error during data update')
         
         return jsonify(response)
         
@@ -2553,5 +2554,5 @@ def update_list_data(list_id):
         return jsonify({
             'error': str(e),
             'success': False,
-            'logs': [f"ERROR: {str(e)}", "An unexpected error occurred during the data update."]
+            'logs': [f"ERROR: {str(e)}", _("An unexpected error occurred during the data update.")]
         }), 500

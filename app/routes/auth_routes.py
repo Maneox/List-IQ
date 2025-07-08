@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_babel import gettext as _
 from ..services.auth_service import AuthService
 import logging
 
@@ -24,7 +25,7 @@ def login():
     password = data.get('password')
     
     if not username or not password:
-        flash('Username and password are required', 'error')
+        flash(_('Username and password are required'), 'error')
         return redirect(url_for('auth.login'))
         
     # First, try local authentication
@@ -49,7 +50,7 @@ def login():
             return redirect(next_url)
         if request.is_json:
             return jsonify({
-                'message': 'Logged in successfully',
+                'message': _('Logged in successfully'),
                 'user': {
                     'id': user.id,
                     'username': user.username,
@@ -59,8 +60,8 @@ def login():
         return redirect(url_for('ui.lists'))
     else:
         if request.is_json:
-            return jsonify({'error': 'Invalid username or password'}), 401
-        flash('Invalid username or password', 'error')
+            return jsonify({'error': _('Invalid username or password')}), 401
+        flash(_('Invalid username or password'), 'error')
         return redirect(url_for('auth.login'))
 
 @auth_bp.route('/api/auth/logout')
