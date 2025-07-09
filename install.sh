@@ -2,12 +2,11 @@
 
 # Installation script for List-IQ
 # This script configures the environment and prepares the database
+
+# If you are an error "-bash: ./install.sh: cannot execute: required file not found"
+#run dos2unix install.sh before running this script
+
 cd app/
-# Check if the script is run with root privileges
-# if [ "$(id -u)" != "0" ]; then
-#    echo "This script must be run as root" 
-#    exit 1
-# fi
 
 # Define colors for messages
 GREEN='\033[0;32m'
